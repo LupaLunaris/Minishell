@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:46:16 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/02/17 16:06:49 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/02/17 17:50:31 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,15 @@
 # include "libft.h"
 
 // Structure globale
-typedef struct s_data {
-
-} t_data;
+typedef struct s_command {
+    char *cmd;               // Commande principale (ex: "ls", "grep", "echo")
+    char **args;             // Liste des arguments (ex: ["ls", "-l", NULL])
+    char *input_file;        // Fichier si redirection de stdin (ex: "input.txt" pour `< input.txt`)
+    char *output_file;       // Fichier si redirection de stdout (ex: "output.txt" pour `> output.txt`)
+    int append;              // Flag pour append : 1 = `>>`, 0 = `>`
+    struct s_command *next;  // Pointeur vers la commande suivante (en cas de pipe)
+    int is_builtin;          // 1 si c'est une commande builtin, 0 sinon
+} t_command;
 
 typedef struct s_env
 {
