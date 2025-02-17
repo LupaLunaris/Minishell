@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:46:16 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/02/17 15:53:23 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/02/17 16:06:49 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,9 @@ typedef struct s_data {
 
 typedef struct s_env
 {
-    char *key;
-    char *value;
-    struct s_env *next;
+    char *key; //nom de la variable d'environnement (par exemple : PATH, HOME, USER)
+    char *value; //valeur associée à cette clé
+    struct s_env *next; //'élément suivant dans la liste chaînée
 } t_env;
 
 // minishell.c
