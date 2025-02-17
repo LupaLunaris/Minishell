@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:46:16 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/02/17 17:50:31 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/02/17 17:57:51 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,9 @@
 # include <signal.h>
 # include <string.h>
 # include "libft.h"
+# include "execute.h"
 
-// Structure globale
+// Structure globale temporaire (attente de martinLAf)
 typedef struct s_command {
     char *cmd;               // Commande principale (ex: "ls", "grep", "echo")
     char **args;             // Liste des arguments (ex: ["ls", "-l", NULL])
