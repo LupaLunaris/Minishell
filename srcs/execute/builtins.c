@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 18:02:55 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/02/19 15:09:14 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/02/19 15:09:38 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	is_builtin(char *cmd)
 			!strcmp(cmd, "exit"));
 }
 
-void execute_builtin(t_command *cmd, t_env *env_list)
+void execute_builtin(t_command *cmd, t_env_list *env_list)
 {
 	if (ft_strcmp(cmd->cmd, "echo") == 0)
 		builtin_echo(cmd->args);
