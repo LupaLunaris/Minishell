@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 17:56:35 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/02/17 18:03:41 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/02/19 14:17:28 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define EXECUTE_H
 
 # include "minishell.h"
+# include <fcntl.h>
 
 // Exécuter une commande simple
 void    execute_command(t_command *cmd, char **envp);

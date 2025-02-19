@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:46:16 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/02/17 17:57:51 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/02/19 14:33:52 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@
 # include "execute.h"
 
 // Structure globale temporaire (attente de martinLAf)
-typedef struct s_command {
+typedef struct s_command
+{
     char *cmd;               // Commande principale (ex: "ls", "grep", "echo")
     char **args;             // Liste des arguments (ex: ["ls", "-l", NULL])
     char *input_file;        // Fichier si redirection de stdin (ex: "input.txt" pour `< input.txt`)
@@ -36,12 +37,12 @@ typedef struct s_command {
     int is_builtin;          // 1 si c'est une commande builtin, 0 sinon
 } t_command;
 
-typedef struct s_env
+typedef struct s_env_list
 {
     char *key; //nom de la variable d'environnement (par exemple : PATH, HOME, USER)
     char *value; //valeur associée à cette clé
-    struct s_env *next; //'élément suivant dans la liste chaînée
-} t_env;
+    struct s_env_list *next; //'élément suivant dans la liste chaînée
+} t_env_list;
 
 // minishell.c
 int main(int argc, char **argv, char **envp);
