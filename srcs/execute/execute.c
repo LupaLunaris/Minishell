@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 18:00:06 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/02/19 14:23:34 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/02/20 15:31:54 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
   * Elle configure redirections et pipes 
   * avant d'exécuter les commandes avec execve
   **/
-void execute_command(t_command *cmd, char **envp)
+int execute_command(t_command *cmd, char **envp)
 {
 	if (!cmd) // Si la commande est NULL, on ne fait rien.
 		return;
 	if (is_builtin(cmd->cmd))
 	{  // Si c'est un **builtin**, on l'exécute directement.
-		execute_builtin(cmd); // Les builtins comme `echo`, `cd`, `env`, etc.
+		execute_builtin(cmd, envp); // Les builtins comme `echo`, `cd`, `env`, etc.
 		return;
 	}
 	if (cmd->input_file || cmd->output_file) // Si la commande contient une redirection :
@@ -42,4 +42,5 @@ void execute_command(t_command *cmd, char **envp)
 		else
 			perror("Fork failed");  // Erreur lors de la création du processus enfant.
 	}
+	return(0);
 }

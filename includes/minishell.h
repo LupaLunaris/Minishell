@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:46:16 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/02/19 14:33:52 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/02/20 15:21:54 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,13 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <unistd.h>
+# include <fcntl.h>
 # include <sys/wait.h>
-#include <sys/types.h>
+# include <sys/types.h>
 # include <signal.h>
 # include <string.h>
 # include "libft.h"
-# include "execute.h"
+
 
 // Structure globale temporaire (attente de martinLAf)
 typedef struct s_command
