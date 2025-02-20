@@ -1,7 +1,0 @@
-Checklist Backend :
-
-1. Connaître les objets que je recois du frontend et la structure qui sera utilisée
-2. Exécuter une Commande Simple (Sans Pipe, Sans Redirection)
-3. Ajouter la Gestion des Redirections
-4. Ajouter la Gestion des Pipes
-5. Gérer les Commandes Builtins

@@ -6,13 +6,13 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 17:21:37 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/02/19 17:27:40 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/02/20 14:30:14 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
 
-void builtin_cd(char **args)
+int	builtin_cd(char **args)
 {
 	
 }
