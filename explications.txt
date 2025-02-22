@@ -1,4 +1,50 @@
 
+typedef struct s_command {
+    char *cmd;              // La commande elle-même (ex: "ls", "cat", "grep")
+    char **args;            // Liste des arguments (ex: ["ls", "-l", NULL])
+    char *input_file;       // Fichier en entrée (redirection "<")
+    char *output_file;      // Fichier en sortie (redirection ">" ou ">>")
+    int append;             // 1 si c'est ">>", 0 sinon (utile pour les redirections en mode ajout)
+    struct s_command *next; // Pour les commandes liées par des pipes
+} t_command;
+
+
+EXEMPLES : 
+
+ls -l
+t_command cmd = {
+    .cmd = "ls",
+    .args = {"ls", "-l", NULL}, // Les arguments sont un tableau NULL-terminé (comme argv)
+    .input_file = NULL,         // Pas de redirection de l'entrée
+    .output_file = NULL,        // Pas de redirection de la sortie
+    .append = 0,                // Pas de redirection en mode ajout
+    .next = NULL                // Pas de pipes pour cette commande
+};
+
+
+cat file.txt | grep "42" > output.txt
+t_command cmd1 = {
+    .cmd = "cat",
+    .args = {"cat", "file.txt", NULL},
+    .input_file = NULL,      // Pas d'entrée redirigée
+    .output_file = NULL,     // Pas de sortie redirigée
+    .append = 0,             // Pas d'ajout
+    .next = &cmd2            // Pipe vers la commande suivante
+};
+
+t_command cmd2 = {
+    .cmd = "grep",
+    .args = {"grep", "42", NULL},
+    .input_file = NULL,       // Pas d'entrée redirigée
+    .output_file = "output.txt", // Enregistre dans un fichier de sortie
+    .append = 0,              // N'écrit pas en mode "append"
+    .next = NULL              // Pas de commande suivante
+};
+
+
+
+
+
 Résumé des modules et priorités :
 
 1. Module Parsing : Analyse et découpage des commandes.

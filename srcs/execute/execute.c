@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 18:00:06 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/02/21 14:28:16 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/02/22 13:22:03 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,8 @@ static int create_children(t_command *cmd, t_env_list *env_list)
 	while (cmd)
 	{
 		pid_t pid = fork();
-		if (pid == -1)
-			return (errmsg_cmd("fork", NULL, strerror(errno), EXIT_FAILURE));
+		if (pid == -1) //si le fork a échoué
+			return error_handler("fork", strerror(errno), 0, EXIT_FAILURE);
 		else if (pid == 0)
 		{
 			// Dans le processus enfant
