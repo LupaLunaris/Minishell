@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 18:01:14 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/02/19 14:15:49 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/02/21 14:11:51 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
  * ensemble (ex : ls | grep text | wc -l).
  */
 
- void	handle_pipes(t_command *cmd, char **envp) {
+ int	handle_pipes(t_command *cmd, char **envp) {
 	int		fd[2]; // Tableau pour stocker les deux extrémités du pipe.
 	pid_t	pid;
 	if (pipe(fd) == -1)
@@ -36,7 +36,8 @@
 	else if (pid > 0)
 	{
 		close(fd[1]); // Ferme l'écriture du pipe dans le processus parent
-		if (fork() == 0) { // Processus enfant 2 : "command2"
+		if (fork() == 0)
+		{ // Processus enfant 2 : "command2"
 			dup2(fd[0], STDIN_FILENO); // Redirige l'entrée standard depuis le pipe (lecture)
 			close(fd[0]);
 			execve(cmd->next->cmd, cmd->next->args, envp); // Exécute la commande suivante.
@@ -52,5 +53,6 @@
 	}
 	else
 		perror("Fork failed"); // Échec du fork
+	return (0);
 }
 

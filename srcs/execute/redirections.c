@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 18:00:51 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/02/19 14:22:12 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/02/21 14:12:26 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
  * Son descripteur de fichier est redirigé grâce à dup2.
  * Les redirections configurent l'entrée (stdin) ou la sortie (stdout).
  */
-void setup_redirection(const char *input_file, const char *output_file, int append)
+int setup_redirection(const char *input_file, const char *output_file, int append)
 {
 	if (input_file)
 	{ // Si un fichier d'entrée (`<`) est spécifié
@@ -48,6 +48,7 @@ void setup_redirection(const char *input_file, const char *output_file, int appe
 		dup2(fd_out, STDOUT_FILENO);  // Remplace la sortie standard par ce fichier.
 		close(fd_out);  // Ferme le fichier après duplication.
 	}
+	return(0);
 }
 
 /* O_CREAT: Crée un fichier s'il n'existe pas.

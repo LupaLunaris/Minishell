@@ -6,41 +6,88 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 18:00:06 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/02/20 15:31:54 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/02/21 14:28:16 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
-/** Cette fonction vérifie qu'il s'agit d'un builtin.
-  * Elle configure redirections et pipes 
-  * avant d'exécuter les commandes avec execve
-  **/
-int execute_command(t_command *cmd, char **envp)
+
+static int get_children(t_command *cmd)
 {
-	if (!cmd) // Si la commande est NULL, on ne fait rien.
-		return;
-	if (is_builtin(cmd->cmd))
-	{  // Si c'est un **builtin**, on l'exécute directement.
-		execute_builtin(cmd, envp); // Les builtins comme `echo`, `cd`, `env`, etc.
-		return;
+	pid_t wpid;
+	int status;
+	int save_status;
+
+	save_status = 0;
+	wpid = 0;
+	while (wpid != -1 || errno != ECHILD)
+	{
+		wpid = waitpid(-1, &status, 0);
+		if (wpid == cmd->pid)
+			save_status = status;
+		continue;
 	}
-	if (cmd->input_file || cmd->output_file) // Si la commande contient une redirection :
-		setup_redirection(cmd->input_file, cmd->output_file, cmd->append); // Configure les entrées/sorties pour les redirections
-	if (cmd->next) // Si cette commande est suivie d'une autre (pipeline logique) :
-		handle_pipes(cmd, envp); // Gère les **pipes** entre cette commande et la suivante.
+	if (WIFSIGNALED(save_status))
+		status = 128 + WTERMSIG(save_status);
+	else if (WIFEXITED(save_status))
+		status = WEXITSTATUS(save_status);
 	else
-	{ // Exécution d'une commande simple (pas de pipeline impliqué ici)
-		pid_t pid = fork(); // Crée un processus enfant.
-		if (pid == 0)
-		{ // Processus enfant
-			execve(cmd->cmd, cmd->args, envp); // Exécute la commande avec environment variables.
-			perror("Execution failed"); // Si execve échoue, on log une erreur.
-			exit(EXIT_FAILURE);   // Quitte en cas d'erreur.
+		status = save_status;
+	return (status);
+}
+
+static int create_children(t_command *cmd, t_env_list *env_list)
+{
+	while (cmd)
+	{
+		pid_t pid = fork();
+		if (pid == -1)
+			return (errmsg_cmd("fork", NULL, strerror(errno), EXIT_FAILURE));
+		else if (pid == 0)
+		{
+			// Dans le processus enfant
+			setup_redirection(cmd->input_file, cmd->output_file, cmd->append);
+			if (cmd->is_builtin)
+				exit(execute_builtin(cmd, env_list)); // Exécuter le builtin dans l'enfant
+			else
+				execute_command(cmd, env_list); // Exécuter une commande normale
 		}
-		else if (pid > 0) // Processus parent
-			waitpid(pid, NULL, 0);  // Attend que l'enfant termine avant de continuer.
-		else
-			perror("Fork failed");  // Erreur lors de la création du processus enfant.
+		cmd = cmd->next;
 	}
-	return(0);
+	return (get_children(cmd));
+}
+
+/*vérifie si tout est en ordre avant l'exécution réelle d'une commande*/
+static int prep_for_exec(t_command *cmd)
+{
+	if (!cmd) // Pas de commandes à exécuter
+		return (EXIT_SUCCESS);
+	if (!cmd->cmd)
+	{
+		if (cmd->input_file || cmd->output_file)
+		{
+			// Vérifie redirections input/output
+			if (!setup_redirection(cmd->input_file, cmd->output_file, cmd->append))
+				return (EXIT_FAILURE);
+		}
+		return (EXIT_SUCCESS);
+	}
+	if (cmd->next != NULL) // Si plusieurs commandes, prépare les pipes
+	{
+		if (!handle_pipes(cmd, cmd->args))
+			return (EXIT_FAILURE);
+	}
+	return (CMD_NOT_FOUND);
+}
+
+int execute(t_command *cmd, t_env_list *env_list)
+{
+	int ret;
+
+	ret = prep_for_exec(cmd);
+	if (ret != CMD_NOT_FOUND)
+		return (ret);
+	if (!cmd->next && cmd->is_builtin) // Pas de pipe, un seul builtin
+		return (execute_builtin(cmd, env_list));
+	return (create_children(cmd, env_list));
 }
