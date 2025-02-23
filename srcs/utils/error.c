@@ -23,7 +23,7 @@ int	error_handler(const char *cmd, const char *message, int should_exit, int err
 	}
 	if (should_exit)
 		exit(error_code);
-	return error_code;
+	return (error_code);
 }
  
  void	warning_handler(const char *cmd, const char *message)
