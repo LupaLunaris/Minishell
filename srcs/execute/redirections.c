@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 18:00:51 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/02/21 14:12:26 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/02/26 16:58:57 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,37 +19,42 @@
  * Son descripteur de fichier est redirigé grâce à dup2.
  * Les redirections configurent l'entrée (stdin) ou la sortie (stdout).
  */
-int setup_redirection(const char *input_file, const char *output_file, int append)
+int	setup_redirection(const char *input_file, const char *output_file, int append)
 {
-	if (input_file)
-	{ // Si un fichier d'entrée (`<`) est spécifié
-		int fd_in = open(input_file, O_RDONLY); // Ouvre le fichier en lecture seulement.
-		if (fd_in == -1) {  // Si le fichier n'est pas accessible :
-			perror("Error opening input file");
-			exit(EXIT_FAILURE); // Termine le programme à cause d'une erreur critique.
+	int fd_in = -1; // Descripteur pour le fichier d'entrée
+	int fd_out = -1; // Descripteur pour le fichier de sortie
+	if (input_file) // Gestion fichier d'entrée (`<`)
+	{
+		fd_in = open(input_file, O_RDONLY);
+		if (fd_in == -1) // Erreur : ouverture fichier entrée échouée
+			return error_handler("setup_redirection", input_file, 0, EXIT_FAILURE);
+		if (dup2(fd_in, STDIN_FILENO) == -1) // Erreur : duplication de STDIN échouée
+		{
+			close(fd_in); // On nettoie avant de retourner
+			return error_handler("setup_redirection", "dup2 error for input", 0, EXIT_FAILURE);
 		}
-		dup2(fd_in, STDIN_FILENO);  // Remplace l'entrée standard par ce fichier.
-		close(fd_in);  // Ferme le fichier après duplication.
+		close(fd_in); // Libère fd_in, car il n'est plus nécessaire
 	}
-	if (output_file)
-	{ // Si un fichier de sortie (`>` ou `>>`) est spécifié
-		int flags = O_WRONLY | O_CREAT;
+	if (output_file)// Gestion fichier de sortie (`>` ou `>>`)
+	{
+		int flags = O_WRONLY | O_CREAT; // Ouverture en écriture (création si nécessaire)
 		if (append)
-    		flags |= O_APPEND;  // Ajoute le flag O_APPEND pour "append"
+			flags |= O_APPEND; // Mode ajout (`>>`)
 		else
-    		flags |= O_TRUNC;   // Ajoute le flag O_TRUNC pour "truncate"
-		// Détermine les modes d'ouverture : append ou écrasement
-		int fd_out = open(output_file, flags, 0644); // Autorisations : rw-r--r--
-		if (fd_out == -1)
-		{ // Si le fichier n'est pas accessible :
-			perror("Error opening output file");
-			exit(EXIT_FAILURE);
+			flags |= O_TRUNC;  // Mode écrasement (`>`)
+		fd_out = open(output_file, flags, 0644); // Permission rw-r--r--
+		if (fd_out == -1) // Erreur : ouverture fichier sortie échouée
+			return error_handler("setup_redirection", output_file, 0, EXIT_FAILURE);
+		if (dup2(fd_out, STDOUT_FILENO) == -1) // Erreur : duplication de STDOUT échouée
+		{
+			close(fd_out); // On nettoie avant de retourner
+			return error_handler("setup_redirection", "dup2 error for output", 0, EXIT_FAILURE);
 		}
-		dup2(fd_out, STDOUT_FILENO);  // Remplace la sortie standard par ce fichier.
-		close(fd_out);  // Ferme le fichier après duplication.
+		close(fd_out); // Libère fd_out, car il n'est plus nécessaire
 	}
-	return(0);
+	return 0; // Succès
 }
+
 
 /* O_CREAT: Crée un fichier s'il n'existe pas.
 O_WRONLY: Ouvre le fichier en écriture uniquement.
