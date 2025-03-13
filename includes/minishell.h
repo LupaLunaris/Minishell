@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:46:16 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/02/22 13:37:33 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/12 15:37:54 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,23 +32,23 @@
 // Structure globale temporaire (attente de martinLAf)
 typedef struct s_command
 {
-    char *cmd;               // Commande principale (ex: "ls", "grep", "echo")
-    char **args;             // Liste des arguments (ex: ["ls", "-l", NULL])
-    char *input_file;        // Fichier si redirection de stdin (ex: "input.txt" pour `< input.txt`)
-    char *output_file;       // Fichier si redirection de stdout (ex: "output.txt" pour `> output.txt`)
-    int append;              // Flag pour append : 1 = `>>`, 0 = `>`
+	char *cmd;               // Commande principale (ex: "ls", "grep", "echo")
+	char **args;             // Liste des arguments (ex: ["ls", "-l", NULL])
+	char *input_file;        // Fichier si redirection de stdin (ex: "input.txt" pour `< input.txt`)
+	char *output_file;       // Fichier si redirection de stdout (ex: "output.txt" pour `> output.txt`)
+	int append;              // Flag pour append : 1 = `>>`, 0 = `>`
 	char *heredoc;          // Le contenu du heredoc (si heredoc utilisé)
-    struct s_command *next;  // Pointeur vers la commande suivante (en cas de pipe)
+	struct s_command *next;  // Pointeur vers la commande suivante (en cas de pipe)
 	struct s_command *prev;
 	pid_t		pid;
-    int is_builtin;          // 1 si c'est une commande builtin, 0 sinon
+	int is_builtin;          // 1 si c'est une commande builtin, 0 sinon
 } t_command;
 
 typedef struct s_env_list
 {
-    char *key; //nom de la variable d'environnement (par exemple : PATH, HOME, USER)
-    char *value; //valeur associée à cette clé
-    struct s_env_list *next; //'élément suivant dans la liste chaînée
+	char *key; //nom de la variable d'environnement (par exemple : PATH, HOME, USER)
+	char *value; //valeur associée à cette clé
+	struct s_env_list *next; //'élément suivant dans la liste chaînée
 } t_env_list;
 
 // minishell.c

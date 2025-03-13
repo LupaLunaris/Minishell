@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 17:56:35 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/02/21 14:12:12 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/13 16:32:35 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,10 @@
 
 # define CMD_NOT_FOUND 127
 # define CMD_NOT_EXECUTABLE 126
+
+# ifndef PATH_MAX
+#  define PATH_MAX 4096
+# endif
 
 // Exécuter une commande simple
 int    execute_command(t_command *cmd, char **envp);
