@@ -6,11 +6,11 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 15:42:25 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/12 16:09:42 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/15 14:31:58 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execute.h"
+#include "minishell.h"
 
 /**
  * Affiche les variables d'environnement au format de la commande export

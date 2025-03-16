@@ -6,52 +6,44 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:46:16 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/12 15:37:54 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/15 14:19:19 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 #define MINISHELL_H
 
-# include <unistd.h>
-# include <errno.h>
-# include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <unistd.h>
+# include <signal.h>
+# include <fcntl.h>
+# include <sys/wait.h>
+# include <sys/stat.h>
+# include <dirent.h>
+# include <errno.h>
 # include <readline/readline.h>
 # include <readline/history.h>
-# include <signal.h>
-# include <limits.h>
-# include <fcntl.h>
-# include <sys/stat.h>
-# include <sys/types.h>
-# include <sys/wait.h>
+# include <termios.h>
+# include <sys/ioctl.h>
 # include "libft.h"
 
+# include "command.h"
+# include "env.h"
+# include "shell_data.h"
+# include "execute.h"
+# include "builtins.h"
+# include "parser.h"
+# include "signals.h"
 
-// Structure globale temporaire (attente de martinLAf)
-typedef struct s_command
-{
-	char *cmd;               // Commande principale (ex: "ls", "grep", "echo")
-	char **args;             // Liste des arguments (ex: ["ls", "-l", NULL])
-	char *input_file;        // Fichier si redirection de stdin (ex: "input.txt" pour `< input.txt`)
-	char *output_file;       // Fichier si redirection de stdout (ex: "output.txt" pour `> output.txt`)
-	int append;              // Flag pour append : 1 = `>>`, 0 = `>`
-	char *heredoc;          // Le contenu du heredoc (si heredoc utilisé)
-	struct s_command *next;  // Pointeur vers la commande suivante (en cas de pipe)
-	struct s_command *prev;
-	pid_t		pid;
-	int is_builtin;          // 1 si c'est une commande builtin, 0 sinon
-} t_command;
+# define CMD_NOT_FOUND 127
+# define CMD_NOT_EXECUTABLE 126
 
-typedef struct s_env_list
-{
-	char *key; //nom de la variable d'environnement (par exemple : PATH, HOME, USER)
-	char *value; //valeur associée à cette clé
-	struct s_env_list *next; //'élément suivant dans la liste chaînée
-} t_env_list;
+# ifndef PATH_MAX
+#  define PATH_MAX 4096
+# endif
 
-// minishell.c
-int main(int argc, char **argv, char **envp);
+int		main(int argc, char **argv, char **envp);
+int		error_handler(const char *cmd, const char *message, int should_exit, int error_code);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 16:20:36 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/12 16:23:08 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/15 14:35:51 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,34 +21,34 @@
  */
 int add_env_var(t_env_list **env_list, char *key, char *value)
 {
-    t_env_list *new_node;
-    t_env_list *current;
+	t_env_list *new_node;
+	t_env_list *current;
 
-    // Créer un nouveau nœud
-    new_node = malloc(sizeof(t_env_list));
-    if (!new_node)
-        return (-1);
-    // Initialiser le nouveau nœud
-    new_node->key = ft_strdup(key);
-    new_node->value = ft_strdup(value);
-    new_node->next = NULL;
-    if (!new_node->key || !new_node->value)
-    {
-        free_env_node(new_node);  // Fonction pour libérer un nœud
-        return (-1);
-    }
-    // Si la liste est vide, le nouveau nœud devient la tête
-    if (*env_list == NULL)
-    {
-        *env_list = new_node;
-        return (0);
-    }
-    // Sinon, ajouter à la fin
-    current = *env_list;
-    while (current->next)
-        current = current->next;
-    current->next = new_node;
-    return (0);
+	// Créer un nouveau nœud
+	new_node = malloc(sizeof(t_env_list));
+	if (!new_node)
+		return (-1);
+	// Initialiser le nouveau nœud
+	new_node->key = ft_strdup(key);
+	new_node->value = ft_strdup(value);
+	new_node->next = NULL;
+	if (!new_node->key || !new_node->value)
+	{
+		free_env_node(new_node);  // Fonction pour libérer un nœud
+		return (-1);
+	}
+	// Si la liste est vide, le nouveau nœud devient la tête
+	if (*env_list == NULL)
+	{
+		*env_list = new_node;
+		return (0);
+	}
+	// Sinon, ajouter à la fin
+	current = *env_list;
+	while (current->next)
+		current = current->next;
+	current->next = new_node;
+	return (0);
 }
 
 /**

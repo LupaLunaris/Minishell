@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 15:29:44 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/12 16:28:33 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/14 13:29:54 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,9 @@ char *get_env_var(t_env_list *env_list, char *key)
  */
 void print_env_list(t_env_list *env_list)
 {
-	t_env_list *current = env_list;
+	t_env_list *current;
 	
+	current = env_list;
 	while (current)
 	{
 		write(STDOUT_FILENO, current->key, strlen(current->key));
