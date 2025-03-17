@@ -6,11 +6,11 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 17:22:25 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/14 13:25:25 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/16 22:03:49 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execute.h"
+#include "minishell.h"
 
 /**
  * Implémente la commande builtin 'env' qui affiche l'environnement
@@ -28,8 +28,7 @@ int builtin_env(t_command *command, t_env_list *env_list)
 		return error_handler("env", "environment not available", 0, EXIT_FAILURE);
 	// Affiche l'environnement
 	print_env_list(env_list);
-	
-	return EXIT_SUCCESS;
+	return (EXIT_SUCCESS);
 }
 
 

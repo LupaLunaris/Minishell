@@ -6,11 +6,11 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 18:01:14 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/02/21 14:11:51 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/17 12:30:19 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execute.h"
+#include "minishell.h"
 
 /* Les pipes permettent de connecter plusieurs commandes 
  * ensemble (ex : ls | grep text | wc -l).

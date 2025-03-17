@@ -6,11 +6,11 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 15:29:44 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/14 13:29:54 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/17 12:30:56 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execute.h"
+#include "minishell.h"
 
 /**
  * Ajoute une variable d'environnement à partir d'une chaîne "KEY=VALUE"

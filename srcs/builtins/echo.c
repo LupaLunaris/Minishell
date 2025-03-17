@@ -6,11 +6,11 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 15:11:35 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/13 16:14:22 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/17 12:29:47 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execute.h"
+#include "minishell.h"
 
 int	builtin_echo(t_command *cmd)
 {

@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 15:42:25 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/15 14:31:58 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/17 12:52:40 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,30 @@ void print_export_list(t_env_list *env_list)
 	free(sorted_env);
 }
 
+static int process_export_with_equals(char *arg, t_env_list **env_list)
+{
+	char *key;
+	char *value;
+	int ret;
+	char *equals_pos;
+	equals_pos = ft_strchr(arg, '=');
+	if (!equals_pos)
+		return EXIT_SUCCESS;
+	// Séparer la clé et la valeur
+	key = ft_substr(arg, 0, equals_pos - arg);
+	value = ft_strdup(equals_pos + 1);
+	if (!key || !value)
+	{
+		free(key);
+		free(value);
+		return (EXIT_FAILURE);
+	}
+	ret = add_env_var(env_list, key, value);
+	free(key);
+	free(value);
+	return ret;
+}
+
 /**
  * Traite un argument spécifique d'export
  * @return 0 pour succès, 1 pour erreur
@@ -66,12 +90,14 @@ int process_export_arg(char *arg, t_env_list **env_list)
 	}
 	// Avec un signe égal : ajoute/modifie la variable
 	if (ft_strchr(arg, '=') != NULL)
-		add_env_var(env_list, arg);
+		return process_export_with_equals(arg, env_list);
 	// Sans signe égal : crée si n'existe pas
 	else if (!get_env_var(*env_list, arg))
-		add_env_var_without_value(env_list, arg); 
+		add_env_var_without_value(env_list, arg);
+	
 	return EXIT_SUCCESS;
 }
+
 
 /**
  * Implémente la commande builtin 'export'
