@@ -6,21 +6,21 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 17:21:37 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/14 13:22:51 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/17 13:59:06 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execute.h"
+#include "minishell.h"
 
 /**
  * Implémente la commande builtin 'cd'
  * Gère les chemins relatifs et absolus
  */
-int builtin_cd(char **args, t_list **env_list)
+int	builtin_cd(char **args, t_list **env_list)
 {
-	char old_pwd[PATH_MAX];
-	char new_pwd[PATH_MAX];
-	char *path;
+	char	old_pwd[PATH_MAX];
+	char	new_pwd[PATH_MAX];
+	char	*path;
 
 	// Sauvegarde du répertoire courant (pour OLDPWD)
 	if (getcwd(old_pwd, PATH_MAX) == NULL)

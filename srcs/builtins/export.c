@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 15:42:25 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/17 12:52:40 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/17 13:56:48 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,9 +52,10 @@ static int process_export_with_equals(char *arg, t_env_list **env_list)
 	char *value;
 	int ret;
 	char *equals_pos;
+	
 	equals_pos = ft_strchr(arg, '=');
 	if (!equals_pos)
-		return EXIT_SUCCESS;
+		return (EXIT_SUCCESS);
 	// Séparer la clé et la valeur
 	key = ft_substr(arg, 0, equals_pos - arg);
 	value = ft_strdup(equals_pos + 1);
@@ -67,7 +68,7 @@ static int process_export_with_equals(char *arg, t_env_list **env_list)
 	ret = add_env_var(env_list, key, value);
 	free(key);
 	free(value);
-	return ret;
+	return (ret);
 }
 
 /**
@@ -80,22 +81,21 @@ int process_export_arg(char *arg, t_env_list **env_list)
 	if (arg[0] == '-')
 	{
 		error_handler("export", "options not supported", 0, 1);
-		return EXIT_FAILURE;
+		return (EXIT_FAILURE);
 	}
 	// Si l'identifiant n'est pas valide, erreur
 	if (!is_valid_identifier(arg))
 	{
 		error_handler("export", ft_strjoin(arg, ": not a valid identifier"), 0, 1);
-		return EXIT_FAILURE;
+		return (EXIT_FAILURE);
 	}
 	// Avec un signe égal : ajoute/modifie la variable
 	if (ft_strchr(arg, '=') != NULL)
-		return process_export_with_equals(arg, env_list);
+		return (process_export_with_equals(arg, env_list));
 	// Sans signe égal : crée si n'existe pas
 	else if (!get_env_var(*env_list, arg))
 		add_env_var_without_value(env_list, arg);
-	
-	return EXIT_SUCCESS;
+	return (EXIT_SUCCESS);
 }
 
 
@@ -111,7 +111,7 @@ int builtin_export(t_command *command, t_env_list **env_list)
 	if (command->args[1] == NULL)
 	{
 		print_export_list(*env_list);
-		return EXIT_SUCCESS;
+		return (EXIT_SUCCESS);
 	}
 	// Traite tous les arguments
 	status = EXIT_SUCCESS;
