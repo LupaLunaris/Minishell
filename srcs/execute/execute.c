@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 18:00:06 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/15 14:15:44 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/19 17:34:15 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,18 +92,39 @@ int execute(t_command *cmd, t_env_list *env_list, t_shell_data *data)
 {
 	int ret;
 
-	ret = prep_for_exec(cmd);
-	if (ret != CMD_NOT_FOUND)
-		return (ret);
-	// Si c'est une commande builtin et qu'elle n'est pas pipée
-	if (!cmd->next && !cmd->prev && cmd->is_builtin)
+	if (!cmd)
+		return EXIT_SUCCESS;
+	// Vérifie si la commande est valide et gère les redirections simples
+	if (!cmd->cmd)
+	{
+		if (cmd->input_file || cmd->output_file)
+		{
+			if (check_redirections(cmd))
+				return EXIT_SUCCESS;
+			return EXIT_FAILURE;
+		}
+		return EXIT_SUCCESS;
+	}
+	// Vérifie s'il y a des pipes dans la chaîne de commandes
+	t_command *curr = cmd;
+	bool has_pipe = false;
+	while (curr->next)
+	{
+		has_pipe = true;
+		break;
+	}
+	// Si on a des pipes, utilise execute_pipeline
+	if (has_pipe)
+		return execute_pipeline(cmd, env_list, data);
+	// Si c'est une commande builtin sans pipe
+	if (cmd->is_builtin)
 	{
 		setup_redirection(cmd->input_file, cmd->output_file, cmd->append);
-		ret = execute_builtin(cmd, data); // Passer data au builtin
+		ret = execute_builtin(cmd, data);
 		restore_io(cmd->input_file, cmd->output_file);
-		return (ret);
+		return ret;
 	}
-	// Sinon, créer des enfants et passer data
-	return (create_children(cmd, env_list, data));
+	// Pour les commandes externes sans pipe
+	return create_children(cmd, env_list, data);
 }
 

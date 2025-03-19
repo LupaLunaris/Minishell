@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 18:02:55 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/19 14:56:19 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/19 17:35:48 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@
 // 	);
 // }
 
-int execute_builtin(t_command *cmd, t_shell_data *data) {
+int execute_builtin(t_command *cmd, t_shell_data *data)
+{
     if (!ft_strcmp(cmd->cmd, "echo"))
         return (builtin_echo(cmd));
     else if (!ft_strcmp(cmd->cmd, "cd"))
