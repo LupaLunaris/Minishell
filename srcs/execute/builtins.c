@@ -6,11 +6,11 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 18:02:55 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/14 16:23:35 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/19 14:56:19 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execute.h"
+#include "minishell.h"
 
 // int	is_builtin(char *cmd)
 // {
@@ -21,21 +21,20 @@
 // 	);
 // }
 
-int execute_builtin(t_command *cmd, t_env_list **env_list, t_shell_data *data)
-{
-	if (!ft_strcmp(cmd->cmd, "echo"))
-		return (builtin_echo(cmd));
-	else if (!ft_strcmp(cmd->cmd, "cd"))
-		return (builtin_cd(cmd->args, env_list));
-	else if (!ft_strcmp(cmd->cmd, "pwd"))
-		return (builtin_pwd());
-	else if (!ft_strcmp(cmd->cmd, "exit"))
-		return (builtin_exit(cmd, data));
-	else if (!ft_strcmp(cmd->cmd, "export"))
-		return (builtin_export(cmd, env_list));
-	else if (!ft_strcmp(cmd->cmd, "unset"))
-		return (builtin_unset(cmd->args, env_list));
-	else if (!ft_strcmp(cmd->cmd, "env"))
-		return (builtin_env(cmd, *env_list));
-	return (1);
+int execute_builtin(t_command *cmd, t_shell_data *data) {
+    if (!ft_strcmp(cmd->cmd, "echo"))
+        return (builtin_echo(cmd));
+    else if (!ft_strcmp(cmd->cmd, "cd"))
+        return (builtin_cd(cmd->args, &data->env_list));
+    else if (!ft_strcmp(cmd->cmd, "pwd"))
+        return (builtin_pwd());
+    else if (!ft_strcmp(cmd->cmd, "exit"))
+        return (builtin_exit(cmd, data));
+    else if (!ft_strcmp(cmd->cmd, "export"))
+        return (builtin_export(cmd, data));
+    else if (!ft_strcmp(cmd->cmd, "unset"))
+        return (builtin_unset(cmd, data));
+    else if (!ft_strcmp(cmd->cmd, "env"))
+        return (builtin_env(cmd, data));
+    return (1);
 }

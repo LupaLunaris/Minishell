@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 14:08:00 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/15 14:08:05 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/19 15:44:11 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@
 # include "shell_data.h"
 
 // Fonctions builtins
-int             execute_builtin(t_command *cmd, t_shell_data *data);
+int				execute_builtin(t_command *cmd, t_env_list **env_list, t_shell_data *data);
 int             builtin_echo(t_command *cmd);
-int             builtin_cd(t_command *cmd, t_shell_data *data);
+int				builtin_cd(char **args, t_list **env_list);
 int             builtin_pwd(void);
 int             builtin_exit(t_command *cmd, t_shell_data *data);
 int             builtin_export(t_command *cmd, t_shell_data *data);

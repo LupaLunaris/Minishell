@@ -6,11 +6,11 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 17:22:46 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/14 16:25:29 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/19 14:55:51 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execute.h"
+#include "minishell.h"
 
 int builtin_exit(t_command *cmd, t_shell_data *data)
 {
