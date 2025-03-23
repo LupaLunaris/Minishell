@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 18:01:14 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/19 17:34:36 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/20 15:54:43 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ static bool create_pipes(t_command *cmd_list)
     {
         curr->pipe_fd[0] = -1;
         curr->pipe_fd[1] = -1;
-        
         // Crée un pipe si nécessaire (s'il y a une commande suivante)
         if (curr->next)
         {
