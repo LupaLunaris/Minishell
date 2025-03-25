@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 16:35:04 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/19 17:20:24 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/25 13:29:56 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ typedef struct s_command
 	struct s_command *prev;
 	pid_t		pid;
 	int is_builtin;          // 1 si c'est une commande builtin, 0 sinon
-	int pipe_fd[2];
+	int pipe_fd[2];          // Descripteurs de fichier pour le pipe
 } t_command;
 
 // Fonctions de gestion des commandes

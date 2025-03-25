@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 16:37:05 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/19 15:14:26 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/15 14:10:44 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 
 typedef struct s_shell_data
 {
-	t_env_list *env_list;    // Stocke l'environnement
     int exit_status;         // Statut de sortie de la dernière commande
+    char **history;          // Tableau pour l'historique des commandes
     int interactive;         // Mode interactif ou non
 } t_shell_data;
 

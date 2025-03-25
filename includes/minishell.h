@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:46:16 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/19 17:21:26 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/25 13:31:01 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@
 # include <readline/history.h>
 # include <termios.h>
 # include <sys/ioctl.h>
-# include <stdbool.h>
+# include <limits.h>
+#include <stdbool.h>
 # include "libft.h"
 
 # include "command.h"
@@ -43,13 +44,6 @@
 # ifndef PATH_MAX
 #  define PATH_MAX 4096
 # endif
-
-#  ifndef TRUE_FALSE_DEFINED
-#   define TRUE_FALSE_DEFINED
-#   define true 1
-#   define false 0
-#   define bool int
-#  endif
 
 int		main(int argc, char **argv, char **envp);
 int		error_handler(const char *cmd, const char *message, int should_exit, int error_code);
