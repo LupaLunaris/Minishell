@@ -1,0 +1,13 @@
+access
+Makefile
+explications.txt
+includes
+libft_19
+minishell
+objs
+srcs
+txt
+[?2004hMiniShellDeLaMort> 
+[?2004l[?2004hMiniShellDeLaMort> 
+[?2004l[?2004hMiniShellDeLaMort> 
+[?2004l[?2004hMiniShellDeLaMort> ex^C[?2004l
