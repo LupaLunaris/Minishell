@@ -53,7 +53,7 @@ int add_env_var_from_string(t_env_list **env_list, char *var_str)
 char *get_env_var(t_env_list *env_list, char *key)
 {
 	t_env_list *current;
-	
+
 	current = env_list;
 	while (current)
 	{
@@ -71,7 +71,7 @@ char *get_env_var(t_env_list *env_list, char *key)
 void print_env_list(t_env_list *env_list)
 {
 	t_env_list *current;
-	
+
 	current = env_list;
 	while (current)
 	{

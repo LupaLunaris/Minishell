@@ -18,29 +18,29 @@ int	is_builtin(char *cmd)
 // creer les node de la liste de commande en les initialisant
 // je me pose la question de ce que doivent etre les node->... lier au redirection
 // par default j'ai mis un *char "filname"
-t_command	*create_cmd_node(void)
+t_cmd	*create_cmd_node(void)
 {
-	t_command	*node;
+	t_cmd	*node;
 
-	node = malloc(sizeof(t_command));
+	node = malloc(sizeof(t_cmd));
 	if (!node)
 		return (NULL);
 	node->args = NULL;
-	node->builtin = 0;
+	node->is_builtin = 0;
 	node->pid = 0;
 	node->input_file = NULL;
 	node->output_file = NULL;
 	node->append = 0;
 	node->heredoc = NULL;
-	node->pipe_next = NULL;
+	node->next = NULL;
 	return (node);
 }
 
-// un lst_add_back mais avec t_command, rajoute un node a la fin de la liste
+// un lst_add_back mais avec t_cmd, rajoute un node a la fin de la liste
 
-void	add_cmd_node(t_command **head, t_command *new_node)
+void	add_cmd_node(t_cmd **head, t_cmd *new_node)
 {
-	t_command   *current;
+	t_cmd   *current;
 
 	current = create_cmd_node();
 	if (!*head)
@@ -49,9 +49,9 @@ void	add_cmd_node(t_command **head, t_command *new_node)
 		return ;
 	}
 	current = *head;
-	while (current->pipe_next)
-		current = current->pipe_next;
-	current->pipe_next = new_node;
+	while (current->next)
+		current = current->next;
+	current->next = new_node;
 }
 
 
@@ -74,20 +74,20 @@ int	count_args_to_pipe(char **splited_args, int start)
 	return (count);
 }
 
-void	add_builtin(t_command *cmd)
+void	add_builtin(t_cmd *cmd)
 {
 
 	if (is_builtin(cmd->cmd))
 	{
-		cmd->builtin = 1;
+		cmd->is_builtin = 1;
 	}
-	while (cmd->pipe_next)
+	while (cmd->next)
 	{
 		if (is_builtin(cmd->cmd))
 		{
-			cmd->builtin = 1;
+			cmd->is_builtin = 1;
 		}
 
-		cmd = cmd->pipe_next;
+		cmd = cmd->next;
 	}
 }

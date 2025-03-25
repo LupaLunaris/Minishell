@@ -12,10 +12,10 @@
 
 #include "minishell.h"
 
-int builtin_exit(t_command *cmd, t_shell_data *data)
+int builtin_exit(t_cmd *cmd, t_shell_data *data)
 {
 	int exit_code;
-	
+	printf("EEEEEXXXXXXIIIIITTTT\n");
 	// Afficher "exit" en mode interactif
 	if (data->interactive)
 		ft_putendl_fd("exit", 2);

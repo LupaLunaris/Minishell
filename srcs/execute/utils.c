@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void print_command(t_command *cmd)
+void print_cmd(t_cmd *cmd)
 {
     if (!cmd)
     {

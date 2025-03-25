@@ -1,61 +1,56 @@
-# Compilateur et flags
-CC          = cc
-CFLAGS      = -Wall -Wextra -Werror -g
 
+# Compilateur et flags
+CC			= cc
+CFLAGS		= -Wall -Wextra -Werror
+LIBS        = -lreadline
 # Nom de l'exécutable
-NAME        = minishell
+NAME		= minishell
 
 # Chemins
-SRCS_DIR    = srcs
-OBJS_DIR    = objs
-LIBFT_DIR   = libft_19
-INCLUDES    = -Iincludes -I$(LIBFT_DIR)
-
-# Bibliothèques externes nécessaires pour readline
-LIBS        = -lreadline
+SRCS_DIR	= srcs
+OBJS_DIR	= objs
+LIBFT_DIR	= libft_19
+INCLUDES	= -Iincludes -I$(LIBFT_DIR)
 
 # Libft
-LIBFT       = $(LIBFT_DIR)/libft.a
+LIBFT		= $(LIBFT_DIR)/libft.a
 
 # Sous-dossiers des sources
-BUILTINS_DIR    = $(SRCS_DIR)/builtins
-EXECUTE_DIR     = $(SRCS_DIR)/execute
-UTILS_DIR       = $(SRCS_DIR)/utils
-SIGNALS_DIR     = $(SRCS_DIR)/signaux
-ENV_DIR         = $(SRCS_DIR)/env
-LEXING_DIR      = $(SRCS_DIR)/lexing
-PARSER_DIR      = $(SRCS_DIR)/parser
+BUILTINS_DIR	= $(SRCS_DIR)/builtins
+EXECUTE_DIR		= $(SRCS_DIR)/execute
+UTILS_DIR		= $(SRCS_DIR)/utils
+SIGNALS_DIR		= $(SRCS_DIR)/signaux
+ENV_DIR			= $(SRCS_DIR)/env
+PARSER_DIR		= $(SRCS_DIR)/parser
 
 # Fichiers sources
-SRCS        = $(SRCS_DIR)/main.c \
-			  $(SIGNALS_DIR)/signaux.c \
-			  $(ENV_DIR)/env.c \
-			  $(ENV_DIR)/env_add.c \
-			  $(ENV_DIR)/env_init.c \
-			  $(ENV_DIR)/env_utils.c \
-			  $(BUILTINS_DIR)/cd.c \
-			  $(BUILTINS_DIR)/echo.c \
-			  $(BUILTINS_DIR)/env_builtins.c \
-			  $(BUILTINS_DIR)/exit.c \
-			  $(BUILTINS_DIR)/export.c \
-			  $(BUILTINS_DIR)/pwd.c \
-			  $(BUILTINS_DIR)/unset.c \
-			  $(EXECUTE_DIR)/redirections.c \
-			  $(EXECUTE_DIR)/pipes.c \
-			  $(EXECUTE_DIR)/builtins.c \
-			  $(EXECUTE_DIR)/execute.c \
-			  $(EXECUTE_DIR)/utils.c \
-			  $(UTILS_DIR)/clean_exit.c \
-			  $(UTILS_DIR)/error.c \
-			  $(LEXING_DIR)/check_op.c \
-			  $(LEXING_DIR)/lexing.c \
-			  $(LEXING_DIR)/lexing_error.c \
-			  $(PARSER_DIR)/cdm_parser.c \
-			  $(PARSER_DIR)/parser_utils.c \
-			  $(PARSER_DIR)/utils.c
+SRCS		= $(SRCS_DIR)/main.c \
+			$(SIGNALS_DIR)/signaux.c \
+			$(ENV_DIR)/env.c \
+			$(ENV_DIR)/env_add.c \
+			$(ENV_DIR)/env_init.c \
+			$(ENV_DIR)/env_utils.c \
+			$(BUILTINS_DIR)/cd.c \
+			$(BUILTINS_DIR)/echo.c \
+			$(BUILTINS_DIR)/env_builtins.c \
+			$(BUILTINS_DIR)/exit.c \
+			$(BUILTINS_DIR)/export.c \
+			$(BUILTINS_DIR)/unset.c \
+			$(EXECUTE_DIR)/redirections.c \
+			$(EXECUTE_DIR)/pipes.c \
+			$(EXECUTE_DIR)/builtins.c \
+			$(EXECUTE_DIR)/execute.c \
+			$(EXECUTE_DIR)/execute_command.c \
+			$(EXECUTE_DIR)/utils.c \
+			$(UTILS_DIR)/clean_exit.c \
+			$(UTILS_DIR)/error.c \
+			$(UTILS_DIR)/free_shell.c \
+			$(PARSER_DIR)/cdm_parser.c \
+			$(PARSER_DIR)/parser_utils.c \
+			$(PARSER_DIR)/parser_utils2.c
 
 # Fichiers objets
-OBJS        = $(SRCS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)
+OBJS		= $(SRCS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)
 
 # Règle principale
 all: $(LIBFT) $(NAME)
@@ -92,15 +87,5 @@ fclean: clean
 # Recompiler tout
 re: fclean all
 
-# Pour le débogage
-debug: CFLAGS += -g
-debug: re
-	@echo "🐞 Compilation en mode débogage terminée !"
-
-# Mode avec sanitize pour détecter les problèmes mémoire
-sanitize: CFLAGS += -g -fsanitize=address -fsanitize=undefined
-sanitize: re
-	@echo "🔍 Compilation avec sanitize terminée !"
-
 # Règles phony pour éviter des conflits avec des fichiers du même nom
-.PHONY: all clean fclean re debug sanitize
+.PHONY: all clean fclean re

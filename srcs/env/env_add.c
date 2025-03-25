@@ -34,7 +34,7 @@ int add_env_var(t_env_list **env_list, char *key, char *value)
 	new_node->next = NULL;
 	if (!new_node->key || !new_node->value)
 	{
-		free_env_node(new_node);  // Fonction pour libérer un nœud
+		free_env_list(new_node);  // Fonction pour libérer un nœud
 		return (-1);
 	}
 	// Si la liste est vide, le nouveau nœud devient la tête
@@ -51,6 +51,19 @@ int add_env_var(t_env_list **env_list, char *key, char *value)
 	return (0);
 }
 
+char *get_env_value(t_env_list *list, char *key)
+{
+    t_env_list *current = list;
+
+    while (current)
+    {
+        if (ft_strcmp(current->key, key) == 0)
+            return (current->value);
+        current = current->next;
+    }
+    return (NULL);
+}
+
 /**
  * Ajoute une variable d'environnement sans valeur si elle n'existe pas déjà
  * @param env_list Liste des variables d'environnement
@@ -59,6 +72,6 @@ int add_env_var(t_env_list **env_list, char *key, char *value)
 void add_env_var_without_value(t_env_list **env_list, char *key)
 {
 	// Si la variable n'existe pas, l'ajouter avec une valeur vide
-	if (!get_env_var(*env_list, key))
-		add_env_node(env_list, key, "");
+	if (!get_env_value(*env_list, key))
+		add_env_var(env_list, key, "");
 }

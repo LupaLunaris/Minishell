@@ -6,15 +6,21 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 16:35:04 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/25 13:29:56 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/19 17:20:24 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef COMMAND_H
 # define COMMAND_H
+#include "minishell.h"
 
 # include <sys/types.h>
-
+# include "env.h"
+# include "shell_data.h"
+# include "execute.h"
+# include "builtins.h"
+# include "parser.h"
+# include "signals.h"
 typedef struct s_command
 {
 	char *cmd;               // Commande principale (ex: "ls", "grep", "echo")
@@ -27,16 +33,16 @@ typedef struct s_command
 	struct s_command *prev;
 	pid_t		pid;
 	int is_builtin;          // 1 si c'est une commande builtin, 0 sinon
-	int pipe_fd[2];          // Descripteurs de fichier pour le pipe
-} t_command;
+	int pipe_fd[2];
+} t_cmd;
 
 // Fonctions de gestion des commandes
-t_command       *create_command(void);
-void            free_command(t_command *cmd);
-void            free_command_list(t_command *cmd);
-int             create_pipes(t_command *cmd);
-int             check_redirections(t_command *cmd);
+t_cmd       	*create_command(void);
+void            free_command(t_cmd *cmd);
+void            free_command_list(t_cmd *cmd);
+bool 			create_pipes(t_cmd *cmd_list);
+int             check_redirections(t_cmd *cmd);
 int				setup_redirection(const char *input_file, const char *output_file, int append);
-void            restore_io(int stdin_backup, int stdout_backup);
+void            restore_io(char *stdin_backup, char *stdout_backup);
 
 #endif

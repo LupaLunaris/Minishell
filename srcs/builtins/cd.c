@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 17:21:37 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/20 16:14:48 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/17 14:57:03 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
  * Implémente la commande builtin 'cd'
  * Gère les chemins relatifs et absolus
  */
-int	builtin_cd(char **args, t_list **env_list)
+int	builtin_cd(char **args, t_env_list **env_list)
 {
 	char	old_pwd[PATH_MAX];
 	char	new_pwd[PATH_MAX];
@@ -42,7 +42,7 @@ int	builtin_cd(char **args, t_list **env_list)
 	if (getcwd(new_pwd, PATH_MAX) == NULL)
 		return (error_handler("cd", strerror(errno), 0, 1));
 	// Mise à jour des variables d'environnement
-	update_env_var(env_list, "OLDPWD", old_pwd);
-	update_env_var(env_list, "PWD", new_pwd);
+	// update_env_var(env_list, "OLDPWD", old_pwd);
+	// update_env_var(env_list, "PWD", new_pwd);
 	return (0);
 }

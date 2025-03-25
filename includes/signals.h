@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 14:09:04 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/15 14:09:07 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/25 20:38:05 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,13 @@
 # define SIGNALS_H
 
 # include "shell_data.h"
+#include "minishell.h"
 
-// Fonctions de gestion des signaux
-void            setup_signals(t_shell_data *data);
-void            setup_signals_interactive(void);
-void            setup_signals_non_interactive(void);
-void            setup_signals_heredoc(void);
-void            handle_sigint(int sig);
-void            handle_sigquit(int sig);
-void            handle_sigint_heredoc(int sig);
+/* signaux.c */
+extern volatile sig_atomic_t g_signal_received;
+void signal_handler(int signo);
+void set_signals_interactive(void);
+void set_signals_noninteractive(void);
+
 
 #endif

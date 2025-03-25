@@ -22,7 +22,7 @@ void print_export_list(t_env_list *env_list)
 	t_env_list **sorted_env;
 	int count;
 	int i;
-	
+
 	count = count_env_vars(env_list); // Compter les variables et les copier dans un tableau
 	sorted_env = malloc(sizeof(t_env_list *) * (count + 1));
 	i = 0;
@@ -37,10 +37,10 @@ void print_export_list(t_env_list *env_list)
 	i = 0;
 	while (i < count)
 	{
-		ft_printf("declare -x %s", sorted_env[i]->key);
+		printf("declare -x %s", sorted_env[i]->key);
 		if (sorted_env[i]->value && ft_strlen(sorted_env[i]->value) > 0)
-			ft_printf("=\"%s\"", sorted_env[i]->value);
-		ft_printf("\n");
+			printf("=\"%s\"", sorted_env[i]->value);
+		printf("\n");
 		i++;
 	}
 	free(sorted_env);
@@ -52,7 +52,7 @@ static int process_export_with_equals(char *arg, t_env_list **env_list)
 	char *value;
 	int ret;
 	char *equals_pos;
-	
+
 	equals_pos = ft_strchr(arg, '=');
 	if (!equals_pos)
 		return (EXIT_SUCCESS);
@@ -102,11 +102,11 @@ int process_export_arg(char *arg, t_env_list **env_list)
 /**
  * Implémente la commande builtin 'export'
  */
-int builtin_export(t_command *command, t_env_list **env_list)
+int builtin_export(t_cmd *command, t_env_list **env_list)
 {
 	int i;
 	int status;
-	
+
 	// Sans arguments : affiche les variables
 	if (command->args[1] == NULL)
 	{

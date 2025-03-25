@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:46:16 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/25 13:31:01 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/25 20:39:31 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <signal.h>
+#include <sys/types.h>
 # include <fcntl.h>
 # include <sys/wait.h>
 # include <sys/stat.h>
@@ -26,17 +27,17 @@
 # include <readline/history.h>
 # include <termios.h>
 # include <sys/ioctl.h>
-# include <limits.h>
-#include <stdbool.h>
+# include <stdbool.h>
 # include "libft.h"
 
-# include "command.h"
-# include "env.h"
-# include "shell_data.h"
-# include "execute.h"
-# include "builtins.h"
-# include "parser.h"
-# include "signals.h"
+// Forward declarations
+struct s_command;
+struct s_env_list;
+struct s_shell_data;
+
+typedef struct s_command t_cmd;
+typedef struct s_env_list t_env_list;
+typedef struct s_shell_data t_shell_data;
 
 # define CMD_NOT_FOUND 127
 # define CMD_NOT_EXECUTABLE 126
@@ -45,7 +46,23 @@
 #  define PATH_MAX 4096
 # endif
 
+#  ifndef TRUE_FALSE_DEFINED
+#   define TRUE_FALSE_DEFINED
+#   define true 1
+#   define false 0
+#  endif
+
+// Include other headers after forward declarations
+# include "command.h"
+# include "env.h"
+# include "shell_data.h"
+# include "execute.h"
+# include "builtins.h"
+# include "parser.h"
+# include "signals.h"
+
 int		main(int argc, char **argv, char **envp);
 int		error_handler(const char *cmd, const char *message, int should_exit, int error_code);
+int		is_valid_identifier(char *str);
 
 #endif

@@ -12,13 +12,13 @@
 
 #include "minishell.h"
 
-int	builtin_echo(t_command *cmd)
+int	builtin_echo(t_cmd *cmd)
 {
 	int i;
 	int newline;
 
 	i = 1; // Pour parcourir les arguments
-	newline = 1; // Savoir si on ajoute une nouvelle ligne a la fin 
+	newline = 1; // Savoir si on ajoute une nouvelle ligne a la fin
 	if (cmd->args[i] && ft_strcmp(cmd->args[i], "-n") == 0) // Vérifie si le premier argument est l'option "-n"
 	{
 		newline = 0; // Ne pas ajouter de nouvelle ligne

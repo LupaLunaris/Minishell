@@ -40,7 +40,7 @@ static int	setup_output_redirection(const char *output_file, int append)
 {
 	int fd_out; // Descripteur pour le fichier de sortie
 	int flags; // Ouverture en écriture (création si nécessaire)
-	
+
 	flags = O_WRONLY | O_CREAT;
 	if (append)
 		flags |= O_APPEND; // Mode ajout (`>>`)
@@ -59,7 +59,7 @@ static int	setup_output_redirection(const char *output_file, int append)
 }
 
 /* Cette fonction gère toutes les redirections d'entrée/sortie.
- * Elle redirige stdin ou stdout en fonction des fichiers spécifiés 
+ * Elle redirige stdin ou stdout en fonction des fichiers spécifiés
  */
 int	setup_redirection(const char *input_file, const char *output_file, int append)
 {
@@ -76,6 +76,58 @@ int	setup_redirection(const char *input_file, const char *output_file, int appen
 	return (0); // Succès
 }
 
+void restore_io(char *stdin_backup, char *stdout_backup)
+{
+    if (stdin_backup)
+    {
+        dup2(STDIN_FILENO, atoi(stdin_backup));
+        close(atoi(stdin_backup));
+        free(stdin_backup);
+    }
+    if (stdout_backup)
+    {
+        dup2(STDOUT_FILENO, atoi(stdout_backup));
+        close(atoi(stdout_backup));
+        free(stdout_backup);
+    }
+}
+
+int check_redirections(t_cmd *cmd)
+{
+    // Check input redirection
+    if (cmd->input_file)
+    {
+        int fd = open(cmd->input_file, O_RDONLY);
+        if (fd < 0)
+        {
+            perror(cmd->input_file);
+            return (1);
+        }
+        dup2(fd, STDIN_FILENO);
+        close(fd);
+    }
+
+    // Check output redirection
+    if (cmd->output_file)
+    {
+        int flags = O_WRONLY | O_CREAT;
+        if (cmd->append)
+            flags |= O_APPEND;
+        else
+            flags |= O_TRUNC;
+
+        int fd = open(cmd->output_file, flags, 0644);
+        if (fd < 0)
+        {
+            perror(cmd->output_file);
+            return (1);
+        }
+        dup2(fd, STDOUT_FILENO);
+        close(fd);
+    }
+
+    return (0);
+}
 /* O_CREAT: Crée un fichier s'il n'existe pas.
 O_WRONLY: Ouvre le fichier en écriture uniquement.
 O_RDONLY: Ouvre le fichier en lecture uniquement.

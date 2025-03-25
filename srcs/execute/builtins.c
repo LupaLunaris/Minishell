@@ -21,21 +21,21 @@
 // 	);
 // }
 
-int execute_builtin(t_command *cmd, t_shell_data *data)
+int execute_builtin(t_cmd *cmd, t_shell_data *data)
 {
     if (!ft_strcmp(cmd->cmd, "echo"))
         return (builtin_echo(cmd));
     else if (!ft_strcmp(cmd->cmd, "cd"))
         return (builtin_cd(cmd->args, &data->env_list));
-    else if (!ft_strcmp(cmd->cmd, "pwd"))
-        return (builtin_pwd());
+    // else if (!ft_strcmp(cmd->cmd, "pwd"))
+    //     return (builtin_pwd());
     else if (!ft_strcmp(cmd->cmd, "exit"))
         return (builtin_exit(cmd, data));
     else if (!ft_strcmp(cmd->cmd, "export"))
-        return (builtin_export(cmd, data));
+        return (builtin_export(cmd, &data->env_list));
     else if (!ft_strcmp(cmd->cmd, "unset"))
-        return (builtin_unset(cmd, data));
+        return (builtin_unset(cmd->args, &data->env_list));
     else if (!ft_strcmp(cmd->cmd, "env"))
-        return (builtin_env(cmd, data));
+        return (builtin_env(cmd, &data->env_list));
     return (1);
 }

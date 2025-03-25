@@ -5,7 +5,7 @@
 // donc tous ce qui est separer par un espace  y est stoker sous forme de *char
 // pipe redirection cmd ...
 
-//le principe de ce parsing est de tout stocker dans une listes *t_command
+//le principe de ce parsing est de tout stocker dans une listes *t_cmd
 
 // chaque pipe ajoute un node a la liste
 
@@ -16,34 +16,44 @@
 //  echo "bla" > test.txt
 // cdm->args = {"echo", "bla"}
 // cdm->output_file = test.txt
-
-// transforme le prompt en string
-char *heredoc(char *eof)
+void	free_arr(char **arr)
 {
-	char *r2 = "";
-	char *temp = "";
-	int a = ft_strcmp(temp, eof);
+	int  i;
 
-	while((a != 0))
+	i = 0;
+	if (!arr)
+		return;
+	while(arr[i])
 	{
-		temp = readline(NULL);
-		a = ft_strcmp(temp, eof);
-		if (a != 0)
-		{
-			r2 = ft_strjoin(r2,"\n");
-			r2 = ft_strjoin(r2, temp);
-		}
-		printf("r2 =%s\\$\n",r2);
+		free(arr[i++]);
 	}
-	return (r2);
+	free(arr);
 }
 
-int process_redirection(t_command *current, char **splited_args, int *i)
+void	*clean_cmd_list(t_cmd *head)
+{
+	t_cmd	*tmp;
+
+	while (head)
+	{
+		tmp = head->next;
+		if (head->args)
+			free_arr(head->args);
+		free(head->input_file);
+		free(head->output_file);
+		free(head);
+		head = tmp;
+	}
+
+	return (NULL);
+}
+int	process_redirection(t_cmd *current, char **splited_args, int *i)
 {
 	int one;
-	int True;
+	int *isTrue;
 
-	True = 1;
+	one = 1;
+	isTrue = &one;
 
 	if (!splited_args[*i])
 		return (0);
@@ -64,14 +74,13 @@ int process_redirection(t_command *current, char **splited_args, int *i)
 		if (!splited_args[*i + 1])
 			return (0);
 		current->output_file = ft_strdup(splited_args[++(*i)]);
-		current->append = True;
+		current->append = *isTrue;
 	}
 	else if (ft_strcmp(splited_args[*i], "<<") == 0)
 	{
 		if (!splited_args[*i + 1])
 			return (0);
 		current->heredoc = ft_strdup(splited_args[++(*i)]);
-		//current->args[(*i)] = heredoc(current->heredoc);
 	}
 	return (1);
 }
@@ -79,9 +88,8 @@ int process_redirection(t_command *current, char **splited_args, int *i)
 //fill_cmd_args parcour le tableau splited_args en etant appeler par parser
 //si l'argument est un pipe il gere la redirection et stock la *char "cdm arg1 arg2" dans cdm ->args
 
-// int		process_new_cmd
 
-void	fill_cmd_args(t_command *cmd, char **splited_args, int *i)
+void	fill_cmd_args(t_cmd *cmd, char **splited_args, int *i)
 {
 	int	arg_count;
 	int	arg_idx;
@@ -97,11 +105,9 @@ void	fill_cmd_args(t_command *cmd, char **splited_args, int *i)
 		{
 			process_redirection(cmd, splited_args, i);
 			(*i)++;
-			cmd->args[arg_idx++] = heredoc(cmd->heredoc);
 		}
 		else
 		{
-
 			cmd->args[arg_idx++] = ft_strdup(splited_args[*i]);
 			(*i)++;
 		}
@@ -109,12 +115,12 @@ void	fill_cmd_args(t_command *cmd, char **splited_args, int *i)
 	cmd->args[arg_idx] = NULL;
 }
 
-// parser fait la liste t_command a partit de splited_args
+// parser fait la liste t_cmd a partit de splited_args
 
-t_command   *parser(char **splited_args)
+t_cmd	*parser(char **splited_args)
 {
-	t_command   *head;
-	t_command   *current;
+	t_cmd   *head;
+	t_cmd   *current;
 	int	 i;
 
 	head = NULL;
