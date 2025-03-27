@@ -26,7 +26,6 @@ char            *find_command_path(char *cmd, t_env_list *env_list);
 int             wait_for_commands(t_cmd *cmd_list, t_shell_data *data);
 void            execute_single_command(t_cmd *cmd, t_shell_data *data);
 void            execute_external_command(t_cmd *cmd, t_shell_data *data);
-void			restore_io(char *stdin_backup, char *stdout_backup);
 int 			check_redirections(t_cmd *cmd);
 int 			get_children(t_cmd *cmd);
 int 			create_children(t_cmd *cmd, t_env_list *env_list, t_shell_data *data);

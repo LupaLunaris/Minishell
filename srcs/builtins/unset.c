@@ -17,26 +17,27 @@
  * Un identifiant valide :
  * - Doit commencer par une lettre (a-z, A-Z) ou un underscore (_)
  * - Ne peut contenir que des lettres, chiffres et underscores
- * 
+ *
  * @param str La chaîne à vérifier
  * @return 1 si l'identifiant est valide, 0 sinon
  */
 int is_valid_identifier(char *str)
 {
     int i;
-    
+
     // Vérification de paramètre NULL
     if (!str || !*str)
         return (0);
     // Premier caractère: lettre ou underscore uniquement
     if (!(ft_isalpha(str[0]) || str[0] == '_'))
-        return (0);
+		return (0);
+
     // Caractères suivants: lettres, chiffres ou underscore
     i = 1;
     while (str[i])
     {
-        if (!(ft_isalnum(str[i]) || str[i] == '_'))
-            return (0);
+        if (!(ft_isalnum(str[i]) || str[i] == '_' ||  str[i] == '=' )) // j'ai rajouter le =
+			return (0);
         i++;
     }
     return (1);
@@ -44,7 +45,7 @@ int is_valid_identifier(char *str)
 
 
 /**
- * Commande intégrée 'unset' - Supprime les variables d'environnement 
+ * Commande intégrée 'unset' - Supprime les variables d'environnement
  * @param args     Tableau d'arguments (args[0] est "unset")
  * @param env_list Pointeur sur la liste des variables d'environnement
  * @return         0 en cas de succès, 1 en cas d'erreur
@@ -53,7 +54,7 @@ int builtin_unset(char **args, t_env_list **env_list)
 {
 	int i;      // Index pour parcourir les arguments
 	int status; // Code de retour de la commande
-	
+
 	i = 1;      // Commencer à l'argument 1 (après "unset")
 	status = 0; // Par défaut, pas d'erreur
 	// Si pas d'arguments, on ne fait rien et on retourne 0

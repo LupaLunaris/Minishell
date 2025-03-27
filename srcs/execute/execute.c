@@ -14,19 +14,20 @@
 
 char	**env_list_to_array(t_env_list *env_list)
 {
-	int count = 0;
-	t_env_list *temp = env_list;
+	int			count;
+	t_env_list	*temp;
+	char		**env_array;
 
+	temp = env_list;
+	count = 0;
 	while (temp)
 	{
 		count++;
 		temp = temp->next;
 	}
-
-	char **env_array = malloc(sizeof(char *) * (count + 1));
+	env_array = malloc(sizeof(char *) * (count + 1));
 	if (!env_array)
 		return (NULL);
-
 	int i = 0;
 	temp = env_list;
 	while (temp)
@@ -36,44 +37,45 @@ char	**env_list_to_array(t_env_list *env_list)
 		i++;
 	}
 	env_array[i] = NULL;
-
 	return (env_array);
 }
+// Attendre tous les processus enfants
+// Déterminer le code de sortie
 
 int get_children(t_cmd *cmd)
 {
-	pid_t   wpid;
-	int	 status;
-	int	 save_status;
+	t_cmd *head = cmd;
+	pid_t wpid;
+	int status = 0;
+	int save_status = 0;
 
-	save_status = 0;
-	wpid = 0;
-	while (wpid != -1 || errno != ECHILD)
+	while ((wpid = waitpid(-1, &status, 0)) > 0)
 	{
-		wpid = waitpid(-1, &status, 0);  // Attendre un enfant
-		if (wpid == -1 && errno == ECHILD)
-			break; // Plus d'enfants à attendre
-		while (cmd) // Parcourir les commandes pour vérifier leurs PIDs
+		cmd = head;
+		while (cmd)
 		{
 			if (wpid == cmd->pid)
-				save_status = status;  // On sauvegarde le statut du processus associé
-			cmd = cmd->next; // Passer à la commande suivante
+			{
+				save_status = status;
+				break;
+			}
+			cmd = cmd->next;
 		}
 	}
-	if (WIFSIGNALED(save_status))	 // Si le processus enfant a été tué par un signal
-		status = 128 + WTERMSIG(save_status);
-	else if (WIFEXITED(save_status))  // Si le processus enfant s'est terminé normalement
-		status = WEXITSTATUS(save_status);
+	if (WIFSIGNALED(save_status))
+		return 128 + WTERMSIG(save_status);
+	else if (WIFEXITED(save_status))
+		return WEXITSTATUS(save_status);
 	else
-		status = save_status;
-	return (status);
+		return save_status;
 }
-
+// Appeler get_children et enregistrer le statut dans data
 int create_children(t_cmd *cmd, t_env_list *env_list, t_shell_data *data)
 {
 	t_cmd *head = cmd;
-	char **env_array = env_list_to_array(env_list);
+	char **env_array;
 
+	env_array = env_list_to_array(env_list);
 	while (cmd)
 	{
 		pid_t pid = fork();
@@ -90,77 +92,39 @@ int create_children(t_cmd *cmd, t_env_list *env_list, t_shell_data *data)
 		}
 		cmd = cmd->next;
 	}
-	// Appeler get_children et enregistrer le statut dans data
-	int status = get_children(head);
+		int status = get_children(head);
 	data->exit_status = status;
 	return (status);
 }
 
-// /*vérifie si tout est en ordre avant l'exécution réelle d'une commande*/
-// static int prep_for_exec(t_cmd *cmd)
-// {
-// 	if (!cmd)
-// 		return (EXIT_SUCCESS); // Rien à faire s'il n'y a pas de commandes
-// 	if (!cmd->cmd) // Pas de commande principale à exécuter
-// 	{
-// 		if (cmd->input_file || cmd->output_file)
-// 		{
-// 			if (check_redirections(cmd))
-// 				return (EXIT_SUCCESS);
-// 			return (EXIT_FAILURE);
-// 		}
-// 		return (EXIT_SUCCESS);
-// 	}
-// 	// Gérer les pipes si nécessaire
-// 	if (!create_pipes(cmd))
-// 		return (EXIT_FAILURE);
-// 	return (CMD_NOT_FOUND); // Prêt à exécuter
-// }
-
-int execute(t_cmd *cmd, t_env_list *env_list, t_shell_data *data)
+int	execute_builtin_cmd(t_cmd *cmd, t_shell_data *data)
 {
+	int stdin_backup;
+	int stdout_backup;
 	int ret;
 
-	if (!cmd)
-		return EXIT_SUCCESS;
-	// Vérifie si la commande est valide et gère les redirections simples
-
-	printf("cmd = %s\n",cmd->cmd);
-	printf("is_builtin = %d\n",cmd->is_builtin);
-
-	if (!cmd->cmd)
+	stdin_backup = -1;
+	stdout_backup = -1;
+	if (cmd->input_file || cmd->output_file)
 	{
-		if (cmd->input_file || cmd->output_file)
-		{
-			if (check_redirections(cmd))
-				return EXIT_SUCCESS;
-			return EXIT_FAILURE;
-		}
-		return EXIT_SUCCESS;
+		if (cmd->input_file)
+			stdin_backup = dup(STDIN_FILENO);
+		if (cmd->output_file)
+			stdout_backup = dup(STDOUT_FILENO);
 	}
-	// Vérifie s'il y a des pipes dans la chaîne de commandes
-	t_cmd *curr = cmd;
-	bool has_pipe = false;
-	while (curr->next)
-	{
-		has_pipe = true;
-		printf("is pipe\n");
-		break;
-	}
-
-	// Si on a des pipes, utilise execute_pipeline
-	if (has_pipe)
-		return execute_pipeline(cmd, env_list, data);
-	// Si c'est une commande builtin sans pipe
-	if (cmd->is_builtin)
-	{
-		printf("on rentre dans la boucle is builtin\n");
-		setup_redirection(cmd->input_file, cmd->output_file, cmd->append);
-		ret = execute_builtin(cmd, data);
-		restore_io(cmd->input_file, cmd->output_file);
-		return ret;
-	}
-	// Pour les commandes externes sans pipe
-	return create_children(cmd, env_list, data);
+	setup_redirection(cmd->input_file, cmd->output_file, cmd->append);
+	ret = execute_builtin(cmd, data);
+	restore_io(stdin_backup, stdout_backup);
+	return (ret);
 }
 
+int	execute(t_cmd *cmd, t_env_list *env_list, t_shell_data *data)
+{
+	if (!cmd)
+		return (EXIT_SUCCESS);
+	if (cmd->next)
+		return (execute_pipeline(cmd, env_list, data));
+	if (cmd->is_builtin)
+		return (execute_builtin_cmd(cmd, data));
+	return (create_children(cmd, env_list, data));
+}

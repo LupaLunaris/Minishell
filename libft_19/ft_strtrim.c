@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strtrim.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Jpaulis <jpaulis@student.s19.be>           +#+  +:+       +#+        */
+/*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:40:00 by jpaulis           #+#    #+#             */
-/*   Updated: 2024/10/21 19:05:31 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/27 16:47:43 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/*ft_strtrim - Alloue de la mémoire avec malloc 
+/*ft_strtrim - Alloue de la mémoire avec malloc
  * à une copie de la chaîne
- * Retourne une chaine de caractère "fraîche" 
+ * Retourne une chaine de caractère "fraîche"
  * trimmée ou une copie de s sinon
  * s1 : la chaîne de caractère a trimmer
  * set : Le set de référence de caractères a trimmer
@@ -40,16 +40,16 @@ char	*ft_strtrim(char const *s1, char const *set)
 	return (new_str);
 }
 
-/*
-#include <stdio.h>
-#include <stdlib.h>
-int main()
-{
-	char test_str[] = "   Bonjour tout le monde   ";
-	char *result = ft_strtrim(test_str);
 
-	printf("Résultat: '%s'\n", result);
-	free(result);
-	return 0;
-}
-*/
+// #include <stdio.h>
+// #include <stdlib.h>
+// int main()
+// {
+// 	char test_str[] = "   Bonjour tout le monde   ";
+// 	char *result = ft_strtrim(test_str, " ");
+
+// 	printf("Résultat: '%s'\n", result);
+// 	free(result);
+// 	return 0;
+// }
+

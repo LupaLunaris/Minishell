@@ -43,6 +43,6 @@ void            free_command_list(t_cmd *cmd);
 bool 			create_pipes(t_cmd *cmd_list);
 int             check_redirections(t_cmd *cmd);
 int				setup_redirection(const char *input_file, const char *output_file, int append);
-void            restore_io(char *stdin_backup, char *stdout_backup);
+void			restore_io(int stdin_fd, int stdout_fd);
 
 #endif
