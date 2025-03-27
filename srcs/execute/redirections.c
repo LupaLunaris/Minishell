@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 18:00:51 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/15 14:26:10 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/27 17:02:06 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,58 +76,52 @@ int	setup_redirection(const char *input_file, const char *output_file, int appen
 	return (0); // Succès
 }
 
-void restore_io(char *stdin_backup, char *stdout_backup)
+void restore_io(int stdin_fd, int stdout_fd)
 {
-    if (stdin_backup)
+    if (stdin_fd >= 0)
     {
-        dup2(STDIN_FILENO, atoi(stdin_backup));
-        close(atoi(stdin_backup));
-        free(stdin_backup);
+        dup2(stdin_fd, STDIN_FILENO);
+        close(stdin_fd);
     }
-    if (stdout_backup)
+    if (stdout_fd >= 0)
     {
-        dup2(STDOUT_FILENO, atoi(stdout_backup));
-        close(atoi(stdout_backup));
-        free(stdout_backup);
+        dup2(stdout_fd, STDOUT_FILENO);
+        close(stdout_fd);
     }
 }
 
 int check_redirections(t_cmd *cmd)
-{
-    // Check input redirection
-    if (cmd->input_file)
-    {
+{    
+    // Appliquer les redirections
+    if (cmd->input_file) {
         int fd = open(cmd->input_file, O_RDONLY);
-        if (fd < 0)
-        {
+        if (fd < 0) {
             perror(cmd->input_file);
             return (1);
         }
         dup2(fd, STDIN_FILENO);
         close(fd);
     }
-
-    // Check output redirection
-    if (cmd->output_file)
-    {
+    
+    if (cmd->output_file) {
         int flags = O_WRONLY | O_CREAT;
         if (cmd->append)
             flags |= O_APPEND;
         else
             flags |= O_TRUNC;
-
+            
         int fd = open(cmd->output_file, flags, 0644);
-        if (fd < 0)
-        {
+        if (fd < 0) {
             perror(cmd->output_file);
             return (1);
         }
         dup2(fd, STDOUT_FILENO);
         close(fd);
     }
-
+    
     return (0);
 }
+
 /* O_CREAT: Crée un fichier s'il n'existe pas.
 O_WRONLY: Ouvre le fichier en écriture uniquement.
 O_RDONLY: Ouvre le fichier en lecture uniquement.
