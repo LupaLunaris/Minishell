@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:46:16 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/25 20:39:31 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/28 11:04:35 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,5 +64,6 @@ typedef struct s_shell_data t_shell_data;
 int		main(int argc, char **argv, char **envp);
 int		error_handler(const char *cmd, const char *message, int should_exit, int error_code);
 int		is_valid_identifier(char *str);
+void	cleanup_resources(t_shell_data *data);
 
 #endif

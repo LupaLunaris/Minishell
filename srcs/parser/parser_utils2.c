@@ -1,4 +1,4 @@
-#include "../../includes/minishell.h"
+#include "minishell.h"
 
 t_env_list	*ft_env_last(t_env_list *lst)
 {

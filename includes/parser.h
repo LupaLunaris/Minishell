@@ -14,5 +14,7 @@ t_cmd	*create_cmd_node(void);
 void	add_cmd_node(t_cmd **head, t_cmd *new_node);
 int		count_args_to_pipe(char **splited_args, int start);
 void	add_builtin(t_cmd *cmd);
+void	free_arr(char **arr);
+t_shell_data *init_shell_data(char **envp);
 #endif
 

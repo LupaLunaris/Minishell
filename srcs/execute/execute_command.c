@@ -1,19 +1,5 @@
 #include "minishell.h"
 
-static void	free_arr(char **arr)
-{
-	int  i;
-
-	i = 0;
-	if (!arr)
-		return;
-	while(arr[i])
-	{
-		free(arr[i++]);
-	}
-	free(arr);
-}
-
 char	*create_cdm_path(char *cmd, char **paths)
 {
 	char	*cmd_path;

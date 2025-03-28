@@ -1,4 +1,3 @@
-
 # Compilateur et flags
 CC			= cc
 CFLAGS		= -Wall -Wextra -Werror
@@ -22,6 +21,7 @@ UTILS_DIR		= $(SRCS_DIR)/utils
 SIGNALS_DIR		= $(SRCS_DIR)/signaux
 ENV_DIR			= $(SRCS_DIR)/env
 PARSER_DIR		= $(SRCS_DIR)/parser
+VAR_DIR			= $(SRCS_DIR)/var
 
 # Fichiers sources
 SRCS		= $(SRCS_DIR)/main.c \
@@ -47,7 +47,8 @@ SRCS		= $(SRCS_DIR)/main.c \
 			$(UTILS_DIR)/free_shell.c \
 			$(PARSER_DIR)/cdm_parser.c \
 			$(PARSER_DIR)/parser_utils.c \
-			$(PARSER_DIR)/parser_utils2.c
+			$(PARSER_DIR)/parser_utils2.c \
+			$(VAR_DIR)/var_expend.c
 
 # Fichiers objets
 OBJS		= $(SRCS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)

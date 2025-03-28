@@ -1,4 +1,4 @@
-#include "../../includes/minishell.h"
+#include "minishell.h"
 
 // Remplit les arguments de la commande
 // splited_args est un array de *char issu du prompt de l'utilisateur

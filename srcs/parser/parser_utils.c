@@ -1,4 +1,4 @@
-#include "../../includes/minishell.h"
+#include "minishell.h"
 
 //verifie si "l'argument" (splited_args[i]) est une redirection
 
