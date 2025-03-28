@@ -1,147 +1,115 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/28 10:17:31 by Jpaulis           #+#    #+#             */
+/*   Updated: 2025/03/28 10:47:19 by Jpaulis          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
-int	is_variable(char *str)
+
+void handle_signals_and_input(t_shell_data *data, char **rl, int *final_status)
 {
-	if(str[0] != '$' && str[0] != '\"')
-		return (0);
-	if(str[0] == '\"' && str[1] == '$')
-		return (2);
-	return 1;
+    // Lire l'entrée utilisateur avec readline
+    *rl = readline("MiniShellDeLaMort> ");
+    
+    if (*rl == NULL) // L'utilisateur a entré EOF (Ctrl+D)
+    {
+        if (data->interactive)
+            write(STDOUT_FILENO, "exit\n", 5);
+        *final_status = data->exit_status;
+        return;
+    }
+
+    if ((*rl)[0] != '\0') // Ajoute à l'historique uniquement si non vide
+        add_history(*rl);
+
+    // Passer aux signaux "non-interactifs" pour la suite
+    set_signals_noninteractive();
 }
-// char *get_env_value(t_env_list *list, char *key)
-// {
-//     t_env_list *current = list;
 
-//     while (current)
-//     {
-//         if (ft_strcmp(current->key, key) == 0)
-//             return (current->value);
-//         current = current->next;
-//     }
-//     return (NULL);
-// }
 
-//char *args_news_values(char *args, )
-
-void var_expend(t_env_list *list, t_cmd *cmds)
+void execute_user_command(t_shell_data *data, const char *rl, char **envp)
 {
-	int	i;
-	char *value;
-	char *env_value = NULL;
-	t_cmd *cmd_temp;
-	int	jump;
+    char **splited_args;
+    t_cmd *cmds;
 
-	i = 0;
-	cmd_temp = cmds;
-	while(cmd_temp)
-	{
-		i = 1;
-		while (cmd_temp->args[i])
-		{
-			jump = is_variable(cmd_temp->args[i]);
-			printf("%d\n",jump);
+    // Splitte la commande en arguments (selon les espaces)
+    splited_args = ft_split(rl, ' ');
+    if (!splited_args)
+        return;
 
-			if(jump)
-			{
-				//printf("args =  %s\n", cmd_temp->args[i]);
+    // Analyse syntaxique de la commande
+    cmds = parser(splited_args);
+    if (!cmds)
+    {
+        free_split(splited_args);
+        return;
+    }
 
-				value = ft_strtrim((cmd_temp->args[i] + jump), "\"");
-				env_value = get_env_value(list, value);
-				if(env_value)
-					cmd_temp->args[i] = strdup(env_value);
-				//printf("value =  %s\n", cmd_temp->args[i]);
-				else
-					cmd_temp->args[i] = strdup("");
-			}
-			i++;
-		}
-		cmd_temp = cmd_temp->next;
-	}
+    // Expansion des variables d'environnement dans la commande
+    var_expend(data->env_list, cmds);
+
+    // Ajouter les fonctions internes (builtins) au shell
+    add_builtin(cmds);
+
+    // Exécuter les commandes
+    data->exit_status = execute(cmds, data->env_list, data);
+
+    // Libérer les structures associées
+    free_command(cmds);
+    free_split(splited_args);
+
+    // Gérer les signaux reçus (SIGINT, SIGQUIT)
+    if (g_signal_received == SIGINT)
+        data->exit_status = 130; // 128 + SIGINT
+    else if (g_signal_received == SIGQUIT)
+        data->exit_status = 131; // 128 + SIGQUIT
 }
+
 int main(int argc, char **argv, char **envp)
 {
-	char *rl;
-	char **splited_args;
-	t_cmd *cmds;
-	int final_status = 0;
+    t_shell_data *data;
+    int final_status = 0;
+    char *rl = NULL; // Déclaration explicite de rl
 
-	if (argc != 1 || !argv)
-		return 1;
+    // Vérification des arguments
+    if (argc != 1 || !argv)
+        return 1;
 
-	// Initialiser la structure t_shell_data
-	t_shell_data *data = malloc(sizeof(t_shell_data));
-	if (!data)
-		return 1;
+    // Initialiser les données du shell
+    data = initialize_shell_data(envp);
+    if (!data)
+        return 1;
 
-	// Initialisation des données du shell
-	data->exit_status = 0;
-	data->interactive = isatty(STDIN_FILENO);
-	t_env_list *env_list = init_env(envp);
-	data->env_list = env_list;
+    // Boucle principale
+    while (1)
+    {
+        // Réinitialisation des signaux et test interactif
+        g_signal_received = 0;
+        if (data->interactive)
+            set_signals_interactive();
 
-	// Boucle principale du shell
-	while (1)
-	{
-		// Réinitialiser l'état des signaux pour chaque nouvelle commande
-		g_signal_received = 0;
+        // Gestion des signaux et de l'input utilisateur
+        handle_signals_and_input(data, &rl, &final_status);
+        if (final_status) // Si final_status != 0, sortir de la boucle
+            break;
 
-		// Configurer les signaux en mode interactif avant de demander une entrée utilisateur
-		if (data->interactive)
-			set_signals_interactive();
+        // Si une commande a été récupérée, l'exécuter
+        if (rl)
+        {
+            execute_user_command(data, rl, envp);
+            free(rl); // Libérer rl après exécution
+            rl = NULL; // Prévenir les doublons de libération
+        }
+    }
 
-		// Lire l'entrée de l'utilisateur
-		rl = readline("MiniShellDeLaMort> ");
+    // Nettoyer les ressources restantes
+    cleanup_resources(data);
 
-		// Traitement explicite de Ctrl+D (EOF)
-		if (rl == NULL)
-		{
-			if (data->interactive)
-				write(STDOUT_FILENO, "exit\n", 5);
-			final_status = data->exit_status;
-			break;  // Sortie immédiate de la boucle
-		}
-
-		// Traiter la ligne saisie si elle n'est pas vide
-		if (rl[0] != '\0')
-		{
-			add_history(rl);
-
-			// Passer en mode non-interactif avant d'exécuter la commande
-			if (data->interactive)
-				set_signals_noninteractive();
-
-			// Parsing et préparation des commandes
-			splited_args = ft_split(rl, ' ');
-			cmds = parser(splited_args);
-			var_expend(env_list,cmds);
-			free(rl);
-
-			// Exécution des commandes
-			if (cmds)
-			{
-				add_builtin(cmds);
-				data->exit_status = execute(cmds, env_list, data);
-				free_command(cmds);
-			}
-
-			// Vérifier si un signal a été reçu pendant l'exécution
-			if (g_signal_received == SIGINT)
-				data->exit_status = 130;  // 128 + SIGINT (2)
-			else if (g_signal_received == SIGQUIT)
-				data->exit_status = 131;  // 128 + SIGQUIT (3)
-		}
-		else
-		{
-			free(rl);
-		}
-	}
-
-	// Libérer les ressources
-	if (env_list)
-		free_env_list(env_list);
-
-	// Libérer la mémoire allouée pour data
-	free(data);
-	rl_clear_history();
-
-	return (final_status);
+    return (final_status); // Retourner le code de sortie final
 }

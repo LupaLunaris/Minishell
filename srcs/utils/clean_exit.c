@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 14:11:51 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/15 14:19:13 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/28 10:16:21 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,15 @@ void	cleanup_and_exit(const char *message, int exit_code)
     error_handler("commade", message, 0, exit_code);
     exit(exit_code);
 }
+
+void cleanup_resources(t_shell_data *data)
+{
+    if (data->env_list)
+        free_env_list(data->env_list);
+    free(data);
+    rl_clear_history(); // Supprime l’historique readline.
+}
+
 
 // void free_shell_data(t_shell_data *data)
 // {
