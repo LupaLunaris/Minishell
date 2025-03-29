@@ -6,10 +6,11 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 17:44:56 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/25 20:39:12 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/29 16:26:35 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#define _POSIX_C_SOURCE 200809L
 #include "minishell.h"
 
 volatile sig_atomic_t g_signal_received = 0;

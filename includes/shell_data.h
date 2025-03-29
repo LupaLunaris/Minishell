@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 16:37:05 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/19 15:14:26 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/29 16:01:59 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,19 +22,18 @@ typedef struct s_shell_data
     int interactive;         // Mode interactif ou non
 } t_shell_data;
 
-// POUR INITIALISER SHELL DATA :
-// t_shell_data *init_shell_data(void)
-// {
-//     t_shell_data *data = malloc(sizeof(t_shell_data));
-//     if (!data)
-//         return NULL;
+typedef struct s_shell_exec
+{
+    t_env_list   *env_list;
+    t_shell_data *data;
+} t_shell_exec;
 
-//     data->exit_status = 0;
-//     data->history = NULL;
-//     data->interactive = isatty(STDIN_FILENO); // Détection automatique du mode interactif
-
-//     return data;
-// }
+typedef struct s_pipe_data
+{
+    int    i;
+    int    cmd_count;
+    int	pipes[2][2];
+} t_pipe_data;
 
 // Fonctions de gestion des données du shell
 t_shell_data    *init_shell_data(char **envp);

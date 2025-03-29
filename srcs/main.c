@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 10:17:31 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/28 11:09:58 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/29 16:20:08 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ t_shell_data *init_shell_data(char **envp)
     return data;
 }
 
-void handle_signals_and_input(t_shell_data *data, char **rl, int *final_status)
+void handle_signals_and_input(t_shell_data *data, char **rl, int *should_exit)
 {
     *rl = readline("MiniShellDeLaMort> ");
     
@@ -31,7 +31,7 @@ void handle_signals_and_input(t_shell_data *data, char **rl, int *final_status)
     {
         if (data->interactive)
             write(STDOUT_FILENO, "exit\n", 5);
-        *final_status = data->exit_status;
+			*should_exit = 1;
         return;
     }
 
@@ -53,18 +53,14 @@ void execute_user_command(t_shell_data *data, const char *rl)
     cmds = parser(splited_args);
     if (!cmds)
     {
-        free_arr(splited_args); // Utilisation de free_arr au lieu de free_split
+        free_arr(splited_args);
         return;
     }
-
-    var_expend(data->env_list, cmds); // Utilisation du nom correct de ta fonction
-
+    var_expend(data->env_list, cmds);
     add_builtin(cmds);
     data->exit_status = execute(cmds, data->env_list, data);
-
     free_command(cmds);
-    free_arr(splited_args); // Utilisation de free_arr au lieu de free_split
-
+    free_arr(splited_args);
     if (g_signal_received == SIGINT)
         data->exit_status = 130;
     else if (g_signal_received == SIGQUIT)
@@ -74,26 +70,22 @@ void execute_user_command(t_shell_data *data, const char *rl)
 int main(int argc, char **argv, char **envp)
 {
     t_shell_data *data;
-    int final_status = 0;
+    int should_exit = 0;
     char *rl = NULL;
 
     if (argc != 1 || !argv)
         return 1;
-
-    data = init_shell_data(envp); // Utilisation du nom correct
+    data = init_shell_data(envp);
     if (!data)
         return 1;
-
     while (1)
     {
         g_signal_received = 0;
         if (data->interactive)
             set_signals_interactive();
-
-        handle_signals_and_input(data, &rl, &final_status);
-        if (final_status)
+        handle_signals_and_input(data, &rl, &should_exit);
+        if (should_exit)
             break;
-        
         if (rl)
         {
             execute_user_command(data, rl);
@@ -101,7 +93,6 @@ int main(int argc, char **argv, char **envp)
             rl = NULL;
         }
     }
-    
-    free_shell_data(data); // Utilisation du nom correct pour nettoyer les ressources
-    return (final_status);
+    free_shell_data(data);
+    return (should_exit);
 }
