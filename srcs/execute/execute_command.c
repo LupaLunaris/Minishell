@@ -70,7 +70,6 @@ char	*get_cmd_path(char *cmd, char **env_array)
 
 void	execute_command(t_cmd *cmd, char **env_array)
 {
-
 	char	*cmd_path;
 
 	cmd_path = get_cmd_path(cmd->cmd, env_array);
