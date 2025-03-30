@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execute_command.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/30 14:51:39 by Jpaulis           #+#    #+#             */
+/*   Updated: 2025/03/30 14:51:39 by Jpaulis          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 char	*create_cdm_path(char *cmd, char **paths)
@@ -67,6 +79,22 @@ char	*get_cmd_path(char *cmd, char **env_array)
 	return (NULL);
 }
 
+int execute_command_for_heredoc(t_cmd *cmd, char **env_array)
+{
+    char    *cmd_path;
+    
+    cmd_path = get_cmd_path(cmd->cmd, env_array);
+    if (!cmd_path)
+    {
+        fprintf(stderr, "command not found: %s\n", cmd->cmd);
+        return EXIT_FAILURE;
+    }
+    
+    execve(cmd_path, cmd->args, env_array);
+    perror("execve");
+    free(cmd_path);
+    return EXIT_FAILURE;
+}
 
 void	execute_command(t_cmd *cmd, char **env_array)
 {

@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 16:35:04 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/19 17:20:24 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/30 12:55:11 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,7 @@ t_cmd       	*create_command(void);
 void            free_command(t_cmd *cmd);
 void            free_command_list(t_cmd *cmd);
 bool 			create_pipes(t_cmd *cmd_list);
-int             check_redirections(t_cmd *cmd);
-int				setup_redirection(const char *input_file, const char *output_file, int append);
+int             setup_redirection(t_cmd *cmd);
 void			restore_io(int stdin_fd, int stdout_fd);
 
 #endif

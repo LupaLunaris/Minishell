@@ -77,13 +77,11 @@ int	process_redirection(t_cmd *current, char **splited_args, int *i)
 		current->append = *isTrue;
 	}
 	else if (ft_strcmp(splited_args[*i], "<<") == 0)
-    {
-        if (!splited_args[*i + 1])
-            return (error_handler("parser", "syntax error near unexpected token `<<'", 0, 258));
-        current->heredoc = ft_strdup(splited_args[++(*i)]);
-        if (process_heredoc(current->heredoc, current) != 0)
-            return (0);
-    }
+	{
+		if (!splited_args[*i + 1])
+			return (0);
+		current->heredoc = ft_strdup(splited_args[++(*i)]);
+	}
 	return (1);
 }
 

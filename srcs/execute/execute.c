@@ -82,9 +82,9 @@ int create_children(t_cmd *cmd, t_env_list *env_list, t_shell_data *data)
 		if (pid == -1)
 			return error_handler("fork", strerror(errno), 0, EXIT_FAILURE);
 		cmd->pid = pid;
-		if (pid == 0) // Enfant
+		if (pid == 0)
 		{
-			setup_redirection(cmd->input_file, cmd->output_file, cmd->append);
+			setup_redirection(cmd);
 			if (cmd->is_builtin)
 				exit(execute_builtin(cmd, data));
 			else
@@ -112,19 +112,35 @@ int	execute_builtin_cmd(t_cmd *cmd, t_shell_data *data)
 		if (cmd->output_file)
 			stdout_backup = dup(STDOUT_FILENO);
 	}
-	setup_redirection(cmd->input_file, cmd->output_file, cmd->append);
+	setup_redirection(cmd);
 	ret = execute_builtin(cmd, data);
 	restore_io(stdin_backup, stdout_backup);
 	return (ret);
 }
 
-int	execute(t_cmd *cmd, t_env_list *env_list, t_shell_data *data)
+int execute(t_cmd *cmd, t_env_list *env_list, t_shell_data *data)
 {
-	if (!cmd)
-		return (EXIT_SUCCESS);
-	if (cmd->next)
-		return (execute_pipeline(cmd, env_list, data));
-	if (cmd->is_builtin)
-		return (execute_builtin_cmd(cmd, data));
-	return (create_children(cmd, env_list, data));
+    // Si on trouve des commandes qui nécessitent un heredoc,
+    // on s'assure de les configurer avant l'exécution
+    t_cmd *curr = cmd;
+    while (curr)
+    {
+        // Si le heredoc est juste un délimiteur (pas encore le contenu)
+        if (curr->heredoc && ft_strlen(curr->heredoc) > 0 && !ft_strchr(curr->heredoc, '\n'))
+        {
+            int status = process_heredoc(curr->heredoc, curr);
+            if (status != 0)
+                return (status);
+        }
+        curr = curr->next;
+    }
+
+    if (!cmd)
+        return (EXIT_SUCCESS);
+        
+    if (cmd->next)
+        return (execute_pipeline(cmd, env_list, data));
+    if (cmd->is_builtin)
+        return (execute_builtin_cmd(cmd, data));
+    return (create_children(cmd, env_list, data));
 }

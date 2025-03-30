@@ -6,11 +6,34 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 18:00:51 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/27 17:02:06 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/30 17:08:22 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static int setup_heredoc_redirection(const char *heredoc_content)
+{
+    int pipe_fd[2];
+    
+    if (pipe(pipe_fd) == -1)
+        return error_handler("setup_redirection", "pipe creation failed", 0, EXIT_FAILURE);
+        
+    // Écrire le contenu du heredoc dans le pipe
+    if (heredoc_content)
+        write(pipe_fd[1], heredoc_content, ft_strlen(heredoc_content));
+    close(pipe_fd[1]); // Fermer l'extrémité d'écriture
+    
+    // Rediriger l'entrée standard vers le pipe
+    if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
+    {
+        close(pipe_fd[0]); 
+        return error_handler("setup_redirection", "dup2 error for heredoc", 0, EXIT_FAILURE);
+    }
+    close(pipe_fd[0]);
+    
+    return 0;
+}
 
 /* Configure la redirection d'entrée vers le fichier spécifié.
  * Le fichier spécifié est ouvert.
@@ -36,7 +59,7 @@ static int	setup_input_redirection(const char *input_file)
  * Le fichier spécifié est ouvert (ou créé) avec les permissions appropriées.
  * Son descripteur de fichier est redirigé grâce à dup2 vers stdout.
  */
-static int	setup_output_redirection(const char *output_file, int append)
+int	setup_output_redirection(const char *output_file, int append)
 {
 	int fd_out; // Descripteur pour le fichier de sortie
 	int flags; // Ouverture en écriture (création si nécessaire)
@@ -61,72 +84,41 @@ static int	setup_output_redirection(const char *output_file, int append)
 /* Cette fonction gère toutes les redirections d'entrée/sortie.
  * Elle redirige stdin ou stdout en fonction des fichiers spécifiés
  */
-int	setup_redirection(const char *input_file, const char *output_file, int append)
+int setup_redirection(t_cmd *cmd)
 {
-	if (input_file)
-	{
-		if (setup_input_redirection(input_file) != 0)
-			return (EXIT_FAILURE);
-	}
-	if (output_file)
-	{
-		if (setup_output_redirection(output_file, append) != 0)
-			return (EXIT_FAILURE);
-	}
-	return (0); // Succès
-}
-
-void restore_io(int stdin_fd, int stdout_fd)
-{
-    if (stdin_fd >= 0)
+    // Le heredoc a priorité sur les redirections de fichier d'entrée
+    if (cmd->heredoc)
     {
-        dup2(stdin_fd, STDIN_FILENO);
-        close(stdin_fd);
+        if (setup_heredoc_redirection(cmd->heredoc) != 0)
+            return (EXIT_FAILURE);
     }
-    if (stdout_fd >= 0)
+    else if (cmd->input_file)
     {
-        dup2(stdout_fd, STDOUT_FILENO);
-        close(stdout_fd);
+        if (setup_input_redirection(cmd->input_file) != 0)
+            return (EXIT_FAILURE);
     }
-}
 
-int check_redirections(t_cmd *cmd)
-{    
-    // Appliquer les redirections
-    if (cmd->input_file) {
-        int fd = open(cmd->input_file, O_RDONLY);
-        if (fd < 0) {
-            perror(cmd->input_file);
-            return (1);
-        }
-        dup2(fd, STDIN_FILENO);
-        close(fd);
+    if (cmd->output_file)
+    {
+        if (setup_output_redirection(cmd->output_file, cmd->append) != 0)
+            return (EXIT_FAILURE);
     }
-    
-    if (cmd->output_file) {
-        int flags = O_WRONLY | O_CREAT;
-        if (cmd->append)
-            flags |= O_APPEND;
-        else
-            flags |= O_TRUNC;
-            
-        int fd = open(cmd->output_file, flags, 0644);
-        if (fd < 0) {
-            perror(cmd->output_file);
-            return (1);
-        }
-        dup2(fd, STDOUT_FILENO);
-        close(fd);
-    }
-    
     return (0);
 }
 
-/* O_CREAT: Crée un fichier s'il n'existe pas.
-O_WRONLY: Ouvre le fichier en écriture uniquement.
-O_RDONLY: Ouvre le fichier en lecture uniquement.
-O_RDWR: Ouvre le fichier en lecture et en écriture.
-O_TRUNC: Tronque le fichier à une taille de 0 lorsqu'il est ouvert.
-O_APPEND: Ajoute des données à la fin du fichier sans écraser son contenu existant.
-O_EXCL: Utilisé avec O_CREAT pour empêcher la création du fichier si celui-ci existe déjà.
-*/
+
+/* Restaure les descripteurs originaux de l'entrée 
+ * et la sortie standard après une redirection*/
+void restore_io(int stdin_fd, int stdout_fd)
+{
+	if (stdin_fd >= 0)
+	{
+		dup2(stdin_fd, STDIN_FILENO);
+		close(stdin_fd);
+	}
+	if (stdout_fd >= 0)
+	{
+		dup2(stdout_fd, STDOUT_FILENO);
+		close(stdout_fd);
+	}
+}

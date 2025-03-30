@@ -42,7 +42,7 @@ static void	process_command(t_cmd *curr, t_shell_exec *se)
 {
 	char	**env_array;
 
-	if (check_redirections(curr) != 0)
+	if (setup_redirection(curr) != 0)
 		exit(EXIT_FAILURE);
 	if (curr->is_builtin)
 		exit(execute_builtin(curr, se->data));
