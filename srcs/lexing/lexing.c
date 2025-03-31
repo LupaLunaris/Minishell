@@ -119,6 +119,8 @@ static int handle_double_op(char *input, int *i, char *output, int *j)
 /* Processes operators in input */
 static int handle_operators(char *input, int *i, char *output, int *j)
 {
+	if (!input[*i])
+        return (0);
     // Ajouter un espace avant l'opérateur si nécessaire
     if ((*j) > 0 && !is_space(output[(*j) - 1]))
         output[(*j)++] = ' ';

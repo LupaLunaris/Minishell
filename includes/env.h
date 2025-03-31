@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 16:36:21 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/31 18:41:07 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/31 21:34:47 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ typedef struct s_env_list
 
 // Fonctions de gestion de l'environnement
 t_env_list      *init_env(char **envp);
-int      		add_env_var(t_env_list **list, char *key, char *value);
+int				add_env_var(t_env_list **env_list, char *name, char *value);
 void            remove_env_var(t_env_list **list, char *key);
 char            *get_env_value(t_env_list *list, char *key);
 void            free_env_list(t_env_list *list);
@@ -37,5 +37,6 @@ char			*get_env_var(t_env_list *env_list, char *key);
 void			add_env_var_without_value(t_env_list **env_list, char *key);
 void			delete_env_var(t_env_list **env_list, char *key);
 void			var_expend(t_env_list *list, t_cmd *cmds, t_shell_data *data);
+void			update_env_var(t_env_list **env_list, char *name, char *value);
 
 #endif
