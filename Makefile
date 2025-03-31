@@ -21,7 +21,6 @@ UTILS_DIR		= $(SRCS_DIR)/utils
 SIGNALS_DIR		= $(SRCS_DIR)/signaux
 ENV_DIR			= $(SRCS_DIR)/env
 PARSER_DIR		= $(SRCS_DIR)/parser
-VAR_DIR			= $(SRCS_DIR)/var
 LEXING_DIR		= $(SRCS_DIR)/lexing
 
 # Fichiers sources
@@ -50,7 +49,7 @@ SRCS       = $(SRCS_DIR)/main.c \
 			 $(PARSER_DIR)/cdm_parser.c \
 			 $(PARSER_DIR)/parser_utils.c \
 			 $(PARSER_DIR)/parser_utils2.c \
-			 $(VAR_DIR)/var_expend.c \
+			 $(ENV_DIR)/var_expend.c \
 			 $(SRCS_DIR)/lexing/lexing.c \
 
 

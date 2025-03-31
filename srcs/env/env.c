@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 15:29:44 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/17 12:30:56 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/31 22:04:32 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int add_env_var_from_string(t_env_list **env_list, char *var_str)
     key = ft_substr(var_str, 0, equal_sign - var_str);
     value = ft_strdup(equal_sign + 1);
     if (!key || !value)
-	{
+    {
         free(key);
         free(value);
         return (-1);
@@ -52,16 +52,16 @@ int add_env_var_from_string(t_env_list **env_list, char *var_str)
  */
 char *get_env_var(t_env_list *env_list, char *key)
 {
-	t_env_list *current;
+    t_env_list *current;
 
-	current = env_list;
-	while (current)
-	{
-		if (ft_strcmp(current->key, key) == 0)
-			return current->value;
-		current = current->next;
-	}
-	return NULL;
+    current = env_list;
+    while (current)
+    {
+        if (ft_strcmp(current->key, key) == 0)
+            return current->value;
+        current = current->next;
+    }
+    return NULL;
 }
 
 /**
@@ -70,15 +70,15 @@ char *get_env_var(t_env_list *env_list, char *key)
  */
 void print_env_list(t_env_list *env_list)
 {
-	t_env_list *current;
+    t_env_list *current;
 
-	current = env_list;
-	while (current)
-	{
-		write(STDOUT_FILENO, current->key, strlen(current->key));
-		write(STDOUT_FILENO, "=", 1);
-		write(STDOUT_FILENO, current->value, strlen(current->value));
-		write(STDOUT_FILENO, "\n", 1);
-		current = current->next;
-	}
+    current = env_list;
+    while (current)
+    {
+        write(STDOUT_FILENO, current->key, strlen(current->key));
+        write(STDOUT_FILENO, "=", 1);
+        write(STDOUT_FILENO, current->value, strlen(current->value));
+        write(STDOUT_FILENO, "\n", 1);
+        current = current->next;
+    }
 }

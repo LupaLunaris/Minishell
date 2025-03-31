@@ -6,12 +6,15 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 10:17:19 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/31 21:38:43 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/31 22:04:20 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/**
+ * Met à jour une variable d'environnement ou l'ajoute si elle n'existe pas
+ */
 void update_env_var(t_env_list **env_list, char *name, char *value)
 {
     t_env_list *current = *env_list;
@@ -33,11 +36,11 @@ void update_env_var(t_env_list **env_list, char *name, char *value)
     add_env_var(env_list, name, value);
 }
 
-
-
+/**
+ * Vérifie si une chaîne contient une variable à expandre
+ */
 int is_variable(char *str)
 {
-    // Vérifie si on a un  $  non échappé
     if (!str || !str[0])
         return 0;
         
@@ -45,7 +48,7 @@ int is_variable(char *str)
     if (str[0] == '\'')
         return 0;
         
-    // Cherche le  $  dans la chaîne
+    // Cherche le $ dans la chaîne
     char *dollar = strchr(str, '$');
     if (!dollar)
         return 0;
@@ -54,22 +57,24 @@ int is_variable(char *str)
     return (dollar - str + 1);
 }
 
-// Dans les paramètres de expand_variables, n'incluez pas in_single_quotes
+/**
+ * Expande les variables d'environnement dans une chaîne
+ */
 char *expand_variables(char *str, t_env_list *list, t_shell_data *data)
 {
-    // Si la chaîne est vide, retourner une copie vide
     if (!str)
         return NULL;
         
     char *result = malloc(4096); // Buffer temporaire
+    if (!result)
+        return NULL;
+        
     int j = 0;
     int i = 0;
     
-    if (!result)
-        return NULL;
     while (str[i])
     {
-        // Si on trouve un $
+        // Si on trouve un  $ 
         if (str[i] == '$' && str[i+1])
         {
             i++; // Passer le $
@@ -112,7 +117,7 @@ char *expand_variables(char *str, t_env_list *list, t_shell_data *data)
             }
             else
             {
-                //   $   suivi d'autre chose, on garde le   $  
+                //  $  suivi d'autre chose, on garde le  $ 
                 result[j++] = '$';
             }
         }
@@ -129,16 +134,26 @@ char *expand_variables(char *str, t_env_list *list, t_shell_data *data)
     return final_result;
 }
 
+/**
+ * Traite et expande les variables dans tous les arguments des commandes
+ */
 void var_expend(t_env_list *list, t_cmd *cmds, t_shell_data *data)
 {
     t_cmd *cmd_temp = cmds;
     
     while (cmd_temp)
     {
-        int i = 0;
-        while (cmd_temp->args[i])
+        // Traiter aussi la commande elle-même
+        if (cmd_temp->cmd && cmd_temp->cmd[0] == '$')
         {
-            // Traiter d'abord les guillemets
+            char *expanded_cmd = expand_variables(cmd_temp->cmd, list, data);
+            free(cmd_temp->cmd);
+            cmd_temp->cmd = expanded_cmd;
+        }
+        
+        int i = 0;
+        while (cmd_temp->args && cmd_temp->args[i])
+        {
             char *arg = cmd_temp->args[i];
             char *processed_arg = NULL;
             

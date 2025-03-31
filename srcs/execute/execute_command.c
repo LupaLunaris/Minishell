@@ -121,7 +121,7 @@ int execute_command_for_heredoc(t_cmd *cmd, char **env_array)
     return EXIT_FAILURE;
 }
 
-void execute_command(t_cmd *cmd, char **env_array)
+int execute_command(t_cmd *cmd, char **env_array)
 {
     char *cmd_path;
     struct stat file_stat;
@@ -176,4 +176,5 @@ void execute_command(t_cmd *cmd, char **env_array)
             exit(127);
         }
     }
+	return 0;
 }

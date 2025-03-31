@@ -6,20 +6,42 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 16:20:36 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/31 21:38:48 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/31 22:04:48 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/**
+ * Ajoute une variable d'environnement à la liste
+ * @param env_list Liste des variables d'environnement
+ * @param name Nom de la variable
+ * @param value Valeur de la variable
+ * @return 1 en cas de succès, 0 sinon
+ */
 int add_env_var(t_env_list **env_list, char *name, char *value)
 {
     t_env_list *new_node;
+    t_env_list *current;
+    
+    // Vérifier d'abord si la variable existe déjà
+    current = *env_list;
+    while (current)
+    {
+        if (ft_strcmp(current->key, name) == 0)
+        {
+            // Mise à jour de la valeur
+            free(current->value);
+            current->value = ft_strdup(value);
+            return (1);
+        }
+        current = current->next;
+    }
     
     // Allouer de la mémoire pour le nouveau nœud
     new_node = (t_env_list *)malloc(sizeof(t_env_list));
     if (!new_node)
-        return (0); // Échec
+        return (0);
     
     // Initialiser les champs du nouveau nœud
     new_node->key = ft_strdup(name);
@@ -43,18 +65,24 @@ int add_env_var(t_env_list **env_list, char *name, char *value)
     if (*env_list == NULL)
     {
         *env_list = new_node;
-        return (1); // Succès
+        return (1);
     }
     
     // Sinon, ajouter à la fin de la liste
-    t_env_list *current = *env_list;
+    current = *env_list;
     while (current->next)
         current = current->next;
     
     current->next = new_node;
-    return (1); // Succès
+    return (1);
 }
 
+/**
+ * Récupère la valeur d'une variable d'environnement
+ * @param list Liste des variables d'environnement
+ * @param key Nom de la variable à rechercher
+ * @return Pointeur sur la valeur ou NULL si non trouvée
+ */
 char *get_env_value(t_env_list *list, char *key)
 {
     t_env_list *current = list;
@@ -75,7 +103,7 @@ char *get_env_value(t_env_list *list, char *key)
  */
 void add_env_var_without_value(t_env_list **env_list, char *key)
 {
-	// Si la variable n'existe pas, l'ajouter avec une valeur vide
-	if (!get_env_value(*env_list, key))
-		add_env_var(env_list, key, "");
+    // Si la variable n'existe pas, l'ajouter avec une valeur vide
+    if (!get_env_value(*env_list, key))
+        add_env_var(env_list, key, "");
 }
