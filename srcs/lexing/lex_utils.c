@@ -150,41 +150,36 @@ char *handle_double(char *prompt, int last_quote)
 
 char *handle_if_quote(char *prompt)
 {
-    char *temps;
-    char first_quote;
-    int last_quote;
-    int *indice;
-    int i = 0;
-    int j = 0;
+	char *temps;
+	char first_quote;
+	int last_quote;
+	int *indice;
+	int i = 0;
+	int j = 0;
 
-    indice = &i;
-    temps = malloc(strlen(prompt) * 3 + 1); // Assure-toi de vérifier que malloc réussit
-    if (!temps) // Vérifie si l'allocation a réussi
-        return NULL;
-
-    first_quote = find_quote(prompt, indice); // indice devient l'indice où se situe la première quote
-    if (!(is_closed(prompt, first_quote))) // la quote n'est pas fermée
-        return NULL;
-    
-    if (is_closed(prompt, '\'') == -1 && is_closed(prompt, '"') == -1) // si il n'y a pas de quote
-    {
-        printf("il n'y a pas de quote\n");
-        return prompt;
-    }
-
-    last_quote = closer_quote(&prompt[(*indice) + 1], first_quote);
-    printf("j =  %d \n" ,j);
-    printf("indice =  %d \n" ,*indice);
-    
-    // Utilisation de 'i' pour parcourir 'prompt' et 'j' pour 'temps'
-    for (i = 0; i < *indice; i++, j++)
-    {
-        printf("indice =  %d \n" ,*indice);
-        temps[j] = prompt[i];
-    }
-    
-    temps[j] = 0; // Ajout de la fin de chaîne
-    return temps;
+	indice = &i;
+	temps = malloc(strlen(prompt) * 3 + 1);
+	first_quote = find_quote(prompt, indice); // indice devient l'indice ou se situe la premiere quote
+	//printf("indice =  %d \n" ,*indice);
+	if (!(is_closed(prompt, first_quote))) // la quote n'est pas fermer
+		return(NULL);
+	if (is_closed(prompt, '\'') == -1 && is_closed(prompt, '"') == -1) // si il n'y a pas de quote
+	{
+		printf("il n'y a pas de quote\n");
+		return(prompt);
+	}
+	last_quote = closer_quote(&prompt[(*indice) + 1], first_quote);
+	printf("j =  %d \n" ,j);
+	printf("indice =  %d \n" ,*indice);
+	while( j < *indice)
+	{
+		printf("indice =  %d \n" ,*indice);
+		temps[j++] =  prompt[j++];
+	}
+	temps[j] = 0;
+	//last_quote = closer_quote(&prompt[(*indice)], first_quote); // on recupere l'indice de la quote fermante
+	//temps = handle_double(&prompt[*indice + 1], last_quote);  // on gere a partir de la cote "char = first quote" juste l'indice 'last_quote"
+	return temps;
 }
 
 

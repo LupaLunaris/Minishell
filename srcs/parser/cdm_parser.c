@@ -16,19 +16,19 @@
 //  echo "bla" > test.txt
 // cdm->args = {"echo", "bla"}
 // cdm->output_file = test.txt
-// void	free_arr(char **arr)
-// {
-// 	int  i;
+void	free_arr(char **arr)
+{
+	int  i;
 
-// 	i = 0;
-// 	if (!arr)
-// 		return;
-// 	while(arr[i])
-// 	{
-// 		free(arr[i++]);
-// 	}
-// 	free(arr);
-// }
+	i = 0;
+	if (!arr)
+		return;
+	while(arr[i])
+	{
+		free(arr[i++]);
+	}
+	free(arr);
+}
 
 void	*clean_cmd_list(t_cmd *head)
 {

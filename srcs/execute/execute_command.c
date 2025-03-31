@@ -109,7 +109,7 @@ void	execute_command(t_cmd *cmd, char **env_array)
 	}
 	else
 	{
-		fprintf(stderr, "command not found: %s\n", cmd->cmd);
+		error_handler(cmd->cmd,"command not found" , 1, 127);
 	}
 	exit(EXIT_FAILURE);
 }

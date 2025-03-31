@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 10:17:19 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/31 18:46:41 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/31 18:57:53 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ char **new_args(char **args, int indice)
     if (!args)
         return (NULL);
     size_args = array_len(args);
-    if (indice >= size_args) // Vérification pour éviter un accès hors limite
+    if (indice >= size_args)
         return (args);
     new_args = malloc(sizeof(char *) * (size_args + 2));
     if (!new_args)
@@ -82,7 +82,6 @@ char **new_args(char **args, int indice)
     return (new_args);
 }
 
-
 void var_expend(t_env_list *list, t_cmd *cmds, t_shell_data *data)
 {
     int i;
@@ -101,19 +100,18 @@ void var_expend(t_env_list *list, t_cmd *cmds, t_shell_data *data)
             jump = is_variable(cmd_temp->args[i]);
             if (jump)
             {
-                //printf("jumped by %s \n",cmd_temp->args[i] );
 				value = ft_strtrim((cmd_temp->args[i] + jump), "\"");
                 env_value = get_env_value(list, value);
 
                 if (env_value)
                 {
-                    free(cmd_temp->args[i]); // Libérer avant remplacement
+                    free(cmd_temp->args[i]);
                     cmd_temp->args[i] = strdup(env_value);
                 }
                 else if (value[0] == '?')
                 {
                     char *exit_status_str = ft_itoa(data->exit_status);
-                    cmd_temp->args = new_args(cmd_temp->args, i + 1); // Ne pas libérer avant d'allouer
+                    cmd_temp->args = new_args(cmd_temp->args, i + 1);
                     cmd_temp->args[i] = exit_status_str;
 					{
 						args =  strdup(value + 1);
@@ -125,23 +123,20 @@ void var_expend(t_env_list *list, t_cmd *cmds, t_shell_data *data)
 				else if (value[0] == '$')
                 {
                     char *pid_str = ft_itoa(getpid());
-                    cmd_temp->args = new_args(cmd_temp->args, i); // Ne pas libérer avant d'allouer
+                    cmd_temp->args = new_args(cmd_temp->args, i);
                     cmd_temp->args[i] = pid_str;
 					if(value[1])
 					{
 						args =  strdup(value + 1);
 						args2 = strdup(cmd_temp->args[i]);
 						cmd_temp->args[i] = ft_strjoin(args2, args);
-
 					}
                 }
-
                 else
                 {
                     free(cmd_temp->args[i]);
                     cmd_temp->args[i] = strdup("");
                 }
-
                 free(value);
             }
 			else if (cmd_temp->args[i][0] == '\'')
