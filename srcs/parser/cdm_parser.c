@@ -16,74 +16,104 @@
 //  echo "bla" > test.txt
 // cdm->args = {"echo", "bla"}
 // cdm->output_file = test.txt
-void	free_arr(char **arr)
-{
-	int  i;
 
-	i = 0;
-	if (!arr)
-		return;
-	while(arr[i])
-	{
-		free(arr[i++]);
-	}
-	free(arr);
+
+void clean_redirections(t_redirection *head)
+{
+    t_redirection *tmp;
+
+    while (head)
+    {
+        tmp = head->next;
+        free(head->file);
+        free(head->heredoc_content);
+        free(head);
+        head = tmp;
+    }
 }
 
-void	*clean_cmd_list(t_cmd *head)
+void *clean_cmd_list(t_cmd *head)
 {
-	t_cmd	*tmp;
+    t_cmd *tmp;
 
-	while (head)
-	{
-		tmp = head->next;
-		if (head->args)
-			free_arr(head->args);
-		free(head->input_file);
-		free(head->output_file);
-		free(head);
-		head = tmp;
-	}
-
-	return (NULL);
+    while (head)
+    {
+        tmp = head->next;
+        if (head->args)
+            free_arr(head->args);
+        clean_redirections(head->redirections); // Nettoyer les redirections
+        free(head);
+        head = tmp;
+    }
+    return (NULL);
 }
-int	process_redirection(t_cmd *current, char **splited_args, int *i)
+
+// Fonction auxiliaire pour ajouter une redirection à la liste
+void add_redirection(t_cmd *cmd, char *file, int type, char *heredoc_content)
 {
-	int one;
-	int *isTrue;
-
-	one = 1;
-	isTrue = &one;
-
-	if (!splited_args[*i])
-		return (0);
-	if (ft_strcmp(splited_args[*i], "<") == 0)
-	{
-		if (!splited_args[*i + 1]) // si il n'y a rien apres la redirection
-			return (0); // mettre ceci dans une fonction a part avec message erreur : " zsh: parse error near `\n' " voir l'equivqlent bash
-		current->input_file = ft_strdup(splited_args[++(*i)]); // stock le *char apres "<" dans le node courant
-	}
-	else if (ft_strcmp(splited_args[*i], ">") == 0)
-	{
-		if (!splited_args[*i + 1])
-			return (0);
-		current->output_file = ft_strdup(splited_args[++(*i)]);
-	}
-	else if (ft_strcmp(splited_args[*i], ">>") == 0)
-	{
-		if (!splited_args[*i + 1])
-			return (0);
-		current->output_file = ft_strdup(splited_args[++(*i)]);
-		current->append = *isTrue;
-	}
-	else if (ft_strcmp(splited_args[*i], "<<") == 0)
-	{
-		if (!splited_args[*i + 1])
-			return (0);
-		current->heredoc = ft_strdup(splited_args[++(*i)]);
-	}
-	return (1);
+    t_redirection *new_redir = malloc(sizeof(t_redirection));
+    if (!new_redir)
+        return; // À gérer : erreur d'allocation
+    
+    new_redir->file = file ? ft_strdup(file) : NULL;
+    new_redir->type = type;
+    new_redir->heredoc_content = heredoc_content ? ft_strdup(heredoc_content) : NULL;
+    new_redir->next = NULL;
+    
+    // Ajouter la nouvelle redirection à la fin de la liste
+    if (!cmd->redirections)
+    {
+        cmd->redirections = new_redir;
+    }
+    else
+    {
+        t_redirection *curr = cmd->redirections;
+        while (curr->next)
+            curr = curr->next;
+        curr->next = new_redir;
+    }
 }
+
+int process_redirection(t_cmd *current, char **splited_args, int *i)
+{
+    if (!splited_args[*i])
+        return (0);
+        
+    if (ft_strcmp(splited_args[*i], "<") == 0)
+    {
+        if (!splited_args[*i + 1])
+            return (0); // Erreur de syntaxe
+        
+        add_redirection(current, splited_args[++(*i)], REDIR_INPUT, NULL);
+    }
+    else if (ft_strcmp(splited_args[*i], ">") == 0)
+    {
+        if (!splited_args[*i + 1])
+            return (0);
+            
+        add_redirection(current, splited_args[++(*i)], REDIR_OUTPUT, NULL);
+    }
+    else if (ft_strcmp(splited_args[*i], ">>") == 0)
+    {
+        if (!splited_args[*i + 1])
+            return (0);
+            
+        add_redirection(current, splited_args[++(*i)], REDIR_APPEND, NULL);
+    }
+    else if (ft_strcmp(splited_args[*i], "<<") == 0)
+    {
+        if (!splited_args[*i + 1])
+            return (0);
+            
+        // Pour le heredoc, tu dois gérer le contenu séparément
+        // Ici je suppose que tu as une fonction pour lire le heredoc
+        char *heredoc_content = get_heredoc_content(splited_args[++(*i)]);
+        add_redirection(current, NULL, REDIR_HEREDOC, heredoc_content);
+        free(heredoc_content); // Libérer la copie temporaire
+    }
+    return (1);
+}
+
 
 //fill_cmd_args parcour le tableau splited_args en etant appeler par parser
 //si l'argument est un pipe il gere la redirection et stock la *char "cdm arg1 arg2" dans cdm ->args
@@ -141,9 +171,3 @@ t_cmd	*parser(char **splited_args)
 	}
 	return (head);
 }
-
-
-
-
-
-

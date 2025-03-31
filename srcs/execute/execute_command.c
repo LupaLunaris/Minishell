@@ -57,7 +57,6 @@ char	*get_path(char **env_array)
 	return (path);
 }
 
-
 char	*get_cmd_path(char *cmd, char **env_array)
 {
 	char	*path;
@@ -75,7 +74,6 @@ char	*get_cmd_path(char *cmd, char **env_array)
 	if (cmd_path)
 		return cmd_path;
 	free_arr(paths);
-	printf("no access\n");
 	return (NULL);
 }
 
@@ -104,7 +102,7 @@ void	execute_command(t_cmd *cmd, char **env_array)
 	if (cmd_path)
 	{
 		execve(cmd_path, cmd->args, env_array);
-		perror("execve");
+		error_handler(cmd->cmd,"Is a directory" , 1, 126);
 		free(cmd_path);
 	}
 	else

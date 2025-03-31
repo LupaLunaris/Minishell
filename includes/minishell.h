@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:46:16 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/31 18:33:49 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/31 19:30:07 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,12 @@
 struct s_command;
 struct s_env_list;
 struct s_shell_data;
+struct s_redirection;
 
 typedef struct s_command t_cmd;
 typedef struct s_env_list t_env_list;
 typedef struct s_shell_data t_shell_data;
+typedef struct s_redirection t_redirection;
 
 # define CMD_NOT_FOUND 127
 # define CMD_NOT_EXECUTABLE 126

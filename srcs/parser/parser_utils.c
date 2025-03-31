@@ -18,23 +18,25 @@ int	is_builtin(char *cmd)
 // creer les node de la liste de commande en les initialisant
 // je me pose la question de ce que doivent etre les node->... lier au redirection
 // par default j'ai mis un *char "filname"
-t_cmd	*create_cmd_node(void)
+t_cmd *create_cmd_node(void)
 {
-	t_cmd	*node;
-
-	node = malloc(sizeof(t_cmd));
-	if (!node)
-		return (NULL);
-	node->args = NULL;
-	node->is_builtin = 0;
-	node->pid = 0;
-	node->input_file = NULL;
-	node->output_file = NULL;
-	node->append = 0;
-	node->heredoc = NULL;
-	node->next = NULL;
-	return (node);
+    t_cmd *new_cmd = malloc(sizeof(t_cmd));
+    if (!new_cmd)
+        return (NULL);
+    
+    new_cmd->cmd = NULL;
+    new_cmd->args = NULL;
+    new_cmd->redirections = NULL; // Initialiser à NULL
+    new_cmd->next = NULL;
+    new_cmd->prev = NULL;
+    new_cmd->pid = 0;
+    new_cmd->is_builtin = 0;
+    new_cmd->pipe_fd[0] = -1;
+    new_cmd->pipe_fd[1] = -1;
+    
+    return (new_cmd);
 }
+
 
 // un lst_add_back mais avec t_cmd, rajoute un node a la fin de la liste
 

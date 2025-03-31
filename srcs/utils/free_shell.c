@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 15:14:57 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/19 15:16:20 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/31 19:47:16 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,30 +38,54 @@ void free_shell_data(t_shell_data *data) {
     free(data);
 }
 
-void    free_command(t_cmd *cmd)
+void free_redirections(t_redirection *redirections)
+{
+    t_redirection *tmp;
+
+    while (redirections)
+    {
+        tmp = redirections->next;
+        
+        // Libérer les champs de la redirection
+        if (redirections->file)
+            free(redirections->file);
+        if (redirections->heredoc_content)
+            free(redirections->heredoc_content);
+        
+        // Libérer la structure
+        free(redirections);
+        
+        // Passer à la suivante
+        redirections = tmp;
+    }
+}
+
+void free_command(t_cmd *cmd)
 {
     t_cmd *tmp;
 
     while (cmd)
-	{
+    {
         tmp = cmd->next;
+        
         // Libère les champs alloués dynamiquement
         if (cmd->cmd)
             free(cmd->cmd);
+        
         if (cmd->args)
-		{
+        {
             for (int i = 0; cmd->args[i]; i++)
                 free(cmd->args[i]);
             free(cmd->args);
         }
-        if (cmd->input_file)
-            free(cmd->input_file);
-        if (cmd->output_file)
-            free(cmd->output_file);
-        if (cmd->heredoc)
-            free(cmd->heredoc);
+        
+        // Libère les redirections
+        if (cmd->redirections)
+            free_redirections(cmd->redirections);
+        
         // Libère le maillon actuel
         free(cmd);
+        
         // Passe au suivant
         cmd = tmp;
     }
