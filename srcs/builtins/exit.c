@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 17:22:46 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/29 16:16:59 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/30 20:27:09 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 int builtin_exit(t_cmd *cmd, t_shell_data *data)
 {
 	int exit_code;
-	printf("EEEEEXXXXXXIIIIITTTT\n");
+	
+	exit_code = 0;
 	if (data->interactive)
 		ft_putendl_fd("exit", 2);
 	if (!cmd->args[1])
@@ -41,8 +42,8 @@ int builtin_exit(t_cmd *cmd, t_shell_data *data)
 			ft_putendl_fd("minishell: exit: too many arguments", 2);
 			return 1;
 		}
-		exit_code = ft_atoi(cmd->args[1]);
+		exit_code = ft_atoi(cmd->args[1]) % 256;
 	}
-	exit(exit_code & 0xFF);
+	exit((unsigned char) exit_code);
 	return exit_code;
 }

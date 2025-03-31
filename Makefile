@@ -22,35 +22,37 @@ SIGNALS_DIR		= $(SRCS_DIR)/signaux
 ENV_DIR			= $(SRCS_DIR)/env
 PARSER_DIR		= $(SRCS_DIR)/parser
 VAR_DIR			= $(SRCS_DIR)/var
+LEXING_DIR		= $(SRCS_DIR)/lexing
 
 # Fichiers sources
-SRCS		= $(SRCS_DIR)/main.c \
-			$(SIGNALS_DIR)/signaux.c \
-			$(ENV_DIR)/env.c \
-			$(ENV_DIR)/env_add.c \
-			$(ENV_DIR)/env_init.c \
-			$(ENV_DIR)/env_utils.c \
-			$(BUILTINS_DIR)/cd.c \
-			$(BUILTINS_DIR)/echo.c \
-			$(BUILTINS_DIR)/env_builtins.c \
-			$(BUILTINS_DIR)/exit.c \
-			$(BUILTINS_DIR)/export.c \
-			$(BUILTINS_DIR)/unset.c \
-			$(BUILTINS_DIR)/pwd.c \
-			$(EXECUTE_DIR)/redirections.c \
-			$(EXECUTE_DIR)/pipes.c \
-			$(EXECUTE_DIR)/builtins.c \
-			$(EXECUTE_DIR)/execute.c \
-			$(EXECUTE_DIR)/execute_command.c \
-			$(EXECUTE_DIR)/utils.c \
-			$(EXECUTE_DIR)/heredoc.c \
-			$(UTILS_DIR)/clean_exit.c \
-			$(UTILS_DIR)/error.c \
-			$(UTILS_DIR)/free_shell.c \
-			$(PARSER_DIR)/cdm_parser.c \
-			$(PARSER_DIR)/parser_utils.c \
-			$(PARSER_DIR)/parser_utils2.c \
-			$(VAR_DIR)/var_expend.c
+SRCS       = $(SRCS_DIR)/main.c \
+			 $(SIGNALS_DIR)/signaux.c \
+			 $(ENV_DIR)/env.c \
+			 $(ENV_DIR)/env_add.c \
+			 $(ENV_DIR)/env_init.c \
+			 $(ENV_DIR)/env_utils.c \
+			 $(BUILTINS_DIR)/cd.c \
+			 $(BUILTINS_DIR)/echo.c \
+			 $(BUILTINS_DIR)/env_builtins.c \
+			 $(BUILTINS_DIR)/exit.c \
+			 $(BUILTINS_DIR)/export.c \
+			 $(BUILTINS_DIR)/unset.c \
+			 $(BUILTINS_DIR)/pwd.c \
+			 $(EXECUTE_DIR)/redirections.c \
+			 $(EXECUTE_DIR)/pipes.c \
+			 $(EXECUTE_DIR)/builtins.c \
+			 $(EXECUTE_DIR)/execute.c \
+			 $(EXECUTE_DIR)/execute_command.c \
+			 $(EXECUTE_DIR)/utils.c \
+			 $(EXECUTE_DIR)/heredoc.c \
+			 $(UTILS_DIR)/error.c \
+			 $(UTILS_DIR)/free_shell.c \
+			 $(PARSER_DIR)/cdm_parser.c \
+			 $(PARSER_DIR)/parser_utils.c \
+			 $(PARSER_DIR)/parser_utils2.c \
+			 $(VAR_DIR)/var_expend.c \
+			 $(SRCS_DIR)/lexing/lexing.c \
+
 
 # Fichiers objets
 OBJS		= $(SRCS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)

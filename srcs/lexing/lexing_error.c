@@ -1,6 +1,5 @@
 
 #include "minishell.h"
-
 int is_space(char c);
 // Vérifie les redirections sans cible
 // static int	check_redirect_errors(char *prompt)
@@ -47,7 +46,7 @@ static int	check_in_op(char *op_array, char op)
 
 }
 
-int	print_error_two(char prompt, char op)
+static int	print_error_two(char op)
 {
 	char unexpected_token[] = {'|', '}', ';', '&', '\0'}; // code 2
 	char unexpected_token_new[] = {'<','>','\0'};
@@ -75,7 +74,7 @@ int	print_error_two(char prompt, char op)
 }
 
 
-int	print_error_other(char prompt, char op)
+static int print_error_other(char op)
 {
 	char Is_a_directory[] = {'/', '\0'};// code: 126
 	char home_user_Is_a_directory[] = {'~', '\0'}; // code: 126
@@ -98,11 +97,11 @@ int	print_error_other(char prompt, char op)
 	}
 	return (1);
 }
-static int	check_op(char prompt, char op)
+static int	check_op(char op)
 {
-	if (!print_error_two(prompt, op))
+	if (!print_error_two(op))
 		return (0);
-	else if (!print_error_other(prompt, op))
+	else if (!print_error_other(op))
 		return (0);
 	return (1);
 }
@@ -115,7 +114,7 @@ static int	check_op_errors(char *prompt, char op)
 	i = 0;
 	while (prompt[i] && is_space(prompt[i])) // Vérifie si la commande commence par un op
 		i++;
-	if (!check_op(prompt[i], op))
+	if (!check_op(op))
 		return(1);
 	i = 0;
 	while (prompt[i])// Vérifie les pipes consécutifs ou pipe en fin de commande
@@ -127,7 +126,7 @@ static int	check_op_errors(char *prompt, char op)
 				i++;
 			if (!prompt[i] || prompt[i] == op) // Erreur si fin de chaîne ou autre pipe
 			{
-				check_op(prompt[i], op);
+				check_op(op);
 				return(1);
 			}
 		}

@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 18:00:51 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/30 17:08:22 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/31 18:22:02 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,6 @@ int setup_redirection(t_cmd *cmd)
         if (setup_input_redirection(cmd->input_file) != 0)
             return (EXIT_FAILURE);
     }
-
     if (cmd->output_file)
     {
         if (setup_output_redirection(cmd->output_file, cmd->append) != 0)

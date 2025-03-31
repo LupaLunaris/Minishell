@@ -1,4 +1,4 @@
-#include "minishell.h"
+#include "../../includes/minishell.h"
 
 // Remplit les arguments de la commande
 // splited_args est un array de *char issu du prompt de l'utilisateur
@@ -16,19 +16,19 @@
 //  echo "bla" > test.txt
 // cdm->args = {"echo", "bla"}
 // cdm->output_file = test.txt
-void	free_arr(char **arr)
-{
-	int  i;
+// void	free_arr(char **arr)
+// {
+// 	int  i;
 
-	i = 0;
-	if (!arr)
-		return;
-	while(arr[i])
-	{
-		free(arr[i++]);
-	}
-	free(arr);
-}
+// 	i = 0;
+// 	if (!arr)
+// 		return;
+// 	while(arr[i])
+// 	{
+// 		free(arr[i++]);
+// 	}
+// 	free(arr);
+// }
 
 void	*clean_cmd_list(t_cmd *head)
 {
@@ -122,7 +122,8 @@ t_cmd	*parser(char **splited_args)
 	t_cmd   *head;
 	t_cmd   *current;
 	int	 i;
-
+	if(!splited_args)
+		return (NULL);
 	head = NULL;
 	i = 0;
 	while (splited_args[i])
