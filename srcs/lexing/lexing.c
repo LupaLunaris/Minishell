@@ -361,53 +361,42 @@ static int	handle_dquote_escape(char *input, int *i, char *output, int *j)
 	return (1);
 }
 
-/* Add single quotes around a word in a single-quoted string */
-static void	add_squote_word(char *output, int *j, char *word_buf, int *w_idx)
-{
-	int	k;
+// /* Add single quotes around a word in a single-quoted string */
+// static void	add_squote_word(char *output, int *j, char *word_buf, int *w_idx)
+// {
+// 	int	k;
 
-	if (*w_idx > 0)
-	{
-		output[(*j)++] = '\''; // Opening quote
-		k = 0;
-		while (k < *w_idx)
-			output[(*j)++] = word_buf[k++];
-		output[(*j)++] = '\''; // Closing quote
+// 	if (*w_idx > 0)
+// 	{
+// 		output[(*j)++] = '\''; // Opening quote
+// 		k = 0;
+// 		while (k < *w_idx)
+// 			output[(*j)++] = word_buf[k++];
+// 		output[(*j)++] = '\''; // Closing quote
 
-		*w_idx = 0; // Reset word buffer
-	}
-}
+// 		*w_idx = 0; // Reset word buffer
+// 	}
+// }
 
 /* Handles content of single quotes - splits into separately quoted words */
-static int	handle_squote_content(char *input, int *i, char *output, int *j)
+static int handle_squote_content(char *input, int *i, char *output, int *j)
 {
-	char	word_buf[1024]; // Buffer for current word
-	int		w_idx;
-
-	(*i)++; // Skip opening quote
-	w_idx = 0;
-	while (input[*i] && input[*i] != '\'')
-	{
-		if (is_space(input[*i]))
-		{
-			add_squote_word(output, j, word_buf, &w_idx);
-			output[(*j)++] = ' ';
-			(*i)++;
-		}
-		else
-		{
-			word_buf[w_idx++] = input[(*i)++];
-		}
-	}
-	add_squote_word(output, j, word_buf, &w_idx);
-
-	if (input[*i] == '\'')
-	{
-		(*i)++; // Skip closing quote
-		return (1);
-	}
-	return (0); // Unclosed quote
+    (*i)++; // Skip opening quote
+    
+    // Copier simplement le contenu sans ajouter de guillemets
+    while (input[*i] && input[*i] != '\'')
+    {
+        output[(*j)++] = input[(*i)++];
+    }
+    
+    if (input[*i] == '\'')
+    {
+        (*i)++; // Skip closing quote
+        return (1);
+    }
+    return (0); // Unclosed quote
 }
+
 
 /* Handles content of double quotes - preserves as is */
 static int	handle_dquote_content(char *input, int *i, char *output, int *j)
@@ -430,32 +419,39 @@ static int	handle_dquote_content(char *input, int *i, char *output, int *j)
 }
 
 /* Handles quotes and surrounding spaces */
-static int	handle_quotes(char *input, int *i, char *output, int *j)
+static int handle_quotes(char *input, int *i, char *output, int *j)
 {
-	int	success;
-
-	if ((*j) > 0 && !is_space(output[(*j) - 1]))
-		output[(*j)++] = ' ';
-
-	if (input[*i] == '\'')
-		success = handle_squote_content(input, i, output, j);
-	else
-	{
-		// For double quotes, just process the content without adding quotes
-		success = handle_dquote_content(input, i, output, j);
-	}
-
-	if (!success)
-	{
-		printf("bash: syntax error: unclosed quote\n");
-		return (0);
-	}
-
-	if (input[*i] && !is_space(input[*i]) && !is_operator(input[*i]))
-		output[(*j)++] = ' ';
-
-	return (1);
+    int success;
+    int need_space_before = 0;
+    int need_space_after = 0;
+    
+    // Vérifier si on a besoin d'un espace avant
+    if ((*j) > 0 && !is_space(output[(*j) - 1]) && !is_operator(output[(*j) - 1]))
+        need_space_before = 1;
+    
+    // Traiter le contenu des guillemets
+    if (input[*i] == '\'')
+        success = handle_squote_content(input, i, output, j);
+    else
+        success = handle_dquote_content(input, i, output, j);
+    
+    if (!success)
+    {
+        printf("bash: syntax error: unclosed quote\n");
+        return (0);
+    }
+    
+    // Vérifier si on a besoin d'un espace après
+    if (input[*i] && !is_space(input[*i]) && !is_operator(input[*i]))
+        need_space_after = 1;
+    
+    // Ajouter les espaces si nécessaire
+    if (need_space_after && need_space_before)
+        output[(*j)++] = ' '; 
+        
+    return (1);
 }
+
 
 /* Processes spaces in input */
 static int	handle_spaces(int *i, char *output, int *j)

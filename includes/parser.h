@@ -7,8 +7,8 @@
 int     process_redirection(t_cmd *current, char **splited_args, int *i);
 void    fill_cmd_args(t_cmd *cmd, char **splited_args, int *i);
 t_cmd   *parser(char **splited_args);
-void    free_arr(char **arr);  // Ajout de cette déclaration
-void    *clean_cmd_list(t_cmd *cmd);  // Vérifiez que cette déclaration est déjà présente
+void    free_arr(char **arr);
+void    *clean_cmd_list(t_cmd *cmd);
 
 // Fonctions utilitaires
 int     is_redirect(char *token);
