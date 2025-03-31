@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 14:08:00 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/19 17:36:39 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/31 21:49:21 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,6 @@ int             builtin_exit(t_cmd *cmd, t_shell_data *data);
 int             builtin_export(t_cmd *cmd,  t_env_list **env_list);
 int             builtin_unset(char **args,  t_env_list **env_list);
 int             builtin_env(t_cmd *cmd, t_env_list **env_list);
+int is_valid_identifier(char *arg);
 
 #endif

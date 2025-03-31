@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 10:17:19 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/31 21:35:06 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/31 21:38:43 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,48 +33,7 @@ void update_env_var(t_env_list **env_list, char *name, char *value)
     add_env_var(env_list, name, value);
 }
 
-int add_env_var(t_env_list **env_list, char *name, char *value)
-{
-    t_env_list *new_node;
-    
-    // Allouer de la mémoire pour le nouveau nœud
-    new_node = (t_env_list *)malloc(sizeof(t_env_list));
-    if (!new_node)
-        return (0); // Échec
-    
-    // Initialiser les champs du nouveau nœud
-    new_node->key = ft_strdup(name);
-    if (!new_node->key)
-    {
-        free(new_node);
-        return (0);
-    }
-    
-    new_node->value = ft_strdup(value);
-    if (!new_node->value)
-    {
-        free(new_node->key);
-        free(new_node);
-        return (0);
-    }
-    
-    new_node->next = NULL;
-    
-    // Cas particulier : liste vide
-    if (*env_list == NULL)
-    {
-        *env_list = new_node;
-        return (1); // Succès
-    }
-    
-    // Sinon, ajouter à la fin de la liste
-    t_env_list *current = *env_list;
-    while (current->next)
-        current = current->next;
-    
-    current->next = new_node;
-    return (1); // Succès
-}
+
 
 int is_variable(char *str)
 {

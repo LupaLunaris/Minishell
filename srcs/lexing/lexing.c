@@ -43,7 +43,7 @@ static int handle_squote_content(char *input, int *i, char *output, int *j)
 {
     (*i)++; // Skip opening quote
     
-    // Copy content literally
+    // Copy content literally without any interpretation
     while (input[*i] && input[*i] != '\'')
     {
         output[(*j)++] = input[(*i)++];
@@ -56,6 +56,7 @@ static int handle_squote_content(char *input, int *i, char *output, int *j)
     }
     return (0); // Unclosed quote
 }
+
 
 /* Handles content of double quotes - preserves as is */
 static int handle_dquote_content(char *input, int *i, char *output, int *j)

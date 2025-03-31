@@ -1,22 +1,5 @@
 #include "../../includes/minishell.h"
 
-// Remplit les arguments de la commande
-// splited_args est un array de *char issu du prompt de l'utilisateur
-// donc tous ce qui est separer par un espace  y est stoker sous forme de *char
-// pipe redirection cmd ...
-
-//le principe de ce parsing est de tout stocker dans une listes *t_cmd
-
-// chaque pipe ajoute un node a la liste
-
-// chaque redirection rempli l'attribut correspondant dans le node courant
-
-// si redirection < > << >>
-//	 on stocke ce qui suit dans le node t_cdm courant
-//  echo "bla" > test.txt
-// cdm->args = {"echo", "bla"}
-// cdm->output_file = test.txt
-
 void	free_arr(char **arr)
 {
 	int  i;

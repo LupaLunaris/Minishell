@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 15:42:25 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/17 13:56:48 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/31 21:43:49 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,7 @@ void print_export_list(t_env_list *env_list)
 		env_list = env_list->next;
 	}
 	sorted_env[i] = NULL;
-	sort_env_list(sorted_env, count); // Trier le tableau
-	// Afficher les variables au format declare -x
+	sort_env_list(sorted_env, count);
 	i = 0;
 	while (i < count)
 	{

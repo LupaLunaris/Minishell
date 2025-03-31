@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 16:02:36 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/12 16:07:21 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/31 21:49:04 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,25 +21,30 @@
  * @param str La chaîne à vérifier
  * @return 1 si l'identifiant est valide, 0 sinon
  */
-int is_valid_identifier(char *str)
+int is_valid_identifier(char *arg)
 {
     int i;
-
-    // Vérification de paramètre NULL
-    if (!str || !*str)
+    char *equals_pos;
+    
+    if (!arg || !*arg)
         return (0);
-    // Premier caractère: lettre ou underscore uniquement
-    if (!(ft_isalpha(str[0]) || str[0] == '_'))
-		return (0);
-
-    // Caractères suivants: lettres, chiffres ou underscore
-    i = 1;
-    while (str[i])
+        
+    // Si l'argument commence par un chiffre ou autre chose qu'une lettre ou underscore
+    if (!ft_isalpha(arg[0]) && arg[0] != '_')
+        return (0);
+        
+    // Chercher le signe égal pour séparer le nom et la valeur
+    equals_pos = ft_strchr(arg, '=');
+    i = 0;
+    
+    // Vérifier chaque caractère jusqu'au signe égal ou la fin
+    while (arg[i] && (!equals_pos || &arg[i] < equals_pos))
     {
-        if (!(ft_isalnum(str[i]) || str[i] == '_' ||  str[i] == '=' )) // j'ai rajouter le =
-			return (0);
+        if (!ft_isalnum(arg[i]) && arg[i] != '_')
+            return (0);
         i++;
     }
+    
     return (1);
 }
 
