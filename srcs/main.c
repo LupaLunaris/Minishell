@@ -27,7 +27,7 @@ t_shell_data *init_shell_data(char **envp)
 void handle_signals_and_input(t_shell_data *data, char **rl, int *should_exit)
 {
     *rl = readline("MiniShellDeLaMort> ");
-    
+
     if (*rl == NULL)
     {
         if (data->interactive)
@@ -44,47 +44,86 @@ void handle_signals_and_input(t_shell_data *data, char **rl, int *should_exit)
 
 int process_command(char *input, t_shell_data *data)
 {
-    char *lexed_input;
+    t_token *lexed_input;
     char **tokens;
     t_cmd *cmd_list;
     int ret;
-    
+
     // Étape 1: Lexer la ligne d'entrée
-    lexed_input = lexing(input);
+    lexed_input = lexer(input);
     if (!lexed_input)
         return 1; // Une erreur est déjà affichée dans lexing
-    
+
     // Étape 2: Séparer en tokens
-    tokens = ft_split(lexed_input, ' ');
-    free(lexed_input);
+    tokens = ft_split(lexed_input->value, ' ');
+    //free(lexed_input);
     if (!tokens)
         return (error_handler("memory allocation", NULL, 0, EXIT_FAILURE));
-    
+
     // Étape 3: Parser les tokens en structure de commande
     cmd_list = parser(tokens);
-    
+
     // Libérer les tokens
     free_arr(tokens);
-    
+
     if (!cmd_list)
         return (error_handler("parsing", NULL, 0, EXIT_FAILURE));
-    
+
     // Étape 4: Identifier les builtins
     add_builtin(cmd_list);
-    
+
     // Étape 5: Exécuter les commandes
     ret = execute(cmd_list, data->env_list, data);
-    
+
     // Étape 6: Nettoyer
     clean_cmd_list(cmd_list);
-    
+
     return ret;
+}
+// static void    print_cmd2(t_cmd *cmd)
+// {
+//     int i;
+
+//     printf("\n--- Nouvelle commande ---\n");
+//     printf("Arguments : ");
+//     if (cmd->args)
+//     {
+//         i = 0;
+//         while (cmd->args[i])
+//         {
+//             printf("[%s] ", cmd->args[i]);
+//             i++;
+//         }
+//     }
+//     printf("\n");
+
+// 	if (cmd->cmd)
+// 		printf("commande : %s\n", cmd->cmd);
+// 	if (cmd->is_builtin)
+// 		printf("%s : est un builtin\n", cmd->cmd);
+
+// }
+
+static void    print_token(t_token *token)
+{
+
+	t_token *tok = token;
+    printf("\n--- token value ---\n");
+	while(tok)
+	{
+		if (tok->value)
+		{
+			printf("[%s] ",tok->value);
+		}
+		printf("\n");
+		tok = tok->next;
+	}
 }
 
 int main(int argc, char **argv, char **envp)
 {
     char *rl = NULL;
-    char *lexed = NULL;
+    t_token *lexed = NULL;
     char **tokens = NULL;
     t_cmd *cmds = NULL;
     t_shell_data *data = NULL;
@@ -131,7 +170,8 @@ int main(int argc, char **argv, char **envp)
             add_history(rl);
 
         // Lexing
-        lexed = lexing(rl);
+        lexed = lexer(rl);
+		print_token(lexed);
         if (!lexed)
         {
             free(rl);
@@ -142,9 +182,9 @@ int main(int argc, char **argv, char **envp)
         set_signals_noninteractive();
 
         // Parsing et préparation des commandes
-        tokens = ft_split(lexed, ' ');
+        tokens = ft_split(lexed->value, ' ');
         free(lexed);
-        
+
         if (!tokens)
         {
             free(rl);
@@ -154,18 +194,17 @@ int main(int argc, char **argv, char **envp)
 
         cmds = parser(tokens);
         free_arr(tokens);
-        
         if (cmds)
         {
             // Expansion des variables
             var_expend(data->env_list, cmds, data);
-            
+
             // Ajout des builtins
             add_builtin(cmds);
-            
+
             // Exécution des commandes
             data->exit_status = execute(cmds, data->env_list, data);
-            
+
             // Nettoyage des commandes
             free_command(cmds);
             cmds = NULL;
@@ -184,7 +223,7 @@ int main(int argc, char **argv, char **envp)
 
     // Nettoyer et quitter proprement
     cleanup_and_exit(NULL, NULL, data, NULL, data->exit_status);
-    
+
     // Cette ligne ne sera jamais atteinte
     return data->exit_status;
 }
