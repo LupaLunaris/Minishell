@@ -12,28 +12,16 @@
 
 #include "minishell.h"
 
-#define TOKEN_WORD      1
-#define TOKEN_PIPE      2
-#define TOKEN_REDIR_IN  3
-#define TOKEN_REDIR_OUT 4
-#define TOKEN_APPEND    5
-#define TOKEN_HEREDOC   6
-#define TOKEN_ERROR     7
-
 /* Vérifie si un caractère est un opérateur */
 int	is_operator(char c)
 {
-	if (c == '|' || c == '<' || c == '>' || c == ';' || c == '&')
-		return (1);
-	return (0);
+	return (c == '|' || c == '<' || c == '>' || c == ';');
 }
 
 /* Vérifie si un caractère est un espace */
 int	is_space(char c)
 {
-	if (c == ' ' || c == '\t' || c == '\n')
-		return (1);
-	return (0);
+	return (c == ' ' || c == '\t' || c == '\n');
 }
 
 /* Crée un nouveau token */
@@ -52,6 +40,7 @@ t_token	*create_token(char *value, int type)
 	}
 	token->type = type;
 	token->next = NULL;
+	token->prev = NULL;
 	return (token);
 }
 
@@ -71,7 +60,9 @@ void	add_token(t_token **tokens, t_token *new_token)
 	while (current->next)
 		current = current->next;
 	current->next = new_token;
+	new_token->prev = current;
 }
+
 /* Libère la mémoire utilisée par les tokens */
 void	free_tokens(t_token *tokens)
 {
@@ -92,6 +83,8 @@ static void	init_lexer(t_lexer *lex, char *input)
 	lex->input = input;
 	lex->position = 0;
 	lex->current_token = malloc(4096);
+	if (!lex->current_token)
+		return ;
 	lex->current_pos = 0;
 	lex->tokens = NULL;
 	lex->state = STATE_NORMAL;
@@ -108,47 +101,47 @@ static void	add_current_token(t_lexer *lex)
 	}
 }
 
-/* Gère un opérateur de redirection */
 /* Gère une redirection de type input (<, <<) */
 static void handle_input_redirection(t_lexer *lex)
 {
-    if (lex->input[lex->position + 1] == '<')
-    {
-        add_token(&lex->tokens, create_token("<<", TOKEN_HEREDOC));
-        lex->position += 2;
-    }
-    else
-    {
-        add_token(&lex->tokens, create_token("<", TOKEN_REDIR_IN));
-        lex->position++;
-    }
+	if (lex->input[lex->position + 1] == '<')
+	{
+		add_token(&lex->tokens, create_token("<<", TOKEN_HEREDOC));
+		lex->position += 2;
+	}
+	else
+	{
+		add_token(&lex->tokens, create_token("<", TOKEN_REDIR_IN));
+		lex->position++;
+	}
 }
 
 /* Gère une redirection de type output (>, >>) */
 static void handle_output_redirection(t_lexer *lex)
 {
-    if (lex->input[lex->position + 1] == '>')
-    {
-        add_token(&lex->tokens, create_token(">>", TOKEN_APPEND));
-        lex->position += 2;
-    }
-    else
-    {
-        add_token(&lex->tokens, create_token(">", TOKEN_REDIR_OUT));
-        lex->position++;
-    }
+	if (lex->input[lex->position + 1] == '>')
+	{
+		add_token(&lex->tokens, create_token(">>", TOKEN_APPEND));
+		lex->position += 2;
+	}
+	else
+	{
+		add_token(&lex->tokens, create_token(">", TOKEN_REDIR_OUT));
+		lex->position++;
+	}
 }
 
 /* Gère un opérateur de redirection */
 static void handle_redirection(t_lexer *lex)
 {
-    add_current_token(lex);
+	add_current_token(lex);
 
-    if (lex->input[lex->position] == '<')
-        handle_input_redirection(lex);
-    else if (lex->input[lex->position] == '>')
-        handle_output_redirection(lex);
+	if (lex->input[lex->position] == '<')
+		handle_input_redirection(lex);
+	else if (lex->input[lex->position] == '>')
+		handle_output_redirection(lex);
 }
+
 /* Gère un pipe */
 static void	handle_pipe(t_lexer *lex)
 {
@@ -157,46 +150,47 @@ static void	handle_pipe(t_lexer *lex)
 	lex->position++;
 }
 
-/* Gère l'état normal (hors guillemets) */
 /* Gère un guillemet simple ou double */
 static void handle_quote(t_lexer *lex, char quote_type)
 {
-    lex->current_token[lex->current_pos++] = quote_type;
-    lex->position++;
+	// On ajoute le guillemet ouvrant au token
+	lex->current_token[lex->current_pos++] = quote_type;
+	lex->position++;
 
-    if (quote_type == '\'')
-        lex->state = STATE_IN_SQUOTE;
-    else if (quote_type == '"')
-        lex->state = STATE_IN_DQUOTE;
+	// Changement d'état selon le type de guillemet
+	if (quote_type == '\'')
+		lex->state = STATE_IN_SQUOTE;
+	else if (quote_type == '"')
+		lex->state = STATE_IN_DQUOTE;
 }
 
 /* Gère un caractère normal (ni espace, ni opérateur, ni guillemet) */
 static void handle_normal_char(t_lexer *lex)
 {
-    lex->current_token[lex->current_pos++] = lex->input[lex->position];
-    lex->position++;
+	lex->current_token[lex->current_pos++] = lex->input[lex->position];
+	lex->position++;
 }
 
 /* Gère l'état normal (hors guillemets) */
 static void process_normal_state(t_lexer *lex)
 {
-    char c;
+	char c;
 
-    c = lex->input[lex->position];
+	c = lex->input[lex->position];
 
-    if (is_space(c))
-    {
-        add_current_token(lex);
-        lex->position++;
-    }
-    else if (c == '<' || c == '>')
-        handle_redirection(lex);
-    else if (c == '|')
-        handle_pipe(lex);
-    else if (c == '\'' || c == '"')
-        handle_quote(lex, c);
-    else
-        handle_normal_char(lex);
+	if (is_space(c))
+	{
+		add_current_token(lex);
+		lex->position++;
+	}
+	else if (c == '<' || c == '>')
+		handle_redirection(lex);
+	else if (c == '|')
+		handle_pipe(lex);
+	else if (c == '\'' || c == '"')
+		handle_quote(lex, c);
+	else
+		handle_normal_char(lex);
 }
 
 /* Gère l'état dans des guillemets simples */
@@ -226,12 +220,18 @@ static void	process_dquote_state(t_lexer *lex)
 	if (c == '"')
 		lex->state = STATE_NORMAL;
 }
+
 /* Fonction principale de lexing */
 t_token	*lexer(char *input)
 {
 	t_lexer	lex;
 
+	if (!input)
+		return (NULL);
+
 	init_lexer(&lex, input);
+	if (!lex.current_token)
+		return (NULL);
 
 	while (lex.input[lex.position])
 	{
@@ -248,7 +248,10 @@ t_token	*lexer(char *input)
 
 	// Vérifier si tous les guillemets sont fermés
 	if (lex.state != STATE_NORMAL)
+	{
 		add_token(&lex.tokens, create_token("unclosed quote", TOKEN_ERROR));
+		ft_putendl_fd("minishell: syntax error: unclosed quote", 2);
+	}
 
 	free(lex.current_token);
 	return (lex.tokens);

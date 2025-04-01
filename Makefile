@@ -47,11 +47,9 @@ SRCS       = $(SRCS_DIR)/main.c \
 			 $(EXECUTE_DIR)/heredoc.c \
 			 $(UTILS_DIR)/error.c \
 			 $(UTILS_DIR)/free_shell.c \
-			 $(PARSER_DIR)/cdm_parser.c \
-			 $(PARSER_DIR)/parser_utils.c \
-			 $(PARSER_DIR)/parser_utils2.c \
+			 $(PARSER_DIR)/parser.c \
 			 $(VAR_DIR)/var_expend.c \
-			 $(SRCS_DIR)/lexing/lexing.c \
+			 $(LEXING_DIR)/lexing.c
 
 
 # Fichiers objets

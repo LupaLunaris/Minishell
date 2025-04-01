@@ -20,12 +20,22 @@
 # define STATE_IN_SQUOTE  1
 # define STATE_IN_DQUOTE  2
 
+/* Types de tokens */
+# define TOKEN_WORD      1
+# define TOKEN_PIPE      2
+# define TOKEN_REDIR_IN  3
+# define TOKEN_REDIR_OUT 4
+# define TOKEN_APPEND    5
+# define TOKEN_HEREDOC   6
+# define TOKEN_ERROR     7
+
 /* Structure d'un token */
 typedef struct s_token
 {
 	char			*value;
 	int				type;
 	struct s_token	*next;
+	struct s_token	*prev;  /* Ajouté pour faciliter la navigation */
 }	t_token;
 
 /* Structure du lexer */
