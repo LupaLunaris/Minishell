@@ -12,29 +12,27 @@
 
 #include "minishell.h"
 
-int execute_builtin(t_cmd *cmd, t_shell_data *data)
+int	execute_builtin(t_cmd *cmd, t_shell_data *data)
 {
-    int ret = 0;
+	int	ret;
 
-    if (!ft_strcmp(cmd->cmd, "echo"))
-        ret = builtin_echo(cmd);
-    else if (!ft_strcmp(cmd->cmd, "cd"))
-        ret = builtin_cd(cmd->args, &data->env_list);
-    else if (!ft_strcmp(cmd->cmd, "pwd"))
-        ret = builtin_pwd();
-    else if (!ft_strcmp(cmd->cmd, "exit"))
-        ret = builtin_exit(cmd, data);
-    else if (!ft_strcmp(cmd->cmd, "export"))
-        ret = builtin_export(cmd, &data->env_list);
-    else if (!ft_strcmp(cmd->cmd, "unset"))
-        ret = builtin_unset(cmd->args, &data->env_list);
-    else if (!ft_strcmp(cmd->cmd, "env"))
-        ret = builtin_env(cmd, &data->env_list);
-    else
-        ret = 127;
-    
-    // Mettre à jour le code de sortie
-    data->exit_status = ret;
-    
-    return ret;
+	ret = 0;
+	if (!ft_strcmp(cmd->cmd, "echo"))
+		ret = builtin_echo(cmd);
+	else if (!ft_strcmp(cmd->cmd, "cd"))
+		ret = builtin_cd(cmd->args, &data->env_list);
+	else if (!ft_strcmp(cmd->cmd, "pwd"))
+		ret = builtin_pwd();
+	else if (!ft_strcmp(cmd->cmd, "exit"))
+		ret = builtin_exit(cmd, data);
+	else if (!ft_strcmp(cmd->cmd, "export"))
+		ret = builtin_export(cmd, &data->env_list);
+	else if (!ft_strcmp(cmd->cmd, "unset"))
+		ret = builtin_unset(cmd->args, &data->env_list);
+	else if (!ft_strcmp(cmd->cmd, "env"))
+		ret = builtin_env(cmd, &data->env_list);
+	else
+		ret = 127;
+	data->exit_status = ret;
+	return (ret);
 }
