@@ -6,11 +6,32 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 15:54:59 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/12 16:00:52 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/02 15:25:02 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void update_env_var(t_env_list **env_list, char *name, char *value)
+{
+    t_env_list *current = *env_list;
+
+    // Chercher si la variable existe déjà
+    while (current)
+    {
+        if (ft_strcmp(current->key, name) == 0)
+        {
+            // Mettre à jour la valeur
+            free(current->value);
+            current->value = ft_strdup(value);
+            return;
+        }
+        current = current->next;
+    }
+
+    // Si la variable n'existe pas, l'ajouter
+    add_env_var(env_list, name, value);
+}
 
 /**
  * Ajoute une nouvelle variable d'environnement à la liste

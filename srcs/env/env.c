@@ -6,43 +6,11 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 15:29:44 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/17 12:30:56 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/02 15:22:13 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-/**
- * Ajoute une variable d'environnement à partir d'une chaîne "KEY=VALUE"
- * @param env_list Liste des variables d'environnement
- * @param var_str Chaîne au format "KEY=VALUE"
- * @return 0 en cas de succès, -1 sinon
- */
-int add_env_var_from_string(t_env_list **env_list, char *var_str)
-{
-    char *equal_sign;
-    char *key;
-    char *value;
-    int result;
-
-    equal_sign = ft_strchr(var_str, '=');
-    if (!equal_sign)
-        return (-1);
-    // Extraire la clé et la valeur
-    key = ft_substr(var_str, 0, equal_sign - var_str);
-    value = ft_strdup(equal_sign + 1);
-    if (!key || !value)
-	{
-        free(key);
-        free(value);
-        return (-1);
-    }
-    // Utiliser la fonction de base
-    result = add_env_var(env_list, key, value);
-    free(key);
-    free(value);
-    return (result);
-}
 
 /**
  * Recherche une variable d'environnement par son nom
