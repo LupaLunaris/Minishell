@@ -35,6 +35,7 @@ SRCS       = $(SRCS_DIR)/main.c \
 			 $(BUILTINS_DIR)/env_builtins.c \
 			 $(BUILTINS_DIR)/exit.c \
 			 $(BUILTINS_DIR)/export.c \
+			 $(BUILTINS_DIR)/export_utils.c \
 			 $(BUILTINS_DIR)/unset.c \
 			 $(BUILTINS_DIR)/pwd.c \
 			 $(EXECUTE_DIR)/redirections.c \
