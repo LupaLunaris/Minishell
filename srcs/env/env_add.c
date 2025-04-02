@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 16:20:36 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/02 15:32:33 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/02 21:55:10 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,4 +92,32 @@ int	add_env_var_from_string(t_env_list **env_list, char *var_str)
 	free(key);
 	free(value);
 	return (result);
+}
+
+/**
+ * Ajoute une nouvelle variable d'environnement à la liste
+ * @param env_list Liste des variables d'environnement
+ * @param key Nom de la variable
+ * @param value Valeur de la variable
+ */
+void	add_env_node(t_env_list **env_list, char *key, char *value)
+{
+	t_env_list	*new_node;
+	t_env_list	*current;
+
+	new_node = (t_env_list *)malloc(sizeof(t_env_list));
+	if (!new_node)
+		return ;
+	new_node->key = ft_strdup(key);
+	new_node->value = ft_strdup(value);
+	new_node->next = NULL;
+	if (*env_list == NULL)
+	{
+		*env_list = new_node;
+		return ;
+	}
+	current = *env_list;
+	while (current->next)
+		current = current->next;
+	current->next = new_node;
 }
