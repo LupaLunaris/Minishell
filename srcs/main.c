@@ -6,13 +6,13 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 10:17:31 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/31 18:34:09 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/02 12:54:55 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "minishell.h"
 
+/* Initialise les données du shell */
 t_shell_data *init_shell_data(char **envp)
 {
     t_shell_data *data = malloc(sizeof(t_shell_data));
@@ -24,10 +24,11 @@ t_shell_data *init_shell_data(char **envp)
     return data;
 }
 
+/* Gère les signaux et l'entrée utilisateur */
 void handle_signals_and_input(t_shell_data *data, char **rl, int *should_exit)
 {
     *rl = readline("MiniShellDeLaMort> ");
-    
+
     if (*rl == NULL)
     {
         if (data->interactive)
@@ -42,51 +43,147 @@ void handle_signals_and_input(t_shell_data *data, char **rl, int *should_exit)
     set_signals_noninteractive();
 }
 
+/* Fonction utilitaire pour afficher les informations de commande */
+void print_cmd_info(t_cmd *cmd)
+{
+    int i;
+    t_redirection *redir;
+
+    printf("\n=== Commande ===\n");
+    printf("cmd: %s\n", cmd->cmd ? cmd->cmd : "(null)");
+    printf("args: ");
+    if (cmd->args)
+    {
+        i = 0;
+        while (cmd->args[i])
+        {
+            printf("[%s] ", cmd->args[i]);
+            i++;
+        }
+    }
+    printf("\nis_builtin: %d\n", cmd->is_builtin);
+
+    // Afficher les redirections
+    redir = cmd->redirections;
+    while (redir)
+    {
+        printf("Redirection: ");
+        switch (redir->type)
+        {
+            case REDIR_INPUT:
+                printf("< %s\n", redir->file);
+                break;
+            case REDIR_OUTPUT:
+                printf("> %s\n", redir->file);
+                break;
+            case REDIR_APPEND:
+                printf(">> %s\n", redir->file);
+                break;
+            case REDIR_HEREDOC:
+                printf("<< %s\n", redir->file);
+                if (redir->heredoc_content)
+                    printf("  Content: %s\n", redir->heredoc_content);
+                break;
+            default:
+                printf("Type inconnu\n");
+        }
+        redir = redir->next;
+    }
+}
+
+/* Fonction utilitaire pour afficher toute la liste de commandes */
+void print_cmd_list(t_cmd *head)
+{
+    t_cmd *current = head;
+    int cmd_num = 1;
+
+    printf("\n===== Liste des commandes =====\n");
+    while (current)
+    {
+        printf("\nCommande #%d:\n", cmd_num++);
+        print_cmd_info(current);
+
+        // Indiquer s'il y a une commande suivante (après un pipe)
+        if (current->next)
+            printf("\n| (pipe)\n");
+
+        current = current->next;
+    }
+    printf("\n=============================\n");
+}
+
+/* Traite une commande saisie par l'utilisateur */
+/* Traite une commande saisie par l'utilisateur */
 int process_command(char *input, t_shell_data *data)
 {
-    char *lexed_input;
-    char **tokens;
     t_cmd *cmd_list;
     int ret;
-    
-    // Étape 1: Lexer la ligne d'entrée
-    lexed_input = lexing(input);
-    if (!lexed_input)
-        return 1; // Une erreur est déjà affichée dans lexing
-    
-    // Étape 2: Séparer en tokens
-    tokens = ft_split(lexed_input, ' ');
-    free(lexed_input);
-    if (!tokens)
-        return (error_handler("memory allocation", NULL, 0, EXIT_FAILURE));
-    
-    // Étape 3: Parser les tokens en structure de commande
-    cmd_list = parser(tokens);
-    
-    // Libérer les tokens
-    free_arr(tokens);
-    
+
+    // Ignorer les entrées vides
+    if (!input || input[0] == '\0')
+        return (0);
+
+    // Traitement explicite de $ et $? seuls
+    if (strcmp(input, "$") == 0 || strcmp(input, "$?") == 0)
+    {
+        ft_putstr_fd(input, 2);
+        ft_putstr_fd(": command not found\n", 2);
+        return 127;  // Code d'erreur pour "command not found"
+    }
+
+    // Étape 1: Parsing complet (lexing + parsing)
+    cmd_list = parse_input(input);
     if (!cmd_list)
-        return (error_handler("parsing", NULL, 0, EXIT_FAILURE));
-    
-    // Étape 4: Identifier les builtins
-    add_builtin(cmd_list);
-    
-    // Étape 5: Exécuter les commandes
+        return (1); // Erreur déjà affichée dans parse_input
+
+    // Étape 2: Configuration des heredocs
+    t_cmd *curr = cmd_list;
+    while (curr)
+    {
+        t_redirection *redir = curr->redirections;
+        while (redir)
+        {
+            if (redir->type == REDIR_HEREDOC)
+            {
+                int status = process_heredoc(redir->file, curr);
+                if (status != 0)
+                {
+                    clean_cmd_list(cmd_list);
+                    return (status);
+                }
+            }
+            redir = redir->next;
+        }
+        curr = curr->next;
+    }
+
+    // Étape 3: Expansion des variables
+    var_expend(data->env_list, cmd_list, data);
+
+    // Cas particulier: les variables vides
+    if (cmd_list && cmd_list->cmd && cmd_list->cmd[0] == '$')
+    {
+        // Si c'est une variable d'environnement vide, on affiche juste rien
+        if (!ft_strchr(cmd_list->cmd, '/'))
+        {
+            clean_cmd_list(cmd_list);
+            return (0);
+        }
+    }
+
+    // Étape 4: Exécution
     ret = execute(cmd_list, data->env_list, data);
-    
-    // Étape 6: Nettoyer
+
+    // Étape 5: Nettoyage
     clean_cmd_list(cmd_list);
-    
-    return ret;
+
+    return (ret);
 }
+
 
 int main(int argc, char **argv, char **envp)
 {
     char *rl = NULL;
-    char *lexed = NULL;
-    char **tokens = NULL;
-    t_cmd *cmds = NULL;
     t_shell_data *data = NULL;
 
     // Vérifier les arguments
@@ -130,46 +227,11 @@ int main(int argc, char **argv, char **envp)
         if (rl[0] != '\0')
             add_history(rl);
 
-        // Lexing
-        lexed = lexing(rl);
-        if (!lexed)
-        {
-            free(rl);
-            continue;
-        }
-
         // Passer en mode non-interactif avant d'exécuter la commande
         set_signals_noninteractive();
 
-        // Parsing et préparation des commandes
-        tokens = ft_split(lexed, ' ');
-        free(lexed);
-        
-        if (!tokens)
-        {
-            free(rl);
-            error_handler("memory allocation", NULL, 0, EXIT_FAILURE);
-            continue;
-        }
-
-        cmds = parser(tokens);
-        free_arr(tokens);
-        
-        if (cmds)
-        {
-            // Expansion des variables
-            var_expend(data->env_list, cmds, data);
-            
-            // Ajout des builtins
-            add_builtin(cmds);
-            
-            // Exécution des commandes
-            data->exit_status = execute(cmds, data->env_list, data);
-            
-            // Nettoyage des commandes
-            free_command(cmds);
-            cmds = NULL;
-        }
+        // Traiter la commande
+        data->exit_status = process_command(rl, data);
 
         // Vérifier si un signal a été reçu pendant l'exécution
         if (g_signal_received == SIGINT)
@@ -184,7 +246,7 @@ int main(int argc, char **argv, char **envp)
 
     // Nettoyer et quitter proprement
     cleanup_and_exit(NULL, NULL, data, NULL, data->exit_status);
-    
+
     // Cette ligne ne sera jamais atteinte
     return data->exit_status;
 }

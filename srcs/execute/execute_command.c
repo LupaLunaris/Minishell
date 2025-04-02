@@ -121,11 +121,18 @@ int execute_command_for_heredoc(t_cmd *cmd, char **env_array)
     return EXIT_FAILURE;
 }
 
-int execute_command(t_cmd *cmd, char **env_array)
+void execute_command(t_cmd *cmd, char **env_array)
 {
     char *cmd_path;
     struct stat file_stat;
 
+	if (cmd->cmd && 
+        ((cmd->cmd[0] == '$' && cmd->cmd[1] == '\0') || 
+         (cmd->cmd[0] == '$' && cmd->cmd[1] == '?' && cmd->cmd[2] == '\0')))
+    	{
+        	error_handler(cmd->cmd, "command not found", 1, 127);
+       		exit(127);
+    	}
     // Cas où la commande contient un chemin (absolu ou relatif)
     if (strchr(cmd->cmd, '/'))
     {
@@ -176,5 +183,4 @@ int execute_command(t_cmd *cmd, char **env_array)
             exit(127);
         }
     }
-	return 0;
 }

@@ -99,28 +99,35 @@ static void	init_pipeline(t_pipe_data *pd, t_shell_exec *se,
 	pd->pipes[1][1] = -1;
 }
 
-int	execute_pipeline(t_cmd *cmd, t_env_list *env_list, t_shell_data *data)
+int execute_pipeline(t_cmd *cmd, t_env_list *env_list, t_shell_data *data)
 {
-	t_pipe_data		pd;
-	t_cmd			*curr;
-	t_shell_exec	se;
-	int				status;
+    t_pipe_data     pd;
+    t_cmd           *curr;
+    t_shell_exec    se;
+    int             status;
+    int             last_status = 0;  // Pour stocker le statut de la dernière commande
 
-	init_pipeline(&pd, &se, env_list, cmd);
-	se.data = data;
-	curr = cmd;
-	while (curr)
-	{
-		curr->pid = create_process(curr, &pd, &se);
-		if (curr->pid == -1)
-			return (EXIT_FAILURE);
-		curr = curr->next;
-		pd.i++;
-	}
-	status = 0;
-	while (wait(&status) > 0)
-		;
-	if (WIFEXITED(status))
-		return (WEXITSTATUS(status));
-	return (EXIT_FAILURE);
+    init_pipeline(&pd, &se, env_list, cmd);
+    se.data = data;
+    curr = cmd;
+    while (curr)
+    {
+        curr->pid = create_process(curr, &pd, &se);
+        if (curr->pid == -1)
+            return (EXIT_FAILURE);
+        curr = curr->next;
+        pd.i++;
+    }
+    
+    // Attendre toutes les commandes et obtenir le statut de la dernière
+    curr = cmd;
+    while (curr) {
+        waitpid(curr->pid, &status, 0);
+        if (WIFEXITED(status))
+            last_status = WEXITSTATUS(status);
+        curr = curr->next;
+    }
+    
+    // Retourner le statut de la dernière commande
+    return (last_status);
 }

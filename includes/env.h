@@ -39,4 +39,6 @@ void			delete_env_var(t_env_list **env_list, char *key);
 void			var_expend(t_env_list *list, t_cmd *cmds, t_shell_data *data);
 void			update_env_var(t_env_list **env_list, char *name, char *value);
 
+char	*ft_strjoin_env(char const *s1, char const *s2);
+
 #endif
