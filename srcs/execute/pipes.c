@@ -1,195 +1,133 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   pipes.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/17 18:01:14 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/19 17:34:36 by Jpaulis          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   pipes.c											:+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: Jpaulis <Jpaulis@student.s19.be>		   +#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2025/02/17 18:01:14 by Jpaulis		   #+#	#+#			 */
+/*   Updated: 2025/03/19 17:34:36 by Jpaulis		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/* setup_pipes:
- * Configure les entrées/sorties des pipes pour une commande
- */
- void setup_pipes(t_cmd *cmd_list, t_cmd *curr)
- {
-	 if (!curr)
-		 return;
-	 printf("on entre dans la fonction setup_pipe\n");
-	 // Si commande précédente existe et a un pipe, connecter son pipe à l'entrée
-	 printf("curr->inputfile %s\n",curr->input_file);
-	 if (curr->prev && curr->pipe_fd[0] != -1 ) //&& !curr->input_file
-	 {
-		 printf("un pipe précédente existe\n");
-		 dup2(curr->prev->pipe_fd[0], STDIN_FILENO);
-		 //printf("un pipe précédente existe\n");
-	 }
-	 // Si pipé à une commande suivante, connecter sa sortie au pipe
-	 if (curr->next && curr->pipe_fd[1] != -1) // && !curr->output_file
-	 {
-		 printf("un pipe suivant existe\n");
-		 dup2(curr->pipe_fd[1], STDOUT_FILENO);
-		 //printf("un pipe suivant existe\n");
-	 }
-	 printf("on sort des verifs la fonction setup_pipe\n");
-
-	 // Fermer tous les pipes inutiles
-	t_cmd *tmp = cmd_list;
-	while (tmp)
-    {
-        if (tmp->pipe_fd[0] != -1 &&
-            (tmp != curr || (curr->prev && curr->prev->pipe_fd[0] != curr->pipe_fd[0])))
-			{
-				printf("on a fermer le pipes fd[0] de la fonction setup_pipe\n");
-				close(tmp->pipe_fd[0]);
-			}
-
-        if (tmp->pipe_fd[1] != -1 &&
-            (tmp != curr || (curr->next && curr->next->pipe_fd[1] != curr->pipe_fd[1])))
-			{
-				printf("on a fermer le pipes fd[1] de la fonction setup_pipe\n");
-				close(tmp->pipe_fd[1]);
-			}
-        tmp = tmp->next;
-    }
-}
-
-/* create_pipes:
- * Crée les pipes pour les commandes chaînées
- */
-bool create_pipes(t_cmd *cmd_list)
+static void	manage_pipes(t_pipe_data *pd, int is_child)
 {
-    t_cmd *curr = cmd_list;
-	//printf("un pipe est creer\n");
-    while (curr)
-    {
-        curr->pipe_fd[0] = -1;
-        curr->pipe_fd[1] = -1;
-
-        // Crée un pipe si nécessaire (s'il y a une commande suivante)
-        if (curr->next)
-        {
-            if (pipe(curr->pipe_fd) == -1)
-            {
-                perror("pipe");
-                return false;
-            }
-			printf("un pipe est creer dans la fonction create_pipe\n");
-        }
-        curr = curr->next;
-    }
-    return true;
+	if (is_child)
+	{
+		if (pd->i > 0)
+			dup2(pd->pipes[(pd->i - 1) % 2][0], STDIN_FILENO);
+		if (pd->i < pd->cmd_count - 1)
+			dup2(pd->pipes[pd->i % 2][1], STDOUT_FILENO);
+		if (pd->pipes[0][0] != -1)
+			close(pd->pipes[0][0]);
+		if (pd->pipes[0][1] != -1)
+			close(pd->pipes[0][1]);
+		if (pd->pipes[1][0] != -1)
+			close(pd->pipes[1][0]);
+		if (pd->pipes[1][1] != -1)
+			close(pd->pipes[1][1]);
+	}
+	else
+	{
+		if (pd->i > 0)
+			close(pd->pipes[(pd->i - 1) % 2][0]);
+		if (pd->i < pd->cmd_count - 1)
+			close(pd->pipes[pd->i % 2][1]);
+	}
 }
 
-/* close_all_pipes:
- * Ferme tous les pipes
- */
-static void close_all_pipes(t_cmd *cmd_list)
+static void	process_command(t_cmd *curr, t_shell_exec *se)
 {
-    t_cmd *curr = cmd_list;
+	char	**env_array;
 
-    while (curr)
-    {
-        if (curr->pipe_fd[0] != -1)
-            close(curr->pipe_fd[0]);
-        if (curr->pipe_fd[1] != -1)
-            close(curr->pipe_fd[1]);
-        curr = curr->next;
-    }
+	if (setup_redirection(curr->redirections) != 0)
+		exit(EXIT_FAILURE);
+	if (curr->is_builtin)
+		exit(execute_builtin(curr, se->data));
+	else
+	{
+		env_array = env_list_to_array(se->env_list);
+		execute_command(curr, env_array);
+	}
 }
 
-/* execute_piped_cmd:
- * Exécute une commande dans un pipeline
- */
-static void execute_piped_cmd(t_cmd *cmd, t_cmd *cmd_list,
-                            t_env_list *env_list, t_shell_data *data)
+static int	create_process(t_cmd *curr, t_pipe_data *pd, t_shell_exec *se)
 {
+	pid_t	pid;
 
-	char **env_array = env_list_to_array(env_list);
-	// Configure les redirections et pipes
-	printf("on entre dans une commande pipe dans excecute_pipe_cdm\n");
-    setup_redirection(cmd->input_file, cmd->output_file, cmd->append);
-
-    setup_pipes(cmd_list, cmd);
-
-    // Exécute la commande
-    if (cmd->is_builtin)
-    {
-        int status = execute_builtin(cmd, data);
-        exit(status);
-    }
-    else
-    {
-        printf("on entre dans une commande pipe dans excecute_pipe_cdm\n");
-		execute_command(cmd, env_array);
-        // execute_command appelle déjà exit en interne si nécessaire
-    }
+	if (pd->i < pd->cmd_count - 1 && pipe(pd->pipes[pd->i % 2]) == -1)
+	{
+		perror("pipe");
+		return (-1);
+	}
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("fork");
+		return (-1);
+	}
+	if (pid == 0)
+	{
+		manage_pipes(pd, 1);
+		process_command(curr, se);
+	}
+	manage_pipes(pd, 0);
+	return (pid);
 }
 
-/* execute_pipeline:
- * Exécute une série de commandes liées par des pipes
- */
+static void	init_pipeline(t_pipe_data *pd, t_shell_exec *se,
+		t_env_list *env_list, t_cmd *cmd_list)
+{
+	t_cmd	*curr;
+	int		count;
+
+	se->env_list = env_list;
+	count = 0;
+	curr = cmd_list;
+	while (curr)
+	{
+		count++;
+		curr = curr->next;
+	}
+	pd->cmd_count = count;
+	pd->i = 0;
+	pd->pipes[0][0] = -1;
+	pd->pipes[0][1] = -1;
+	pd->pipes[1][0] = -1;
+	pd->pipes[1][1] = -1;
+}
+
 int execute_pipeline(t_cmd *cmd, t_env_list *env_list, t_shell_data *data)
 {
-    bool has_pipe = false;
-    t_cmd *curr = cmd;
+    t_pipe_data     pd;
+    t_cmd           *curr;
+    t_shell_exec    se;
+    int             status;
+    int             last_status = 0;  // Pour stocker le statut de la dernière commande
 
-    // Vérifie si une commande dans la liste est reliée par pipe
-    while (curr)
-    {
-        if (curr->next)
-        {
-            has_pipe = true;
-            break;
-        }
-        curr = curr->next;
-    }
-
-    // Si pas de pipe et builtin, exécution directe
-    if (!has_pipe && cmd->is_builtin)
-    {
-        setup_redirection(cmd->input_file, cmd->output_file, cmd->append);
-        int status = execute_builtin(cmd, data);
-        restore_io(cmd->input_file, cmd->output_file);
-        return status;
-    }
-
-    // Crée les pipes nécessaires
-    if (!create_pipes(cmd))
-        return EXIT_FAILURE;
-
-    // Crée un processus pour chaque commande
+    init_pipeline(&pd, &se, env_list, cmd);
+    se.data = data;
     curr = cmd;
     while (curr)
     {
-        pid_t pid = fork();
-        if (pid == -1)
-        {
-            perror("fork");
-            close_all_pipes(cmd);
-            return EXIT_FAILURE;
-        }
-
-        if (pid == 0) // Processus enfant
-		{
-			printf("on creer des processecus dans execute_pipeline\n");
-			execute_piped_cmd(curr, cmd, env_list, data);
-			printf("on sort de execute_piped_cmd vers execute_pipeline\n");
-		}
-
-
-        curr->pid = pid;
+        curr->pid = create_process(curr, &pd, &se);
+        if (curr->pid == -1)
+            return (EXIT_FAILURE);
+        curr = curr->next;
+        pd.i++;
+    }
+    
+    // Attendre toutes les commandes et obtenir le statut de la dernière
+    curr = cmd;
+    while (curr) {
+        waitpid(curr->pid, &status, 0);
+        if (WIFEXITED(status))
+            last_status = WEXITSTATUS(status);
         curr = curr->next;
     }
-
-    // Ferme tous les pipes dans le processus parent
-    close_all_pipes(cmd);
-
-    // Attendre la fin des processus enfants
-    return get_children(cmd);
-	return 0;
+    
+    // Retourner le statut de la dernière commande
+    return (last_status);
 }

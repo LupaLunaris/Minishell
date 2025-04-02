@@ -1,4 +1,3 @@
-
 # Compilateur et flags
 CC			= cc
 CFLAGS		= -Wall -Wextra -Werror
@@ -22,32 +21,37 @@ UTILS_DIR		= $(SRCS_DIR)/utils
 SIGNALS_DIR		= $(SRCS_DIR)/signaux
 ENV_DIR			= $(SRCS_DIR)/env
 PARSER_DIR		= $(SRCS_DIR)/parser
+LEXING_DIR		= $(SRCS_DIR)/lexing
 
 # Fichiers sources
-SRCS		= $(SRCS_DIR)/main.c \
-			$(SIGNALS_DIR)/signaux.c \
-			$(ENV_DIR)/env.c \
-			$(ENV_DIR)/env_add.c \
-			$(ENV_DIR)/env_init.c \
-			$(ENV_DIR)/env_utils.c \
-			$(BUILTINS_DIR)/cd.c \
-			$(BUILTINS_DIR)/echo.c \
-			$(BUILTINS_DIR)/env_builtins.c \
-			$(BUILTINS_DIR)/exit.c \
-			$(BUILTINS_DIR)/export.c \
-			$(BUILTINS_DIR)/unset.c \
-			$(EXECUTE_DIR)/redirections.c \
-			$(EXECUTE_DIR)/pipes.c \
-			$(EXECUTE_DIR)/builtins.c \
-			$(EXECUTE_DIR)/execute.c \
-			$(EXECUTE_DIR)/execute_command.c \
-			$(EXECUTE_DIR)/utils.c \
-			$(UTILS_DIR)/clean_exit.c \
-			$(UTILS_DIR)/error.c \
-			$(UTILS_DIR)/free_shell.c \
-			$(PARSER_DIR)/cdm_parser.c \
-			$(PARSER_DIR)/parser_utils.c \
-			$(PARSER_DIR)/parser_utils2.c
+SRCS       = $(SRCS_DIR)/main.c \
+			 $(SIGNALS_DIR)/signaux.c \
+			 $(ENV_DIR)/env.c \
+			 $(ENV_DIR)/env_add.c \
+			 $(ENV_DIR)/env_init.c \
+			 $(ENV_DIR)/env_utils.c \
+			 $(BUILTINS_DIR)/cd.c \
+			 $(BUILTINS_DIR)/echo.c \
+			 $(BUILTINS_DIR)/env_builtins.c \
+			 $(BUILTINS_DIR)/exit.c \
+			 $(BUILTINS_DIR)/export.c \
+			 $(BUILTINS_DIR)/unset.c \
+			 $(BUILTINS_DIR)/pwd.c \
+			 $(EXECUTE_DIR)/redirections.c \
+			 $(EXECUTE_DIR)/pipes.c \
+			 $(EXECUTE_DIR)/builtins.c \
+			 $(EXECUTE_DIR)/execute.c \
+			 $(EXECUTE_DIR)/execute_command.c \
+			 $(EXECUTE_DIR)/utils.c \
+			 $(EXECUTE_DIR)/heredoc.c \
+			 $(UTILS_DIR)/error.c \
+			 $(UTILS_DIR)/free_shell.c \
+			 $(PARSER_DIR)/parser.c \
+			 $(ENV_DIR)/var_expend.c \
+			 $(LEXING_DIR)/lexing.c \
+			$(LEXING_DIR)/handle_quotes.c \
+
+
 
 # Fichiers objets
 OBJS		= $(SRCS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)

@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 16:02:36 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/12 16:07:21 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/31 21:49:04 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,34 +17,40 @@
  * Un identifiant valide :
  * - Doit commencer par une lettre (a-z, A-Z) ou un underscore (_)
  * - Ne peut contenir que des lettres, chiffres et underscores
- * 
+ *
  * @param str La chaîne à vérifier
  * @return 1 si l'identifiant est valide, 0 sinon
  */
-int is_valid_identifier(char *str)
+int is_valid_identifier(char *arg)
 {
     int i;
+    char *equals_pos;
     
-    // Vérification de paramètre NULL
-    if (!str || !*str)
+    if (!arg || !*arg)
         return (0);
-    // Premier caractère: lettre ou underscore uniquement
-    if (!(ft_isalpha(str[0]) || str[0] == '_'))
+        
+    // Si l'argument commence par un chiffre ou autre chose qu'une lettre ou underscore
+    if (!ft_isalpha(arg[0]) && arg[0] != '_')
         return (0);
-    // Caractères suivants: lettres, chiffres ou underscore
-    i = 1;
-    while (str[i])
+        
+    // Chercher le signe égal pour séparer le nom et la valeur
+    equals_pos = ft_strchr(arg, '=');
+    i = 0;
+    
+    // Vérifier chaque caractère jusqu'au signe égal ou la fin
+    while (arg[i] && (!equals_pos || &arg[i] < equals_pos))
     {
-        if (!(ft_isalnum(str[i]) || str[i] == '_'))
+        if (!ft_isalnum(arg[i]) && arg[i] != '_')
             return (0);
         i++;
     }
+    
     return (1);
 }
 
 
 /**
- * Commande intégrée 'unset' - Supprime les variables d'environnement 
+ * Commande intégrée 'unset' - Supprime les variables d'environnement
  * @param args     Tableau d'arguments (args[0] est "unset")
  * @param env_list Pointeur sur la liste des variables d'environnement
  * @return         0 en cas de succès, 1 en cas d'erreur
@@ -53,7 +59,7 @@ int builtin_unset(char **args, t_env_list **env_list)
 {
 	int i;      // Index pour parcourir les arguments
 	int status; // Code de retour de la commande
-	
+
 	i = 1;      // Commencer à l'argument 1 (après "unset")
 	status = 0; // Par défaut, pas d'erreur
 	// Si pas d'arguments, on ne fait rien et on retourne 0

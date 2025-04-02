@@ -22,7 +22,7 @@ void add_env_node(t_env_list **env_list, char *key, char *value)
 {
 	t_env_list *new_node;
 	t_env_list *current;
-	
+
 	new_node = (t_env_list *)malloc(sizeof(t_env_list)); // Créer un nouveau nœud
 	if (!new_node)
 		return; // Gestion d'erreur selon ton système
@@ -59,7 +59,7 @@ void delete_env_var(t_env_list **env_list, char *key)
 {
 	t_env_list *current;
 	t_env_list *previous;
-	
+
 	if (!*env_list)
 		return;
 	if (ft_strcmp((*env_list)->key, key) == 0)
@@ -92,7 +92,7 @@ int count_env_vars(t_env_list *env_list)
 {
 	int count;
 	t_env_list *current;
-	
+
 	count = 0;
 	current = env_list;
 	while (current)
@@ -113,7 +113,7 @@ void sort_env_list(t_env_list **env_array, int count)
 	int i;
 	int j;
 	t_env_list *temp;
-	
+
 	i = 0;
 	while (i < count - 1)
 	{
@@ -130,4 +130,33 @@ void sort_env_list(t_env_list **env_array, int count)
 		}
 		i++;
 	}
+}
+char	*ft_strjoin_env(char const *s1, char const *s2)
+{
+	char	*tmp;
+	size_t	size;
+	size_t	i;
+
+	size = ft_strlen(s1) + ft_strlen(s2) + 2;
+	tmp = malloc(sizeof(char) * size);
+	if (!tmp)
+		return (NULL);
+	i = 0;
+	while (i < ft_strlen(s1))
+	{
+		tmp[i] = s1[i];
+		i++;
+	}
+	tmp[i] = '=';
+	i++;
+
+	while (i < size - 1)
+	{
+		tmp[i] = s2[i - ft_strlen(s1) - 1];
+
+		i++;
+	}
+	tmp[i] = '\0';
+
+	return (tmp);
 }
