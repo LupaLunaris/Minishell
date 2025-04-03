@@ -45,6 +45,7 @@ SRCS       = $(SRCS_DIR)/main.c \
 			 $(EXECUTE_DIR)/execute_command.c \
 			 $(EXECUTE_DIR)/utils.c \
 			 $(EXECUTE_DIR)/heredoc.c \
+			 $(EXECUTE_DIR)/heredoc_utils.c \
 			 $(UTILS_DIR)/error.c \
 			 $(UTILS_DIR)/free_shell.c \
 			 $(PARSER_DIR)/parser.c \
