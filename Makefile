@@ -49,6 +49,7 @@ SRCS       = $(SRCS_DIR)/main.c \
 			 $(UTILS_DIR)/free_shell.c \
 			 $(PARSER_DIR)/parser.c \
 			 $(ENV_DIR)/var_expend.c \
+			 $(ENV_DIR)/var_expend2.c \
 			 $(LEXING_DIR)/lexing.c \
 			$(LEXING_DIR)/handle_quotes.c \
 

@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 17:56:35 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/31 19:50:11 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/03 20:51:36 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ void			execute_command(t_cmd *cmds, char **env_array);
 int process_heredoc(char *delimiter, t_cmd *command);
 int	setup_output_redirection(const char *output_file, int append);
 char *get_heredoc_content(char *delimiter);
+void	print_redirections(t_redirection *redir);
+
 
 
 

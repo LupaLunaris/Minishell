@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 16:36:21 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/02 15:35:19 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/03 20:53:24 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ char		*get_env_var(t_env_list *env_list, char *key);
 void		add_env_var_without_value(t_env_list **env_list, char *key);
 void		delete_env_var(t_env_list **env_list, char *key);
 void		var_expend(t_env_list *list, t_cmd *cmds, t_shell_data *data);
+char *expand_variables(char *str, t_env_list *list, t_shell_data *data);
 void		update_env_var(t_env_list **env_list, char *name, char *value);
 int			add_env_var_from_string(t_env_list **env_list, char *var_str);
 char		*ft_strjoin_env(char const *s1, char const *s2);
