@@ -55,6 +55,13 @@ int		is_space(char c);
 t_token	*lexer(char *input);
 t_token	*create_token(char *value, int type);
 void	add_token(t_token **tokens, t_token *new_token);
+void	add_current_token(t_lexer *lex);
 void	free_tokens(t_token *tokens);
-char *remove_quotes(char *str);
+void	handle_redirection(t_lexer *lex);
+void	handle_pipe(t_lexer *lex);
+/* handle_quotes.c */
+char	*remove_quotes(char *str, char quote_type);
+void	handle_quote(t_lexer *lex, char quote_type);
+void	process_dquote_state(t_lexer *lex);
+void	process_squote_state(t_lexer *lex);
 #endif

@@ -47,12 +47,14 @@ SRCS       = $(SRCS_DIR)/main.c \
 			 $(UTILS_DIR)/error.c \
 			 $(UTILS_DIR)/free_shell.c \
 			 $(PARSER_DIR)/parser.c \
+			 $(PARSER_DIR)/parser_clean.c \
+			 $(PARSER_DIR)/handle_redir.c \
+			 $(PARSER_DIR)/parser_utils.c \
 			 $(ENV_DIR)/var_expend.c \
 			 $(LEXING_DIR)/lexing.c \
-			$(LEXING_DIR)/handle_quotes.c \
-
-
-
+			 $(LEXING_DIR)/lex_utils.c \
+			 $(LEXING_DIR)/lex_pipe_redir.c \
+			 $(LEXING_DIR)/handle_quotes.c
 # Fichiers objets
 OBJS		= $(SRCS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)
 
