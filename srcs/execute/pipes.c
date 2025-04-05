@@ -38,7 +38,7 @@ static void	manage_pipes(t_pipe_data *pd, int is_child)
 	}
 }
 
-static void	process_command(t_cmd *curr, t_shell_exec *se)
+static void	process_pipe_command(t_cmd *curr, t_shell_exec *se)
 {
 	char	**env_array;
 
@@ -71,7 +71,7 @@ static int	create_process(t_cmd *curr, t_pipe_data *pd, t_shell_exec *se)
 	if (pid == 0)
 	{
 		manage_pipes(pd, 1);
-		process_command(curr, se);
+		process_pipe_command(curr, se);
 	}
 	manage_pipes(pd, 0);
 	return (pid);

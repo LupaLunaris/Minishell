@@ -25,6 +25,7 @@ LEXING_DIR		= $(SRCS_DIR)/lexing
 
 # Fichiers sources
 SRCS       = $(SRCS_DIR)/main.c \
+			 $(SRCS_DIR)/command_processor.c \
 			 $(SIGNALS_DIR)/signaux.c \
 			 $(ENV_DIR)/env.c \
 			 $(ENV_DIR)/env_add.c \
@@ -48,6 +49,7 @@ SRCS       = $(SRCS_DIR)/main.c \
 			 $(EXECUTE_DIR)/heredoc_utils.c \
 			 $(UTILS_DIR)/error.c \
 			 $(UTILS_DIR)/free_shell.c \
+			 $(UTILS_DIR)/shell_utils.c \
 			 $(ENV_DIR)/var_expend.c \
 			 $(ENV_DIR)/var_expend2.c \
 			 $(PARSER_DIR)/parser.c \

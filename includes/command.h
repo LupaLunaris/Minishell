@@ -6,21 +6,15 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 16:35:04 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/05 19:35:09 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/05 23:00:13 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef COMMAND_H
 # define COMMAND_H
-#include "minishell.h"
+
 
 # include <sys/types.h>
-# include "env.h"
-# include "shell_data.h"
-# include "execute.h"
-# include "builtins.h"
-# include "parser.h"
-# include "signals.h"
 
 typedef enum e_redir_type {
     REDIR_INPUT,     // <
@@ -30,11 +24,12 @@ typedef enum e_redir_type {
 } t_redir_type;
 
 typedef struct s_redirection {
-    char *file;               // Nom du fichier
-    int type;                 // Type: INPUT, OUTPUT, APPEND, HEREDOC
-    char *heredoc_content;    // Contenu du heredoc (si applicable)
-    struct s_redirection *next; // Pointeur vers la prochaine redirection
+    char *file;                    // Nom du fichier
+    t_redir_type type;             // Type: utilise l'enum t_redir_type
+    char *heredoc_content;         // Contenu du heredoc (si applicable)
+    struct s_redirection *next;    // Pointeur vers la prochaine redirection
 } t_redirection;
+
 
 typedef struct s_command
 {
@@ -46,6 +41,8 @@ typedef struct s_command
 	pid_t		pid;
 	int is_builtin;          // 1 si c'est une commande builtin, 0 sinon
 	int pipe_fd[2];
+	int infile;              // Descripteur de fichier d'entrée
+    int outfile;             // Descripteur de fichier de sorti
 } t_cmd;
 
 // Fonctions de gestion des commandes

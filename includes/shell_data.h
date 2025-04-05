@@ -6,14 +6,12 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 16:37:05 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/05 22:26:39 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/05 22:59:50 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SHELL_DATA_H
 # define SHELL_DATA_H
-
-# include "env.h"
 
 typedef struct s_shell_data
 {

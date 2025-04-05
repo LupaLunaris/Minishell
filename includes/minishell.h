@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:46:16 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/05 22:18:13 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/05 23:11:47 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,12 +70,35 @@ typedef struct s_lexer t_lexer;
 # include "signals.h"
 # include "lexing.h"
 
-int		main(int argc, char **argv, char **envp);
-int		error_handler(const char *cmd, const char *message, int should_exit, int error_code);
-int		is_valid_identifier(char *str);
+// Error handling
+int     error_handler(const char *cmd, const char *message, int should_exit, int error_code);
+int     error_message_env_init(t_shell_data *data);
+int     error_message_and_exit(char *prefix, char *message);
+
+// String utilities
+int     is_valid_identifier(char *str);
+char    *strip_quotes(char *str);
+
+// Memory management
 void	cleanup_and_exit(t_shell_data *data, t_cmd *cmds, int exit_code);
 void    free_arr(char **arr);
 void    *clean_cmd_list(t_cmd *head);
-char *strip_quotes(char *str);
+
+// Command processing
+int     process_command(char *input, t_shell_data *data);
+int     process_all_redirections(t_cmd *cmd_list);
+int     check_special_commands(char *input);
+int     check_dollar_command(t_cmd *cmd_list);
+
+// Shell loop functions
+void    main_shell_loop(t_shell_data *data, char **rl);
+void    handle_input_loop(t_shell_data *data, char **rl);
+void    handle_signals_exit_status(t_shell_data *data);
+// Assurez-vous que le prototype est présent ici
+int	error_message_and_exit(char *prefix, char *message);
+
+
+// Main prototypes
+int     main(int argc, char **argv, char **envp);
 
 #endif
