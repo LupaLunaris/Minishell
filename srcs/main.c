@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 10:17:31 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/02 12:54:55 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/05 22:25:31 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,67 +186,69 @@ int main(int argc, char **argv, char **envp)
     char *rl = NULL;
     t_shell_data *data = NULL;
 
-    // Vérifier les arguments
     if (argc != 1 || !argv)
-        return 1;
-
-    // Initialiser la structure t_shell_data
+        return (error_handler(NULL, "Invalid arguments", 1, 1));
+    
+    // Initialisation des données
     data = malloc(sizeof(t_shell_data));
     if (!data)
-        cleanup_and_exit("malloc", "Échec d'allocation mémoire", NULL, NULL, EXIT_FAILURE);
-
-    // Initialisation des données du shell
+        return (error_handler("malloc", "Memory allocation failed", 1, EXIT_FAILURE));
+    
+    // Configuration initiale
     data->exit_status = 0;
     data->interactive = isatty(STDIN_FILENO);
     data->env_list = init_env(envp);
     if (!data->env_list)
-        cleanup_and_exit("init_env", "Échec d'initialisation des variables d'environnement", data, NULL, EXIT_FAILURE);
+    {
+        free(data);
+        return (error_handler("init_env", "Failed to initialize environment variables", 1, EXIT_FAILURE));
+    }
 
-    // Boucle principale du shell
+    // Boucle principale
     while (1)
     {
-        // Réinitialiser l'état des signaux pour chaque nouvelle commande
         g_signal_received = 0;
-
-        // Configurer les signaux en mode interactif avant de demander une entrée utilisateur
         if (data->interactive)
             set_signals_interactive();
-
-        // Lire l'entrée de l'utilisateur
+        
         rl = readline("MiniShellDeLaMort> ");
-
-        // Traitement explicite de Ctrl+D (EOF)
+        
+        // Gestion de Ctrl+D (EOF)
         if (rl == NULL)
         {
             if (data->interactive)
                 write(STDOUT_FILENO, "exit\n", 5);
-            break;  // Sortie immédiate de la boucle
+            break;
         }
-
-        // Ajouter à l'historique si non vide
+        
+        // Ajout à l'historique si non vide
         if (rl[0] != '\0')
             add_history(rl);
-
-        // Passer en mode non-interactif avant d'exécuter la commande
+        
+        // Configuration des signaux pour l'exécution des commandes
         set_signals_noninteractive();
-
-        // Traiter la commande
+        
+        // Traitement et exécution de la commande
         data->exit_status = process_command(rl, data);
-
-        // Vérifier si un signal a été reçu pendant l'exécution
+        
+        // Mise à jour du statut de sortie en fonction des signaux
         if (g_signal_received == SIGINT)
-            data->exit_status = 130;  // 128 + SIGINT (2)
+            data->exit_status = 130;
         else if (g_signal_received == SIGQUIT)
-            data->exit_status = 131;  // 128 + SIGQUIT (3)
-
-        // Libérer rl pour la prochaine itération
+            data->exit_status = 131;
+        
+        // Libération de la ligne de commande
         free(rl);
         rl = NULL;
+        
+        // Vérification si on doit sortir (après une commande exit)
+        if (data->should_exit)
+            break;
     }
-
-    // Nettoyer et quitter proprement
-    cleanup_and_exit(NULL, NULL, data, NULL, data->exit_status);
-
-    // Cette ligne ne sera jamais atteinte
-    return data->exit_status;
+    
+    // Nettoyage final et sortie
+    cleanup_and_exit(data, NULL, data->exit_status);
+    
+    // Cette ligne ne sera jamais atteinte car cleanup_and_exit appelle exit()
+    return (data->exit_status);
 }

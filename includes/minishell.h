@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:46:16 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/02 12:31:01 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/05 22:18:13 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ typedef struct s_lexer t_lexer;
 int		main(int argc, char **argv, char **envp);
 int		error_handler(const char *cmd, const char *message, int should_exit, int error_code);
 int		is_valid_identifier(char *str);
-void cleanup_and_exit(const char *cmd, const char *message, t_shell_data *data, t_cmd *cmds, int exit_code);
+void	cleanup_and_exit(t_shell_data *data, t_cmd *cmds, int exit_code);
 void    free_arr(char **arr);
 void    *clean_cmd_list(t_cmd *head);
 char *strip_quotes(char *str);

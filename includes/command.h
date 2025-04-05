@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 16:35:04 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/03 21:08:10 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/05 19:35:09 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,6 @@ typedef struct s_command
 	char *cmd;               // Commande principale (ex: "ls", "grep", "echo")
 	char **args;             // Liste des arguments (ex: ["ls", "-l", NULL])
 	t_redirection	*redirections;
-	// char *input_file;        // Fichier si redirection de stdin (ex: "input.txt" pour `< input.txt`)
-	// char *output_file;       // Fichier si redirection de stdout (ex: "output.txt" pour `> output.txt`)
-	// int append;              // Flag pour append : 1 = `>>`, 0 = `>`
-	// char *heredoc;          // Le contenu du heredoc (si heredoc utilisé)
 	struct s_command *next;  // Pointeur vers la commande suivante (en cas de pipe)
 	struct s_command *prev;
 	pid_t		pid;

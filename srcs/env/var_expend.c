@@ -6,11 +6,50 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 10:17:19 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/02 22:01:52 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/05 22:34:07 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static char *remove_quotes_var(char *str)
+{
+    int i, j;
+    int len = strlen(str);
+    char *result;
+    char quote_type = 0;  // 0 = aucun, ' = simple, " = double
+    
+    if (!str)
+        return (NULL);
+    
+    result = malloc(len + 1);
+    if (!result)
+        return (NULL);
+    
+    // Détecter si la chaîne commence par un guillemet
+    if (len > 0 && (str[0] == '"' || str[0] == '\''))
+        quote_type = str[0];
+    
+    i = 0;
+    j = 0;
+    
+    // Si la chaîne commence par un guillemet, on l'ignore
+    if (quote_type != 0)
+        i++;
+    
+    // Copier le contenu en préservant tous les caractères internes
+    while (i < len)
+    {
+        // Si on arrive au guillemet fermant correspondant à la fin, on l'ignore
+        if (quote_type != 0 && str[i] == quote_type && i == len - 1)
+            break;
+            
+        // Dans tous les autres cas, on copie le caractère
+        result[j++] = str[i++];
+    }
+    result[j] = '\0';
+    return (result);
+}
 
 // Fonction principale pour développer les variables
 void	var_expend(t_env_list *list, t_cmd *cmds, t_shell_data *data)
@@ -53,7 +92,7 @@ void	var_expend(t_env_list *list, t_cmd *cmds, t_shell_data *data)
 					if (expanded)
 					{
 						free(cmd_temp->args[i]);
-						char *no_quotes = remove_quotes(expanded);
+						char *no_quotes = remove_quotes_var(expanded);
 						free(expanded);
 						cmd_temp->args[i] = no_quotes;
 					}
