@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 22:40:21 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/05 23:10:25 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/05 23:21:20 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,13 +69,15 @@ int	error_message_and_exit(char *prefix, char *message)
 	return (error_handler(prefix, message, 1, EXIT_FAILURE));
 }
 
-t_shell_data *init_shell_data(char **envp)
+t_shell_data	*init_shell_data(char **envp)
 {
-    t_shell_data *data = malloc(sizeof(t_shell_data));
-    if (!data)
-        return NULL;
-    data->exit_status = 0;
-    data->interactive = isatty(STDIN_FILENO);
-    data->env_list = init_env(envp);
-    return data;
+	t_shell_data	*data;
+
+	data = malloc(sizeof(t_shell_data));
+	if (!data)
+		return (NULL);
+	data->exit_status = 0;
+	data->interactive = isatty(STDIN_FILENO);
+	data->env_list = init_env(envp);
+	return (data);
 }

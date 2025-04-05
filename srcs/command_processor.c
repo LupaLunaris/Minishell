@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 22:44:41 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/05 23:18:53 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/05 23:20:03 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,11 @@ int	process_command(char *input, t_shell_data *data)
 
 	special_code = check_special_commands(input);
 	if (special_code)
-    {
-        if (special_code == 127)
-            return (127);
-        return (special_code - 1);
-    }
+	{
+		if (special_code == 127)
+			return (127);
+		return (special_code - 1);
+	}
 	cmd_list = parse_input(input);
 	if (!cmd_list)
 		return (1);
@@ -66,51 +66,3 @@ int	process_command(char *input, t_shell_data *data)
 	clean_cmd_list(cmd_list);
 	return (ret);
 }
-
-// Ligne 66 - Espace avant le nom de la fonction
-// int	process_all_redirections(t_cmd *cmd_list)
-// {
-// 	t_cmd			*curr;
-// 	t_redirection	*redir;
-// 	int				status;
-
-// 	if (!cmd_list)
-// 		return (0);
-// 	status = 0;
-// 	curr = cmd_list;
-// 	while (curr)
-// 	{
-// 		redir = curr->redirections;
-// 		while (redir)
-// 		{
-// 			if (redir->type == REDIR_HEREDOC)
-// 			{
-// 				status = process_heredoc(redir->file, curr);
-// 				if (status != 0)
-// 				{
-// 					clean_cmd_list(cmd_list);
-// 					return (status);
-// 				}
-// 			}
-// 			redir = redir->next;
-// 		}
-// 		curr = curr->next;
-// 	}
-// 	return (0);
-// }
-
-// /* Boucle principale du shell */
-// void	main_shell_loop(t_shell_data *data, char **rl)
-// {
-// 	while (1)
-// 	{
-// 		g_signal_received = 0;
-// 		if (data->interactive)
-// 			set_signals_interactive();
-// 		handle_input_loop(data, rl);
-// 		if (*rl == NULL)
-// 			break ;
-// 		if (data->should_exit)
-// 			break ;
-// 	}
-// }
