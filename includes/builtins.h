@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 14:08:00 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/02 15:19:25 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/06 20:36:57 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,5 +38,6 @@ int		is_valid_identifier(char *arg);
 int		process_export_with_equals(char *arg, t_env_list **env_list);
 void	print_export_list(t_env_list *env_list);
 void	print_sorted_exp(t_env_list **sorted_env, int count);
+int		execute_builtin_cmd(t_cmd *cmd, t_shell_data *data);
 
 #endif

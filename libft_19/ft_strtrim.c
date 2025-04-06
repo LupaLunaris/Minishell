@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:40:00 by jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/27 16:47:43 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/06 21:05:22 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,17 +39,3 @@ char	*ft_strtrim(char const *s1, char const *set)
 	ft_strlcpy(new_str, &s1[start], end - start + 1);
 	return (new_str);
 }
-
-
-// #include <stdio.h>
-// #include <stdlib.h>
-// int main()
-// {
-// 	char test_str[] = "   Bonjour tout le monde   ";
-// 	char *result = ft_strtrim(test_str, " ");
-
-// 	printf("Résultat: '%s'\n", result);
-// 	free(result);
-// 	return 0;
-// }
-

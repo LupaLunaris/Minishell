@@ -29,27 +29,24 @@
 # define TOKEN_HEREDOC   6
 # define TOKEN_ERROR     7
 
-/* Structure d'un token */
 typedef struct s_token
 {
 	char			*value;
 	int				type;
 	struct s_token	*next;
-	struct s_token	*prev;  /* Ajouté pour faciliter la navigation */
+	struct s_token	*prev;
 }	t_token;
 
-/* Structure du lexer */
 typedef struct s_lexer
 {
-	char	*input;         /* Entrée à traiter */
-	int		position;       /* Position actuelle dans l'entrée */
-	char	*current_token; /* Buffer pour construire le token actuel */
-	int		current_pos;    /* Position dans le buffer du token actuel */
-	t_token	*tokens;        /* Liste des tokens */
-	int		state;          /* État actuel du lexer */
+	char	*input;
+	int		position;
+	char	*current_token;
+	int		current_pos;
+	t_token	*tokens;
+	int		state;
 }	t_lexer;
 
-/* Fonctions exportées */
 int		is_operator(char c);
 int		is_space(char c);
 t_token	*lexer(char *input);
@@ -59,9 +56,9 @@ void	add_current_token(t_lexer *lex);
 void	free_tokens(t_token *tokens);
 void	handle_redirection(t_lexer *lex);
 void	handle_pipe(t_lexer *lex);
-/* handle_quotes.c */
 char	*remove_quotes(char *str, char quote_type);
 void	handle_quote(t_lexer *lex, char quote_type);
 void	process_dquote_state(t_lexer *lex);
 void	process_squote_state(t_lexer *lex);
+
 #endif

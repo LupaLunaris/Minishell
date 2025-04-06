@@ -36,3 +36,27 @@ int	execute_builtin(t_cmd *cmd, t_shell_data *data)
 	data->exit_status = ret;
 	return (ret);
 }
+
+static int	has_redirections(t_cmd *cmd)
+{
+	return (cmd->redirections != NULL);
+}
+
+int	execute_builtin_cmd(t_cmd *cmd, t_shell_data *data)
+{
+	int	stdin_backup;
+	int	stdout_backup;
+	int	ret;
+
+	stdin_backup = -1;
+	stdout_backup = -1;
+	if (has_redirections(cmd))
+	{
+		stdin_backup = dup(STDIN_FILENO);
+		stdout_backup = dup(STDOUT_FILENO);
+	}
+	setup_redirection(cmd->redirections);
+	ret = execute_builtin(cmd, data);
+	restore_io(stdin_backup, stdout_backup);
+	return (ret);
+}

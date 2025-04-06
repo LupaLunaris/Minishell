@@ -1,72 +1,57 @@
-# Compilateur et flags
-CC			= cc
-CFLAGS		= -Wall -Wextra -Werror
+CC          = cc
+CFLAGS      = -Wall -Wextra -Werror
 LIBS        = -lreadline
+
 # Nom de l'exécutable
-NAME		= minishell
+NAME        = minishell
 
 # Chemins
-SRCS_DIR	= srcs
-OBJS_DIR	= objs
-LIBFT_DIR	= libft_19
-INCLUDES	= -Iincludes -I$(LIBFT_DIR)
+SRCS_DIR    = srcs
+OBJS_DIR    = objs
+LIBFT_DIR   = libft_19
+INCLUDES    = -Iincludes -I$(LIBFT_DIR)
 
 # Libft
-LIBFT		= $(LIBFT_DIR)/libft.a
+LIBFT       = $(LIBFT_DIR)/libft.a
 
-# Sous-dossiers des sources
-BUILTINS_DIR	= $(SRCS_DIR)/builtins
-EXECUTE_DIR		= $(SRCS_DIR)/execute
-UTILS_DIR		= $(SRCS_DIR)/utils
-SIGNALS_DIR		= $(SRCS_DIR)/signaux
-ENV_DIR			= $(SRCS_DIR)/env
-PARSER_DIR		= $(SRCS_DIR)/parser
-LEXING_DIR		= $(SRCS_DIR)/lexing
+# Sources principales
+SRCS        = $(SRCS_DIR)/main.c \
+			  $(SRCS_DIR)/command_processor.c
 
-# Fichiers sources
-SRCS       = $(SRCS_DIR)/main.c \
-			 $(SRCS_DIR)/command_processor.c \
-			 $(SIGNALS_DIR)/signaux.c \
-			 $(ENV_DIR)/env.c \
-			 $(ENV_DIR)/env_add.c \
-			 $(ENV_DIR)/env_init.c \
-			 $(ENV_DIR)/env_utils.c \
-			 $(BUILTINS_DIR)/cd.c \
-			 $(BUILTINS_DIR)/echo.c \
-			 $(BUILTINS_DIR)/env_builtins.c \
-			 $(BUILTINS_DIR)/exit.c \
-			 $(BUILTINS_DIR)/export.c \
-			 $(BUILTINS_DIR)/export_utils.c \
-			 $(BUILTINS_DIR)/unset.c \
-			 $(BUILTINS_DIR)/pwd.c \
-			 $(EXECUTE_DIR)/redirections.c \
-			 $(EXECUTE_DIR)/pipes.c \
-			 $(EXECUTE_DIR)/pipes_utils.c \
-			 $(EXECUTE_DIR)/builtins.c \
-			 $(EXECUTE_DIR)/execute.c \
-			 $(EXECUTE_DIR)/execute_command.c \
-			 $(EXECUTE_DIR)/cmd_path_utils.c \
-			 $(EXECUTE_DIR)/utils.c \
-			 $(EXECUTE_DIR)/heredoc.c \
-			 $(EXECUTE_DIR)/heredoc_utils.c \
-			 $(UTILS_DIR)/error.c \
-			 $(UTILS_DIR)/free_shell.c \
-			 $(UTILS_DIR)/shell_utils.c \
-			 $(ENV_DIR)/var_expend.c \
-			 $(ENV_DIR)/var_expend2.c \
-			 $(PARSER_DIR)/parser.c \
-			 $(PARSER_DIR)/parser_clean.c \
-			 $(PARSER_DIR)/handle_redir.c \
-			 $(PARSER_DIR)/parser_utils.c \
-			 $(LEXING_DIR)/lexing.c \
-			 $(LEXING_DIR)/lex_utils.c \
-			 $(LEXING_DIR)/lex_pipe_redir.c \
-			 $(LEXING_DIR)/handle_quotes.c \
+# Sources des builtins
+BUILTINS_SRCS = $(wildcard $(SRCS_DIR)/builtins/*.c)
 
+# Sources des exécutions
+EXECUTE_SRCS = $(wildcard $(SRCS_DIR)/execute/*.c)
 
+# Sources des utilitaires
+UTILS_SRCS = $(wildcard $(SRCS_DIR)/utils/*.c)
+
+# Sources des signaux
+SIGNALS_SRCS = $(wildcard $(SRCS_DIR)/signaux/*.c)
+
+# Sources de l'environnement
+ENV_SRCS = $(wildcard $(SRCS_DIR)/env/*.c)
+
+# Sources du parser
+PARSER_SRCS = $(wildcard $(SRCS_DIR)/parser/*.c)
+
+# Sources du lexing
+LEXING_SRCS = $(wildcard $(SRCS_DIR)/lexing/*.c)
+
+# Sources des redirections
+REDIR_SRCS = $(wildcard $(SRCS_DIR)/redirections/*.c)
+
+# Sources des pipes
+PIPES_SRCS = $(wildcard $(SRCS_DIR)/pipes/*.c)
+
+# Combinaison de toutes les sources
+ALL_SRCS = $(SRCS) $(BUILTINS_SRCS) $(EXECUTE_SRCS) $(UTILS_SRCS) \
+		   $(SIGNALS_SRCS) $(ENV_SRCS) $(PARSER_SRCS) $(LEXING_SRCS) \
+		   $(REDIR_SRCS) $(PIPES_SRCS)
 
 # Fichiers objets
-OBJS		= $(SRCS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)
+OBJS = $(ALL_SRCS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)
 
 # Règle principale
 all: $(LIBFT) $(NAME)
@@ -79,14 +64,14 @@ $(NAME): $(OBJS)
 
 # Génération des objets
 $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c
-	@mkdir -p $(@D) # Crée les sous-dossiers dans objs/ si besoin
-	@echo "🛠️  Compilation de $<..."
+	@mkdir -p $(@D)
+	@echo "🛠️ Compilation de $<..."
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 # Compilation de la libft
 $(LIBFT):
 	@echo "🔧 Compilation de la libft..."
-	$(MAKE) -C $(LIBFT_DIR)
+	@$(MAKE) -C $(LIBFT_DIR)
 
 # Nettoyage des fichiers objets
 clean:
