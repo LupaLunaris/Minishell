@@ -6,33 +6,28 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 17:56:35 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/03 21:09:34 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/06 10:31:30 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef EXECUTE_H
 # define EXECUTE_H
 
-# include "command.h"
-# include "env.h"
-# include "shell_data.h"
-
 // Fonctions d'exécution
 int		execute(t_cmd *cmd, t_env_list *env_list, t_shell_data *data);
 int		execute_pipeline(t_cmd *cmd, t_env_list *env_list, t_shell_data *data);
-char	*find_command_path(char *cmd, t_env_list *env_list);
-int		wait_for_commands(t_cmd *cmd_list, t_shell_data *data);
-void	execute_single_command(t_cmd *cmd, t_shell_data *data);
-void	execute_external_command(t_cmd *cmd, t_shell_data *data);
 int		check_redirections(t_cmd *cmd);
 int		get_children(t_cmd *cmd);
 int		create_children(t_cmd *cmd, t_env_list *env_list, t_shell_data *data);
-char	*get_cmd_path(char *cmd, char **env_array);
-void	execute_command(t_cmd *cmds, char **env_array);
 int		process_heredoc(char *delimiter, t_cmd *command);
 int		setup_output_redirection(const char *output_file, int append);
 char	*get_heredoc_content(char *delimiter);
 void	print_redirections(t_redirection *redir);
 int		add_line_to_content(char **new_content, char *line);
+bool 			create_pipes(t_cmd *cmd_list);
+int				setup_redirection(t_redirection *redirections);
+void			restore_io(int stdin_fd, int stdout_fd);
+
+
 
 #endif

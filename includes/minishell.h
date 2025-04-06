@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:46:16 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/05 23:11:47 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/06 10:25:19 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,9 +94,6 @@ int     check_dollar_command(t_cmd *cmd_list);
 void    main_shell_loop(t_shell_data *data, char **rl);
 void    handle_input_loop(t_shell_data *data, char **rl);
 void    handle_signals_exit_status(t_shell_data *data);
-// Assurez-vous que le prototype est présent ici
-int	error_message_and_exit(char *prefix, char *message);
-
 
 // Main prototypes
 int     main(int argc, char **argv, char **envp);

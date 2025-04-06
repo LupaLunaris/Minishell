@@ -6,13 +6,12 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 16:35:04 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/05 23:00:13 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/06 10:31:25 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef COMMAND_H
 # define COMMAND_H
-
 
 # include <sys/types.h>
 
@@ -49,8 +48,14 @@ typedef struct s_command
 t_cmd       	*create_command(void);
 void            free_command(t_cmd *cmd);
 void            free_command_list(t_cmd *cmd);
-bool 			create_pipes(t_cmd *cmd_list);
-int				setup_redirection(t_redirection *redirections);
-void			restore_io(int stdin_fd, int stdout_fd);
+char	*find_command_path(char *cmd, t_env_list *env_list);
+int		wait_for_commands(t_cmd *cmd_list, t_shell_data *data);
+void	execute_single_command(t_cmd *cmd, t_shell_data *data);
+void	execute_external_command(t_cmd *cmd, t_shell_data *data);
+void	execute_command(t_cmd *cmd, char **env_array);
+int	execute_command_for_heredoc(t_cmd *cmd, char **env_array);
+char	*create_cmd_path(char *cmd, char **paths);
+char	*get_path(char **env_array);
+char	*get_cmd_path(char *cmd, char **env_array);
 
 #endif
