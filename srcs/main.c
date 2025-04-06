@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 10:17:31 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/05 23:16:54 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/06 11:13:21 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ void	handle_input_loop(t_shell_data *data, char **rl)
 	data->exit_status = process_command(*rl, data);
 	handle_signals_exit_status(data);
 	free(*rl);
-	*rl = NULL;
 }
 
 int	main(int argc, char **argv, char **envp)

@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 17:22:46 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/02 15:14:55 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/06 11:49:10 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,10 @@ static int	is_valid_number(char *str)
  * Implémente la commande builtin 'exit'
  * Quitte le shell avec le statut spécifié
  */
-int	builtin_exit(t_cmd *cmd, t_shell_data *data)
+int builtin_exit(t_cmd *cmd, t_shell_data *data)
 {
-	int		exit_code;
-	char	*arg;
+	int exit_code;
+	char *arg;
 
 	exit_code = data->exit_status;
 	if (data->interactive)
@@ -49,18 +49,10 @@ int	builtin_exit(t_cmd *cmd, t_shell_data *data)
 		exit(exit_code);
 	arg = cmd->args[1];
 	if (!is_valid_number(arg))
-	{
-		ft_putstr_fd("minishell: exit: ", 2);
-		ft_putstr_fd(arg, 2);
-		ft_putendl_fd(": numeric argument required", 2);
-		exit(2);
-	}
+		return (error_handler("exit", ft_strjoin(arg, ": numeric argument required"), 1, 2));
 	if (cmd->args[2])
-	{
-		ft_putendl_fd("minishell: exit: too many arguments", 2);
-		return (1);
-	}
+		return (error_handler("exit", "too many arguments", 0, 1));
 	exit_code = ft_atoi(arg) % 256;
-	exit((unsigned char) exit_code);
+	exit((unsigned char)exit_code);
 	return (exit_code);
 }
