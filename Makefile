@@ -29,6 +29,9 @@ SRCS       = $(SRCS_DIR)/main.c \
 			 $(ENV_DIR)/env.c \
 			 $(ENV_DIR)/env_add.c \
 			 $(ENV_DIR)/env_init.c \
+			 $(ENV_DIR)/var_expend.c \
+			 $(ENV_DIR)/var_verif.c \
+			 $(ENV_DIR)/unset_utils.c \
 			 $(ENV_DIR)/env_utils.c \
 			 $(BUILTINS_DIR)/cd.c \
 			 $(BUILTINS_DIR)/echo.c \
@@ -50,7 +53,6 @@ SRCS       = $(SRCS_DIR)/main.c \
 			 $(PARSER_DIR)/parser_clean.c \
 			 $(PARSER_DIR)/handle_redir.c \
 			 $(PARSER_DIR)/parser_utils.c \
-			 $(ENV_DIR)/var_expend.c \
 			 $(LEXING_DIR)/lexing.c \
 			 $(LEXING_DIR)/lex_utils.c \
 			 $(LEXING_DIR)/lex_pipe_redir.c \

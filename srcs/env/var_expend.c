@@ -1,289 +1,118 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   var_expend.c                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/28 10:17:19 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/02 12:49:27 by Jpaulis          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   var_expend.c									   :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: Jpaulis <Jpaulis@student.s19.be>		   +#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2025/03/28 10:17:19 by Jpaulis		   #+#	#+#			 */
+/*   Updated: 2025/04/02 12:49:27 by Jpaulis		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void update_env_var(t_env_list **env_list, char *name, char *value)
+char	*expand_no_quote(char *str, char *result, t_shell_data *data)
 {
-    t_env_list *current = *env_list;
+	t_indices	idx;
+	char		*final_result;
 
-    // Chercher si la variable existe déjà
-    while (current)
-    {
-        if (ft_strcmp(current->key, name) == 0)
-        {
-            // Mettre à jour la valeur
-            free(current->value);
-            current->value = ft_strdup(value);
-            return;
-        }
-        current = current->next;
-    }
-
-    // Si la variable n'existe pas, l'ajouter
-    add_env_var(env_list, name, value);
+	idx.i = 0;
+	idx.j = 0;
+	while (str[idx.i])
+	{
+		if (str[idx.i] == '$' && str[idx.i + 1])
+		{
+			idx.i++;
+			idx = process_special_vars(str, result, data, idx);
+		}
+		else
+			result[idx.j++] = str[idx.i++];
+	}
+	result[idx.j] = '\0';
+	final_result = ft_strdup(result);
+	free(result);
+	return (final_result);
 }
 
-// Fonction pour développer les variables d'environnement
-char *expand_variables(char *str, t_env_list *list, t_shell_data *data)
+t_indices	process_quoted_vars(char *str, char *result, t_shell_data *data,
+	t_indices idx)
 {
-    char *result;
-    int i, j;
-    int in_squote = 0;
-    int in_dquote = 0;
+	t_indices	n_id;
+	int			quote_changed;
 
-    // Si la chaîne est vide ou NULL, retourner NULL ou une chaîne vide
-    if (!str)
-        return (NULL);
-
-    // Vérifier si la chaîne contient au moins un guillemet
-    int has_quotes = 0;
-    for (i = 0; str[i]; i++) {
-        if (str[i] == '\'' || str[i] == '"') {
-            has_quotes = 1;
-            break;
-        }
-    }
-
-    // Si pas de guillemets, pas besoin d'expansion spéciale
-    if (!has_quotes) {
-        // Allouer un buffer pour le résultat (assez grand)
-        result = malloc(4096);
-        if (!result)
-            return (NULL);
-
-        i = 0;
-        j = 0;
-
-        while (str[i])
-        {
-            // Si on trouve un $ et pas dans des guillemets simples
-            if (str[i] == '$' && str[i+1])
-            {
-                i++; // Passer le $
-
-                // Cas spécial $?
-                if (str[i] == '?')
-                {
-                    char *exit_str = ft_itoa(data->exit_status);
-                    int k = 0;
-                    while (exit_str[k])
-                        result[j++] = exit_str[k++];
-                    free(exit_str);
-                    i++;
-                }
-                // Cas $$ pour PID
-                else if (str[i] == '$')
-                {
-                    char *pid_str = ft_itoa(getpid());
-                    int k = 0;
-                    while (pid_str[k])
-                        result[j++] = pid_str[k++];
-                    free(pid_str);
-                    i++;
-                }
-                // Expansions des variables d'environnement
-                else if (ft_isalpha(str[i]) || str[i] == '_')
-                {
-                    int start = i;
-                    while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
-                        i++;
-
-                    char *var_name = ft_substr(str, start, i - start);
-                    char *var_value = get_env_value(list, var_name);
-
-                    if (var_value)
-                    {
-                        int k = 0;
-                        while (var_value[k])
-                            result[j++] = var_value[k++];
-                    }
-
-                    free(var_name);
-                }
-                else
-                {
-                    // $ suivi d'autre chose, on garde le $
-                    result[j++] = '$';
-                }
-            }
-            else
-            {
-                result[j++] = str[i++];
-            }
-        }
-
-        result[j] = '\0';
-        char *final_result = ft_strdup(result);
-        free(result);
-
-        return (final_result);
-    }
-
-    // Allouer un buffer pour le résultat (assez grand)
-    result = malloc(4096);
-    if (!result)
-        return (NULL);
-
-    i = 0;
-    j = 0;
-
-    while (str[i])
-    {
-        // Gestion des guillemets
-        if (str[i] == '\'' && !in_dquote)
-        {
-            in_squote = !in_squote;
-            i++;
-        }
-        else if (str[i] == '"' && !in_squote)
-        {
-            in_dquote = !in_dquote;
-            i++;
-        }
-        // Expansion des variables
-        else if (str[i] == '$' && str[i+1] && !in_squote)
-        {
-            i++; // Passer le $
-
-            // Cas spécial $?
-            if (str[i] == '?')
-            {
-                char *exit_str = ft_itoa(data->exit_status);
-                int k = 0;
-                while (exit_str[k])
-                    result[j++] = exit_str[k++];
-                free(exit_str);
-                i++;
-            }
-            // Cas $$ pour PID
-            else if (str[i] == '$')
-            {
-                char *pid_str = ft_itoa(getpid());
-                int k = 0;
-                while (pid_str[k])
-                    result[j++] = pid_str[k++];
-                free(pid_str);
-                i++;
-            }
-            // Expansions des variables d'environnement
-            else if (ft_isalpha(str[i]) || str[i] == '_')
-            {
-                int start = i;
-                while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
-                    i++;
-
-                char *var_name = ft_substr(str, start, i - start);
-                char *var_value = get_env_value(list, var_name);
-
-                if (var_value)
-                {
-                    int k = 0;
-                    while (var_value[k])
-                        result[j++] = var_value[k++];
-                }
-
-                free(var_name);
-            }
-            else
-            {
-                // $ suivi d'autre chose, on garde le $
-                result[j++] = '$';
-            }
-        }
-        else
-        {
-            // Caractère normal
-            result[j++] = str[i++];
-        }
-    }
-
-    result[j] = '\0';
-    char *final_result = ft_strdup(result);
-    free(result);
-
-    return (final_result);
+	n_id = idx;
+	quote_changed = 0;
+	n_id = is_in_squote(data->state, str, n_id);
+	if (n_id.i > idx.i)
+		quote_changed = 1;
+	if (!quote_changed && str[n_id.i] == '$' && str[n_id.i + 1]
+		&& !data->state->in_squote)
+	{
+		n_id.i++;
+		n_id = process_special_vars(str, result, data, n_id);
+	}
+	else if (!quote_changed)
+		result[n_id.j++] = str[n_id.i++];
+	return (n_id);
 }
 
-// Fonction principale pour développer les variables
-void var_expend(t_env_list *list, t_cmd *cmds, t_shell_data *data)
+char	*expand_quote(char *str, char *result, t_shell_data *data)
 {
-    t_cmd *cmd_temp = cmds;
+	t_indices	idx;
+	char		*final_result;
 
-    while (cmd_temp)
-    {
-        // Traiter les arguments
-        if (cmd_temp->args)
-        {
-            int i = 0;
-            // Si le premier argument est une variable d'environnement vide
-            if (cmd_temp->args[0] && cmd_temp->args[0][0] == '$' && 
-                (!get_env_var(list, cmd_temp->args[0] + 1) || 
-                 (get_env_var(list, cmd_temp->args[0] + 1) && ft_strlen(get_env_var(list, cmd_temp->args[0] + 1)) == 0)))
-            {
-                // S'il y a d'autres arguments, déplacer tous les arguments
-                if (cmd_temp->args[1])
-                {
-                    free(cmd_temp->args[0]);
-                    int j = 0;
-                    while (cmd_temp->args[j+1])
-                    {
-                        cmd_temp->args[j] = cmd_temp->args[j+1];
-                        j++;
-                    }
-                    cmd_temp->args[j] = NULL;
-                    
-                    // Mettre à jour cmd
-                    free(cmd_temp->cmd);
-                    cmd_temp->cmd = ft_strdup(cmd_temp->args[0]);
-                    
-                    // Supprimer la ligne is_builtin qui cause l'erreur
-                    // cmd_temp->is_builtin = is_builtin(cmd_temp->cmd);
-                }
-                else
-                {
-                    // Sinon, s'il n'y a pas d'arguments suivants, c'est une erreur
-                    data->exit_status = 127;
-                    // Garder la commande vide pour afficher l'erreur
-                }
-            }
-            else {
-                // Expansion normale
-                while (cmd_temp->args[i])
-                {
-                    // Expander les variables
-                    char *expanded = expand_variables(cmd_temp->args[i], list, data);
-                    if (expanded)
-                    {
-                        free(cmd_temp->args[i]);
+	idx.i = 0;
+	idx.j = 0;
+	while (str[idx.i])
+		idx = process_quoted_vars(str, result, data, idx);
+	result[idx.j] = '\0';
+	final_result = ft_strdup(result);
+	free(result);
+	return (final_result);
+}
 
-                        // Supprimer les guillemets
-                        char *no_quotes = remove_quotes(expanded);
-                        free(expanded);
+int	handle_none_var(t_env_list *list, t_cmd *cmd, t_shell_data *data)
+{
+	int	j;
 
-                        cmd_temp->args[i] = no_quotes;
-                    }
-                    i++;
-                }
-            }
-        }
+	if (!cmd->args[0] || cmd->args[0][0] != '$')
+		return (0);
+	if (is_none_var(list, cmd))
+	{
+		if (cmd->args[1])
+		{
+			free(cmd->args[0]);
+			j = 0;
+			while (cmd->args[j + 1])
+			{
+				cmd->args[j] = cmd->args[j + 1];
+				j++;
+			}
+			cmd->args[j] = NULL;
+			free(cmd->cmd);
+			cmd->cmd = ft_strdup(cmd->args[0]);
+		}
+		else
+			data->exit_status = 127;
+		return (1);
+	}
+	return (0);
+}
 
-        // Mettre à jour cmd si nécessaire (premier argument)
-        if (cmd_temp->args && cmd_temp->args[0])
-        {
-            free(cmd_temp->cmd);
-            cmd_temp->cmd = ft_strdup(cmd_temp->args[0]);
-        }
+void	var_expend(t_env_list *list, t_cmd *cmds, t_shell_data *data)
+{
+	t_cmd	*cmd_temp;
 
-        cmd_temp = cmd_temp->next;
-    }
+	cmd_temp = cmds;
+	while (cmd_temp)
+	{
+		if (cmd_temp->args)
+		{
+			if (!handle_none_var(list, cmd_temp, data))
+				expand_cmd_args(cmd_temp, data);
+		}
+		update_cmd_from_args(cmd_temp);
+		cmd_temp = cmd_temp->next;
+	}
 }

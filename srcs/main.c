@@ -134,8 +134,8 @@ int process_command(char *input, t_shell_data *data)
     // Étape 1: Parsing complet (lexing + parsing)
     cmd_list = parse_input(input);
     if (!cmd_list)
-        return (1); // Erreur déjà affichée dans parse_input
-
+		return (1);
+	//print_cmd_list(cmd_list);
     // Étape 2: Configuration des heredocs
     t_cmd *curr = cmd_list;
     while (curr)

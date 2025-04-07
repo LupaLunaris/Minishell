@@ -20,6 +20,8 @@ typedef struct s_shell_data
 	t_env_list *env_list;    // Stocke l'environnement
     int exit_status;         // Statut de sortie de la dernière commande
     int interactive;         // Mode interactif ou non
+	t_quote *state;
+
 } t_shell_data;
 
 typedef struct s_shell_exec
@@ -34,6 +36,8 @@ typedef struct s_pipe_data
     int    cmd_count;
     int	pipes[2][2];
 } t_pipe_data;
+
+
 
 // Fonctions de gestion des données du shell
 t_shell_data    *init_shell_data(char **envp);
