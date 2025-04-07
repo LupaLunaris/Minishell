@@ -11,41 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-/*
-** Fonction pour supprimer les guillemets des tokens tout en préservant
-** les guillemets imbriqués.
-*/
-// Fonction pour supprimer les guillemets d'une chaîne
-// en préservant les guillemets imbriqués
-// Fonction pour supprimer uniquement les guillemets externes d'une chaîne
-char	*remove_quotes(char *str, char quote_type)
-{
-	int		i;
-	int		j;
-	int		len;
-	char	*result;
-
-	if (!str)
-		return (NULL);
-	len = strlen(str);
-	result = malloc(len + 1);
-	if (!result)
-		return (NULL);
-	if (len > 0 && (str[0] == '"' || str[0] == '\''))
-		quote_type = str[0];
-	i = 0;
-	j = 0;
-	if (quote_type != 0)
-		i++;
-	while (i < len)
-	{
-		if (quote_type != 0 && str[i] == quote_type && i == len - 1)
-			break ;
-		result[j++] = str[i++];
-	}
-	result[j] = '\0';
-	return (result);
-}
 
 void	handle_quote(t_lexer *lex, char quote_type)
 {

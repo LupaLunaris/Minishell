@@ -91,7 +91,6 @@ void	expand_cmd_args(t_cmd *cmd, t_shell_data *data)
 {
 	int		i;
 	char	*expanded;
-	char	*no_quotes;
 
 	i = 0;
 	while (cmd->args[i])
@@ -100,9 +99,7 @@ void	expand_cmd_args(t_cmd *cmd, t_shell_data *data)
 		if (expanded)
 		{
 			free(cmd->args[i]);
-			no_quotes = remove_quotes(expanded, 0);
-			free(expanded);
-			cmd->args[i] = no_quotes;
+			cmd->args[i] = expanded;
 		}
 		i++;
 	}
