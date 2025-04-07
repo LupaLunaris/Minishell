@@ -6,51 +6,11 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 15:54:59 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/02 21:54:47 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/03/12 16:00:52 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-static void	free_node(t_env_list *node)
-{
-	free(node->key);
-	free(node->value);
-	free(node);
-}
-
-/**
- * Supprime une variable d'environnement de la liste
- * @param env_list Liste des variables d'environnement
- * @param key Nom de la variable à supprimer
- */
-void	delete_env_var(t_env_list **env_list, char *key)
-{
-	t_env_list	*current;
-	t_env_list	*previous;
-
-	if (!*env_list)
-		return ;
-	if (ft_strcmp((*env_list)->key, key) == 0)
-	{
-		current = *env_list;
-		*env_list = (*env_list)->next;
-		free_node(current);
-		return ;
-	}
-	previous = *env_list;
-	current = (*env_list)->next;
-	while (current && ft_strcmp(current->key, key))
-	{
-		previous = current;
-		current = current->next;
-	}
-	if (current)
-	{
-		previous->next = current->next;
-		free_node(current);
-	}
-}
 
 /**
  * Compte le nombre de variables dans la liste d'environnement
@@ -73,8 +33,8 @@ int	count_env_vars(t_env_list *env_list)
 }
 
 /**
- * Trie un tableau de pointeurs vers des variables
- * d'environnement par ordre alphabétique des clés
+ * Trie un tableau de pointeurs vers des variables d'environnement
+  par ordre alphabétique des clés
  * @param env_array Tableau de pointeurs vers des nœuds à trier
  * @param count Nombre d'éléments dans le tableau
  */
@@ -127,4 +87,28 @@ char	*ft_strjoin_env(char const *s1, char const *s2)
 	}
 	tmp[i] = '\0';
 	return (tmp);
+}
+
+static t_env_list	*ft_env_last(t_env_list *lst)
+{
+	if (!lst)
+		return (NULL);
+	while (lst->next)
+		lst = lst->next;
+	return (lst);
+}
+
+void	ft_env_back(t_env_list **lst, t_env_list *new)
+{
+	t_env_list	*last;
+
+	if (!lst || !new)
+		return ;
+	if (!*lst)
+	{
+		*lst = new;
+		return ;
+	}
+	last = ft_env_last(*lst);
+	last->next = new;
 }

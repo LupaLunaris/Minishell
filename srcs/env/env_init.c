@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   env_init.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/12 16:18:45 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/02 21:54:43 by Jpaulis          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   env_init.c										 :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: Jpaulis <Jpaulis@student.s19.be>		   +#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2025/03/12 16:18:45 by Jpaulis		   #+#	#+#			 */
+/*   Updated: 2025/03/12 16:20:11 by Jpaulis		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include "minishell.h"
@@ -25,8 +25,8 @@ t_env_list	*init_env(char **envp)
 	char		*value;
 	char		*equals_pos;
 
-	env_list = NULL;
 	i = 0;
+	env_list = NULL;
 	if (!envp)
 		return (NULL);
 	while (envp[i])
@@ -46,20 +46,61 @@ t_env_list	*init_env(char **envp)
 	return (env_list);
 }
 
-void	update_env_var(t_env_list **env_list, char *name, char *value)
+t_quote	*init_quote_state(void)
 {
-	t_env_list	*current;
+	t_quote	*state;
 
-	current = *env_list;
-	while (current)
+	state = malloc(sizeof(t_quote));
+	state->in_squote = 0;
+	state->in_dquote = 0;
+	return (state);
+}
+
+char	*expand_variables(char *str, t_shell_data *data)
+{
+	char	*result;
+	char	*final_result;
+
+	data->state = init_quote_state();
+	if (!str)
+		return (NULL);
+	result = malloc(4096);
+	if (!result)
+		return (NULL);
+	if (!has_quotes(str))
 	{
-		if (ft_strcmp(current->key, name) == 0)
-		{
-			free(current->value);
-			current->value = ft_strdup(value);
-			return ;
-		}
-		current = current->next;
+		final_result = expand_no_quote(str, result, data);
+		return (final_result);
 	}
-	add_env_var(env_list, name, value);
+	final_result = expand_quote(str, result, data);
+	return (final_result);
+}
+
+char	*init_expand_result(char *str, t_shell_data *data)
+{
+	char	*result;
+
+	if (!str)
+		return (NULL);
+	data->state = init_quote_state();
+	result = malloc(4096);
+	return (result);
+}
+
+void	expand_cmd_args(t_cmd *cmd, t_shell_data *data)
+{
+	int		i;
+	char	*expanded;
+
+	i = 0;
+	while (cmd->args[i])
+	{
+		expanded = expand_variables(cmd->args[i], data);
+		if (expanded)
+		{
+			free(cmd->args[i]);
+			cmd->args[i] = expanded;
+		}
+		i++;
+	}
 }

@@ -6,16 +6,12 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 14:08:00 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/06 20:36:57 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/07 19:20:51 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef BUILTINS_H
 # define BUILTINS_H
-
-# include "command.h"
-# include "env.h"
-# include "shell_data.h"
 
 typedef struct s_quote_data
 {

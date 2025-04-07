@@ -1,41 +1,41 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   env_add.c                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/12 16:20:36 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/02 21:55:10 by Jpaulis          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   env_add.c										  :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: Jpaulis <Jpaulis@student.s19.be>		   +#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2025/03/12 16:20:36 by Jpaulis		   #+#	#+#			 */
+/*   Updated: 2025/03/31 21:38:48 by Jpaulis		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+// Allouer de la mémoire pour le nouveau nœud
+// Initialiser les champs du nouveau nœud
 int	add_env_var(t_env_list **env_list, char *name, char *value)
 {
 	t_env_list	*new_node;
-	t_env_list	*current;
 
 	new_node = (t_env_list *)malloc(sizeof(t_env_list));
 	if (!new_node)
 		return (0);
 	new_node->key = ft_strdup(name);
 	if (!new_node->key)
-		return (free(new_node), 0);
+	{
+		free(new_node);
+		return (0);
+	}
 	new_node->value = ft_strdup(value);
 	if (!new_node->value)
-		return (free(new_node->key), free(new_node), 0);
-	new_node->next = NULL;
-	if (*env_list == NULL)
 	{
-		*env_list = new_node;
-		return (1);
+		free(new_node->key);
+		free(new_node);
+		return (0);
 	}
-	current = *env_list;
-	while (current->next)
-		current = current->next;
-	current->next = new_node;
+	new_node->next = NULL;
+	ft_env_back(env_list, new_node);
 	return (1);
 }
 
@@ -64,60 +64,29 @@ void	add_env_var_without_value(t_env_list **env_list, char *key)
 		add_env_var(env_list, key, "");
 }
 
-/**
- * Ajoute une variable d'environnement à partir d'une chaîne "KEY=VALUE"
- * @param env_list Liste des variables d'environnement
- * @param var_str Chaîne au format "KEY=VALUE"
- * @return 0 en cas de succès, -1 sinon
- */
-int	add_env_var_from_string(t_env_list **env_list, char *var_str)
+void	update_env_var(t_env_list **env_list, char *name, char *value)
 {
-	char	*equal_sign;
-	char	*key;
-	char	*value;
-	int		result;
-
-	equal_sign = ft_strchr(var_str, '=');
-	if (!equal_sign)
-		return (-1);
-	key = ft_substr(var_str, 0, equal_sign - var_str);
-	value = ft_strdup(equal_sign + 1);
-	if (!key || !value)
-	{
-		free(key);
-		free(value);
-		return (-1);
-	}
-	result = add_env_var(env_list, key, value);
-	free(key);
-	free(value);
-	return (result);
-}
-
-/**
- * Ajoute une nouvelle variable d'environnement à la liste
- * @param env_list Liste des variables d'environnement
- * @param key Nom de la variable
- * @param value Valeur de la variable
- */
-void	add_env_node(t_env_list **env_list, char *key, char *value)
-{
-	t_env_list	*new_node;
 	t_env_list	*current;
 
-	new_node = (t_env_list *)malloc(sizeof(t_env_list));
-	if (!new_node)
-		return ;
-	new_node->key = ft_strdup(key);
-	new_node->value = ft_strdup(value);
-	new_node->next = NULL;
-	if (*env_list == NULL)
-	{
-		*env_list = new_node;
-		return ;
-	}
 	current = *env_list;
-	while (current->next)
+	while (current)
+	{
+		if (ft_strcmp(current->key, name) == 0)
+		{
+			free(current->value);
+			current->value = ft_strdup(value);
+			return ;
+		}
 		current = current->next;
-	current->next = new_node;
+	}
+	add_env_var(env_list, name, value);
+}
+
+void	update_cmd_from_args(t_cmd *cmd)
+{
+	if (cmd->args && cmd->args[0])
+	{
+		free(cmd->cmd);
+		cmd->cmd = ft_strdup(cmd->args[0]);
+	}
 }

@@ -1,110 +1,118 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   var_expend.c                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/28 10:17:19 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/05 22:34:07 by Jpaulis          ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   var_expend.c									   :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: Jpaulis <Jpaulis@student.s19.be>		   +#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2025/03/28 10:17:19 by Jpaulis		   #+#	#+#			 */
+/*   Updated: 2025/04/02 12:49:27 by Jpaulis		  ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char *remove_quotes_var(char *str)
+char	*expand_no_quote(char *str, char *result, t_shell_data *data)
 {
-    int i, j;
-    int len = strlen(str);
-    char *result;
-    char quote_type = 0;  // 0 = aucun, ' = simple, " = double
-    
-    if (!str)
-        return (NULL);
-    
-    result = malloc(len + 1);
-    if (!result)
-        return (NULL);
-    
-    // Détecter si la chaîne commence par un guillemet
-    if (len > 0 && (str[0] == '"' || str[0] == '\''))
-        quote_type = str[0];
-    
-    i = 0;
-    j = 0;
-    
-    // Si la chaîne commence par un guillemet, on l'ignore
-    if (quote_type != 0)
-        i++;
-    
-    // Copier le contenu en préservant tous les caractères internes
-    while (i < len)
-    {
-        // Si on arrive au guillemet fermant correspondant à la fin, on l'ignore
-        if (quote_type != 0 && str[i] == quote_type && i == len - 1)
-            break;
-            
-        // Dans tous les autres cas, on copie le caractère
-        result[j++] = str[i++];
-    }
-    result[j] = '\0';
-    return (result);
+	t_indices	idx;
+	char		*final_result;
+
+	idx.i = 0;
+	idx.j = 0;
+	while (str[idx.i])
+	{
+		if (str[idx.i] == '$' && str[idx.i + 1])
+		{
+			idx.i++;
+			idx = process_special_vars(str, result, data, idx);
+		}
+		else
+			result[idx.j++] = str[idx.i++];
+	}
+	result[idx.j] = '\0';
+	final_result = ft_strdup(result);
+	free(result);
+	return (final_result);
 }
 
-// Fonction principale pour développer les variables
+t_indices	process_quoted_vars(char *str, char *result, t_shell_data *data,
+	t_indices idx)
+{
+	t_indices	n_id;
+	int			quote_changed;
+
+	n_id = idx;
+	quote_changed = 0;
+	n_id = is_in_squote(data->state, str, n_id);
+	if (n_id.i > idx.i)
+		quote_changed = 1;
+	if (!quote_changed && str[n_id.i] == '$' && str[n_id.i + 1]
+		&& !data->state->in_squote)
+	{
+		n_id.i++;
+		n_id = process_special_vars(str, result, data, n_id);
+	}
+	else if (!quote_changed)
+		result[n_id.j++] = str[n_id.i++];
+	return (n_id);
+}
+
+char	*expand_quote(char *str, char *result, t_shell_data *data)
+{
+	t_indices	idx;
+	char		*final_result;
+
+	idx.i = 0;
+	idx.j = 0;
+	while (str[idx.i])
+		idx = process_quoted_vars(str, result, data, idx);
+	result[idx.j] = '\0';
+	final_result = ft_strdup(result);
+	free(result);
+	return (final_result);
+}
+
+int	handle_none_var(t_env_list *list, t_cmd *cmd, t_shell_data *data)
+{
+	int	j;
+
+	if (!cmd->args[0] || cmd->args[0][0] != '$')
+		return (0);
+	if (is_none_var(list, cmd))
+	{
+		if (cmd->args[1])
+		{
+			free(cmd->args[0]);
+			j = 0;
+			while (cmd->args[j + 1])
+			{
+				cmd->args[j] = cmd->args[j + 1];
+				j++;
+			}
+			cmd->args[j] = NULL;
+			free(cmd->cmd);
+			cmd->cmd = ft_strdup(cmd->args[0]);
+		}
+		else
+			data->exit_status = 127;
+		return (1);
+	}
+	return (0);
+}
+
 void	var_expend(t_env_list *list, t_cmd *cmds, t_shell_data *data)
 {
 	t_cmd	*cmd_temp;
-	int		j;
-	int		i;
 
 	cmd_temp = cmds;
 	while (cmd_temp)
 	{
 		if (cmd_temp->args)
 		{
-			i = 0;
-			if (cmd_temp->args[0] && cmd_temp->args[0][0] == '$' && 
-				(!get_env_var(list, cmd_temp->args[0] + 1) || 
-				 (get_env_var(list, cmd_temp->args[0] + 1) && ft_strlen(get_env_var(list, cmd_temp->args[0] + 1)) == 0)))
-			{
-				if (cmd_temp->args[1])
-				{
-					free(cmd_temp->args[0]);
-					j = 0;
-					while (cmd_temp->args[j+1])
-					{
-						cmd_temp->args[j] = cmd_temp->args[j+1];
-						j++;
-					}
-					cmd_temp->args[j] = NULL;
-					free(cmd_temp->cmd);
-					cmd_temp->cmd = ft_strdup(cmd_temp->args[0]);
-				}
-				else
-					data->exit_status = 127;
-			}
-			else
-			{
-				while (cmd_temp->args[i])
-				{
-					char *expanded = expand_variables(cmd_temp->args[i], list, data);
-					if (expanded)
-					{
-						free(cmd_temp->args[i]);
-						char *no_quotes = remove_quotes_var(expanded);
-						free(expanded);
-						cmd_temp->args[i] = no_quotes;
-					}
-					i++;
-				}
-			}
+			if (!handle_none_var(list, cmd_temp, data))
+				expand_cmd_args(cmd_temp, data);
 		}
-		if (cmd_temp->args && cmd_temp->args[0])
-		{
-			free(cmd_temp->cmd);
-			cmd_temp->cmd = ft_strdup(cmd_temp->args[0]);
-		}
+		update_cmd_from_args(cmd_temp);
 		cmd_temp = cmd_temp->next;
 	}
 }

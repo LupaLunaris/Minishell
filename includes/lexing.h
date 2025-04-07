@@ -13,8 +13,6 @@
 #ifndef LEXING_H
 # define LEXING_H
 
-# include "minishell.h"
-
 /* États du lexer */
 # define STATE_NORMAL     0
 # define STATE_IN_SQUOTE  1

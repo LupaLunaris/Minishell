@@ -6,12 +6,25 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 16:37:05 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/06 21:03:19 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/07 19:32:30 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SHELL_DATA_H
 # define SHELL_DATA_H
+
+typedef struct s_quote
+{
+	int	in_dquote;
+	int	in_squote;
+}	t_quote;
+
+typedef struct s_env_list
+{
+	char				*key;
+	char				*value;
+	struct s_env_list	*next;
+}	t_env_list;
 
 typedef struct s_shell_data
 {
@@ -19,6 +32,7 @@ typedef struct s_shell_data
 	int			exit_status;
 	int			interactive;
 	int			should_exit;
+	t_quote		*state;
 }	t_shell_data;
 
 typedef struct s_shell_exec

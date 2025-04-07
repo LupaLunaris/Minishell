@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:46:16 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/06 21:00:08 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/07 19:36:42 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,29 +31,15 @@
 # include <string.h>
 # include <ctype.h>
 # include "libft.h"
-
-# include "command.h"
-# include "env.h"
+# include "types.h"
 # include "shell_data.h"
+# include "env.h"
+# include "command.h"
 # include "execute.h"
 # include "builtins.h"
 # include "parser.h"
 # include "signals.h"
 # include "lexing.h"
-
-struct							s_command;
-struct							s_env_list;
-struct							s_shell_data;
-struct							s_redirection;
-struct							s_token;
-struct							s_lexer;
-
-typedef struct s_command		t_cmd;
-typedef struct s_env_list		t_env_list;
-typedef struct s_shell_data		t_shell_data;
-typedef struct s_redirection	t_redirection;
-typedef struct s_token			t_token;
-typedef struct s_lexer			t_lexer;
 
 # define CMD_NOT_FOUND 127
 # define CMD_NOT_EXECUTABLE 126
@@ -67,6 +53,15 @@ typedef struct s_lexer			t_lexer;
 #  define TRUE 1
 #  define FALSE 0
 # endif
+
+struct							s_command;
+struct							s_env_list;
+struct							s_shell_data;
+struct							s_redirection;
+struct							s_token;
+struct							s_lexer;
+struct							s_quote;
+struct							s_indices;
 
 int		error_handler(const char *cmd, const char *message,
 			int should_exit, int error_code);
