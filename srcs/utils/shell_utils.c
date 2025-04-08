@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 22:40:21 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/08 15:09:33 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/08 15:56:48 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	main_shell_loop(t_shell_data *data, char **rl)
 }
 
 /* Traite les redirections pour une liste de commandes */
-int	process_all_redirections(t_cmd *cmd_list)
+int	process_all_redirections(t_cmd *cmd_list, t_shell_data *data)
 {
 	t_cmd			*curr;
 	t_redirection	*redir;
@@ -41,7 +41,7 @@ int	process_all_redirections(t_cmd *cmd_list)
 		{
 			if (redir->type == REDIR_HEREDOC)
 			{
-				status = process_heredoc(redir->file, curr);
+				status = process_heredoc(redir->file, curr, data);
 				if (status != 0)
 				{
 					clean_cmd_list(cmd_list);

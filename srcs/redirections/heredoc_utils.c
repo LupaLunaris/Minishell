@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 21:03:53 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/03 21:06:04 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/08 15:59:13 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	add_line_to_content(char **new_content, char *line)
 	return (0);
 }
 
-static int	process_cmd_heredocs(t_cmd *current)
+static int	process_cmd_heredocs(t_cmd *current, t_shell_data *data)
 {
 	t_redirection	*redir;
 	int				status;
@@ -42,7 +42,7 @@ static int	process_cmd_heredocs(t_cmd *current)
 			&& (!redir->heredoc_content
 				|| ft_strlen(redir->heredoc_content) == 0))
 		{
-			status = process_heredoc(redir->file, current);
+			status = process_heredoc(redir->file, current, data);
 			if (status != 0)
 				return (status);
 		}
@@ -51,7 +51,7 @@ static int	process_cmd_heredocs(t_cmd *current)
 	return (0);
 }
 
-int	setup_heredocs_for_pipeline(t_cmd *cmd_list)
+int	setup_heredocs_for_pipeline(t_cmd *cmd_list, t_shell_data *data)
 {
 	t_cmd	*current;
 	int		status;
@@ -59,7 +59,7 @@ int	setup_heredocs_for_pipeline(t_cmd *cmd_list)
 	current = cmd_list;
 	while (current)
 	{
-		status = process_cmd_heredocs(current);
+		status = process_cmd_heredocs(current, data);
 		if (status != 0)
 			return (status);
 		current = current->next;

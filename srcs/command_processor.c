@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 22:44:41 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/08 15:26:01 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/08 15:55:55 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int	process_command(char *input, t_shell_data *data)
 	cmd_list = parse_input(input);
 	if (!cmd_list)
 		return (1);
-	if (process_all_redirections(cmd_list) != 0)
+	if (process_all_redirections(cmd_list, data) != 0)
 		return (1);
 	var_expend(data->env_list, cmd_list, data);
 	if (check_dollar_command(cmd_list))

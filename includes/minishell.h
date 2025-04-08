@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:46:16 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/08 15:01:24 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/08 15:55:26 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ void	cleanup_and_exit(t_shell_data *data, t_cmd *cmds, int exit_code);
 void	free_arr(char **arr);
 void	*clean_cmd_list(t_cmd *head);
 int		process_command(char *input, t_shell_data *data);
-int		process_all_redirections(t_cmd *cmd_list);
+int		process_all_redirections(t_cmd *cmd_list, t_shell_data *data);
 int		check_special_commands(char *input);
 int		check_dollar_command(t_cmd *cmd_list);
 void	main_shell_loop(t_shell_data *data, char **rl);

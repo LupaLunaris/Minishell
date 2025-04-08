@@ -6,32 +6,39 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 16:44:57 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/03 21:06:16 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/08 16:01:30 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	handle_heredoc_line(char *delimiter, char *line, char **new_content)
+static int	handle_heredoc_line(char *delimiter, char *line,
+	char **content, t_shell_data *data)
 {
-	int	result;
+	char	*tmp;
+	char	*expanded_line;
 
 	if (!line)
-	{
-		free(*new_content);
-		return (error_handler("heredoc",
-				"unexpected EOF while looking for delimiter", 0, 130));
-	}
+		return (2);
 	if (ft_strcmp(line, delimiter) == 0)
 	{
 		free(line);
 		return (1);
 	}
-	result = add_line_to_content(new_content, line);
-	return (result);
+	expanded_line = expand_variables(line, data);
+	free(line);
+	tmp = *content;
+	*content = ft_strjoin(*content, expanded_line);
+	free(tmp);
+	tmp = *content;
+	*content = ft_strjoin(*content, "\n");
+	free(tmp);
+	free(expanded_line);
+	return (0);
 }
 
-static int	read_heredoc_lines(char *delimiter, char **content)
+static int	read_heredoc_lines(char *delimiter, char **content,
+	t_shell_data	*data)
 {
 	char	*line;
 	int		result;
@@ -43,7 +50,7 @@ static int	read_heredoc_lines(char *delimiter, char **content)
 	while (1)
 	{
 		line = readline("> ");
-		result = handle_heredoc_line(delimiter, line, &new_content);
+		result = handle_heredoc_line(delimiter, line, &new_content, data);
 		if (result != 0)
 		{
 			if (result == 1)
@@ -55,9 +62,9 @@ static int	read_heredoc_lines(char *delimiter, char **content)
 	return (0);
 }
 
-int	read_heredoc_content(char *delimiter, char **content)
+int	read_heredoc_content(char *delimiter, char **content, t_shell_data *data)
 {
-	return (read_heredoc_lines(delimiter, content));
+	return (read_heredoc_lines(delimiter, content, data));
 }
 
 t_redirection	*find_heredoc_redirection(t_cmd *command, char *delimiter)
@@ -75,7 +82,7 @@ t_redirection	*find_heredoc_redirection(t_cmd *command, char *delimiter)
 	return (NULL);
 }
 
-int	process_heredoc(char *delimiter, t_cmd *command)
+int	process_heredoc(char *delimiter, t_cmd *command, t_shell_data	*data)
 {
 	t_redirection	*redir;
 	char			*content;
@@ -84,7 +91,7 @@ int	process_heredoc(char *delimiter, t_cmd *command)
 	redir = find_heredoc_redirection(command, delimiter);
 	if (!redir)
 		return (0);
-	status = read_heredoc_content(delimiter, &content);
+	status = read_heredoc_content(delimiter, &content, data);
 	if (status != 0)
 		return (status);
 	if (redir->heredoc_content)

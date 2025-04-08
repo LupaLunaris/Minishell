@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 17:56:35 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/06 20:55:00 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/08 15:50:34 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int		execute(t_cmd *cmd, t_env_list *env_list, t_shell_data *data);
 int		check_redirections(t_cmd *cmd);
 int		get_children(t_cmd *cmd);
 int		create_children(t_cmd *cmd, t_env_list *env_list, t_shell_data *data);
-int		process_heredoc(char *delimiter, t_cmd *command);
+int		process_heredoc(char *delimiter, t_cmd *command, t_shell_data *data);
 int		setup_output_redirection(const char *output_file, int append);
 char	*get_heredoc_content(char *delimiter);
 void	print_redirections(t_redirection *redir);

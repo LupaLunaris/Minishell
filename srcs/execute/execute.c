@@ -78,7 +78,7 @@ int	create_children(t_cmd *cmd, t_env_list *env_list, t_shell_data *data)
 	return (status);
 }
 
-static int	process_cmd_heredocs(t_cmd *cmd)
+static int	process_cmd_heredocs(t_cmd *cmd, t_shell_data *data)
 {
 	t_cmd	*curr;
 	int		status;
@@ -93,7 +93,7 @@ static int	process_cmd_heredocs(t_cmd *cmd)
 			if (delimiter && (!get_cmd_heredoc_content(curr)
 					|| ft_strlen(get_cmd_heredoc_content(curr)) == 0))
 			{
-				status = process_heredoc(delimiter, curr);
+				status = process_heredoc(delimiter, curr, data);
 				if (status != 0)
 					return (status);
 			}
@@ -107,7 +107,7 @@ int	execute(t_cmd *cmd, t_env_list *env_list, t_shell_data *data)
 {
 	int	status;
 
-	status = process_cmd_heredocs(cmd);
+	status = process_cmd_heredocs(cmd, data);
 	if (status != 0)
 		return (status);
 	if (!cmd)
