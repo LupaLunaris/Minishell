@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 15:14:57 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/05 22:15:58 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/08 14:47:08 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ void	free_shell_data(t_shell_data *data)
 		return ;
 	if (data->env_list)
 		free_env_list(data->env_list);
+	if (data->state)
+		free(data->state);
 	free(data);
 }
 

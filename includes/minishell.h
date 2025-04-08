@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:46:16 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/06 21:00:08 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/08 15:01:24 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,5 +85,6 @@ void	main_shell_loop(t_shell_data *data, char **rl);
 void	handle_input_loop(t_shell_data *data, char **rl);
 void	handle_signals_exit_status(t_shell_data *data);
 int		main(int argc, char **argv, char **envp);
+void	free_env_array(char **env_array);
 
 #endif

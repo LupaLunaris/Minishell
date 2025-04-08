@@ -66,13 +66,21 @@ char	*expand_variables(char *str, t_shell_data *data)
 		return (NULL);
 	result = malloc(4096);
 	if (!result)
+	{
+		free(data->state);
+		data->state = NULL;
 		return (NULL);
+	}
 	if (!has_quotes(str))
 	{
 		final_result = expand_no_quote(str, result, data);
+		free(data->state);
+		data->state = NULL;
 		return (final_result);
 	}
 	final_result = expand_quote(str, result, data);
+	free(data->state);
+	data->state = NULL;
 	return (final_result);
 }
 

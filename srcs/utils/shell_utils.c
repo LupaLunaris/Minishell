@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 22:40:21 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/05 23:21:20 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/08 15:09:33 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,5 +79,7 @@ t_shell_data	*init_shell_data(char **envp)
 	data->exit_status = 0;
 	data->interactive = isatty(STDIN_FILENO);
 	data->env_list = init_env(envp);
+	data->state = NULL;
+	data->should_exit = 0;
 	return (data);
 }

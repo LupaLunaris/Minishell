@@ -63,7 +63,10 @@ int	create_children(t_cmd *cmd, t_env_list *env_list, t_shell_data *data)
 	{
 		pid = fork();
 		if (pid == -1)
+		{
+			free_env_array(env_array);
 			return (error_handler("fork", strerror(errno), 0, EXIT_FAILURE));
+		}
 		cmd->pid = pid;
 		if (pid == 0)
 			child_process(cmd, env_array, data);
@@ -71,6 +74,7 @@ int	create_children(t_cmd *cmd, t_env_list *env_list, t_shell_data *data)
 	}
 	status = get_children(head);
 	data->exit_status = status;
+	free_env_array(env_array);
 	return (status);
 }
 

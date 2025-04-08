@@ -88,5 +88,43 @@ fclean: clean
 # Recompiler tout
 re: fclean all
 
+# Règles pour le testing et debugging
+
+# Règle pour tester les fuites de mémoire avec Valgrind
+valgrind: $(NAME)
+	@echo "🔍 Lancement avec Valgrind pour vérifier les fuites..."
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose ./$(NAME)
+
+# Règle pour tester les fuites avec option de suppression des erreurs de readline
+valgrind-readline: readline-supp $(NAME)
+	@echo "🔍 Lancement avec Valgrind (suppression des erreurs readline)..."
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --suppressions=readline.supp ./$(NAME)
+
+# Règle pour générer un fichier de suppression pour readline
+readline-supp:
+	@echo "📝 Génération du fichier de suppression readline.supp..."
+	@echo "{\n   <Readline>\n   Memcheck:Leak\n   match-leak-kinds: reachable\n   ...\n   fun:readline\n}\n{\n   <AddHistory>\n   Memcheck:Leak\n   match-leak-kinds: reachable\n   ...\n   fun:add_history\n}" > readline.supp
+
+# Règle pour tester avec un analyseur statique
+analyze:
+	@echo "🔬 Analyse statique du code..."
+	scan-build make re
+
+# Règle pour tester avec l'AddressSanitizer et l'UBSanitizer
+sanitize: CFLAGS += -fsanitize=address,undefined -g
+sanitize: re
+	@echo "🧪 Exécution avec sanitizers..."
+	./$(NAME)
+
+# Règle pour tester avec des outils de détection de fuites spécifiques à macOS
+leaks: $(NAME)
+	@echo "🔍 Exécution avec l'outil leaks de macOS..."
+	leaks -atExit -- ./$(NAME)
+
+# Règle pour exécuter avec un input spécifique
+test-cmd: $(NAME)
+	@echo "🧪 Test avec commande spécifique: $(CMD)"
+	echo "$(CMD)" | ./$(NAME)
+
 # Règles phony pour éviter des conflits avec des fichiers du même nom
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re valgrind valgrind-readline readline-supp analyze sanitize leaks test-cmd
