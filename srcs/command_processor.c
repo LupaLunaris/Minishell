@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 22:44:41 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/08 15:22:59 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/08 15:26:01 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	check_special_commands(char *input)
 {
 	if (!input || input[0] == '\0')
 		return (1);
-	if (ft_strcmp(input, "$") == 0 )
+	if (ft_strcmp(input, "$") == 0)
 	{
 		ft_putstr_fd(input, 2);
 		ft_putstr_fd(": command not found\n", 2);
