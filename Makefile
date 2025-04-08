@@ -56,6 +56,13 @@ OBJS = $(ALL_SRCS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)
 # Variables pour la barre de progression
 TOTAL_FILES := $(words $(ALL_SRCS))
 
+# Couleurs
+RED = \033[1;31m
+GREEN = \033[0;32m
+YELLOW = \033[1;33m
+BLUE = \033[0;34m
+RESET = \033[0m
+
 # Règle principale
 all: $(LIBFT) compile_start $(NAME)
 
@@ -66,7 +73,7 @@ compile_start:
 $(NAME): $(OBJS)
 	@echo "\n🔨 Création de l'exécutable $(NAME)..."
 	@$(CC) $(CFLAGS) $(OBJS) $(INCLUDES) $(LIBFT) $(LIBS) -o $(NAME)
-	@echo "✅ Compilation de $(NAME) terminée !"
+	@echo "${GREEN}✅ Compilation de $(NAME) terminée !${RESET}"
 
 # Variable pour suivre les fichiers compilés
 COMPILE_COUNT = 0
@@ -76,29 +83,29 @@ $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c
 	@mkdir -p $(@D)
 	@$(eval COMPILE_COUNT=$(shell echo $$(($(COMPILE_COUNT) + 1))))
 	@$(eval PERCENT=$(shell echo $$(($(COMPILE_COUNT) * 100 / $(TOTAL_FILES)))))
-	@printf "\r\033[K⏳ Progression: [%-50s] %3d%% (%d/%d)" \
+	@printf "\r\033[K⏳ Progression: [${RED}%-50s${RESET}] %3d%% (%d/%d)" \
 		"$(shell printf '█%.0s' $$(seq 1 $$(($(PERCENT) * 50 / 100))))" \
 		$(PERCENT) $(COMPILE_COUNT) $(TOTAL_FILES)
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 # Compilation de la libft
 $(LIBFT):
-	@echo "🔧 Compilation de la libft..."
+	@echo "${BLUE}🔧 Compilation de la libft...${RESET}"
 	@$(MAKE) -s -C $(LIBFT_DIR)
 
 # Nettoyage des fichiers objets
 clean:
-	@echo "🧹 Suppression des fichiers objets..."
+	@echo "${YELLOW}🧹 Suppression des fichiers objets...${RESET}"
 	@rm -rf $(OBJS_DIR)
 	@$(MAKE) -s clean -C $(LIBFT_DIR)
-	@echo "🧹 Nettoyage terminé."
+	@echo "${GREEN}🧹 Nettoyage terminé.${RESET}"
 
 # Nettoyage complet (inclut les objets + exécutable)
 fclean: clean
-	@echo "🧹 Suppression de l'exécutable $(NAME)..."
+	@echo "${YELLOW}🧹 Suppression de l'exécutable $(NAME)...${RESET}"
 	@rm -f $(NAME)
 	@$(MAKE) -s fclean -C $(LIBFT_DIR)
-	@echo "🧹 Nettoyage complet terminé."
+	@echo "${GREEN}🧹 Nettoyage complet terminé.${RESET}"
 
 # Recompiler tout
 re: fclean all
@@ -111,8 +118,8 @@ status:
 	@echo "📊 État du projet:"
 	@echo "  - Nombre total de fichiers sources: $(TOTAL_FILES)"
 	@if [ -f "$(NAME)" ]; then \
-		echo "  - Exécutable '$(NAME)': ✅ Présent"; \
+		echo "  - Exécutable '$(NAME)': ${GREEN}✅ Présent${RESET}"; \
 	else \
-		echo "  - Exécutable '$(NAME)': ❌ Absent"; \
+		echo "  - Exécutable '$(NAME)': ${RED}❌ Absent${RESET}"; \
 	fi
-	@echo "  - Libft: $(shell if [ -f "$(LIBFT)" ]; then echo "✅ Compilée"; else echo "❌ Non compilée"; fi)"
+	@echo "  - Libft: $(shell if [ -f "$(LIBFT)" ]; then echo "${GREEN}✅ Compilée${RESET}"; else echo "${RED}❌ Non compilée${RESET}"; fi)"
