@@ -53,78 +53,66 @@ ALL_SRCS = $(SRCS) $(BUILTINS_SRCS) $(EXECUTE_SRCS) $(UTILS_SRCS) \
 # Fichiers objets
 OBJS = $(ALL_SRCS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)
 
+# Variables pour la barre de progression
+TOTAL_FILES := $(words $(ALL_SRCS))
+
 # Règle principale
-all: $(LIBFT) $(NAME)
+all: $(LIBFT) compile_start $(NAME)
+
+compile_start:
+	@echo "🚀 Début de la compilation de $(TOTAL_FILES) fichiers..."
 
 # Création de l'exécutable
 $(NAME): $(OBJS)
-	@echo "🔨 Création de l'exécutable $(NAME)..."
-	$(CC) $(CFLAGS) $(OBJS) $(INCLUDES) $(LIBFT) $(LIBS) -o $(NAME)
+	@echo "\n🔨 Création de l'exécutable $(NAME)..."
+	@$(CC) $(CFLAGS) $(OBJS) $(INCLUDES) $(LIBFT) $(LIBS) -o $(NAME)
 	@echo "✅ Compilation de $(NAME) terminée !"
 
-# Génération des objets
+# Variable pour suivre les fichiers compilés
+COMPILE_COUNT = 0
+
+# Génération des objets avec barre de progression mise à jour
 $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c
 	@mkdir -p $(@D)
-	@echo "🛠️ Compilation de $<..."
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	@$(eval COMPILE_COUNT=$(shell echo $$(($(COMPILE_COUNT) + 1))))
+	@$(eval PERCENT=$(shell echo $$(($(COMPILE_COUNT) * 100 / $(TOTAL_FILES)))))
+	@printf "\r\033[K⏳ Progression: [%-50s] %3d%% (%d/%d)" \
+		"$(shell printf '█%.0s' $$(seq 1 $$(($(PERCENT) * 50 / 100))))" \
+		$(PERCENT) $(COMPILE_COUNT) $(TOTAL_FILES)
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 # Compilation de la libft
 $(LIBFT):
 	@echo "🔧 Compilation de la libft..."
-	@$(MAKE) -C $(LIBFT_DIR)
+	@$(MAKE) -s -C $(LIBFT_DIR)
 
 # Nettoyage des fichiers objets
 clean:
 	@echo "🧹 Suppression des fichiers objets..."
-	rm -rf $(OBJS_DIR)
-	@$(MAKE) clean -C $(LIBFT_DIR)
+	@rm -rf $(OBJS_DIR)
+	@$(MAKE) -s clean -C $(LIBFT_DIR)
+	@echo "🧹 Nettoyage terminé."
 
 # Nettoyage complet (inclut les objets + exécutable)
 fclean: clean
 	@echo "🧹 Suppression de l'exécutable $(NAME)..."
-	rm -f $(NAME)
-	@$(MAKE) fclean -C $(LIBFT_DIR)
+	@rm -f $(NAME)
+	@$(MAKE) -s fclean -C $(LIBFT_DIR)
+	@echo "🧹 Nettoyage complet terminé."
 
 # Recompiler tout
 re: fclean all
 
-# Règles pour le testing et debugging
-
-# Règle pour tester les fuites de mémoire avec Valgrind
-valgrind: $(NAME)
-	@echo "🔍 Lancement avec Valgrind pour vérifier les fuites..."
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose ./$(NAME)
-
-# Règle pour tester les fuites avec option de suppression des erreurs de readline
-valgrind-readline: readline-supp $(NAME)
-	@echo "🔍 Lancement avec Valgrind (suppression des erreurs readline)..."
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --suppressions=readline.supp ./$(NAME)
-
-# Règle pour générer un fichier de suppression pour readline
-readline-supp:
-	@echo "📝 Génération du fichier de suppression readline.supp..."
-	@echo "{\n   <Readline>\n   Memcheck:Leak\n   match-leak-kinds: reachable\n   ...\n   fun:readline\n}\n{\n   <AddHistory>\n   Memcheck:Leak\n   match-leak-kinds: reachable\n   ...\n   fun:add_history\n}" > readline.supp
-
-# Règle pour tester avec un analyseur statique
-analyze:
-	@echo "🔬 Analyse statique du code..."
-	scan-build make re
-
-# Règle pour tester avec l'AddressSanitizer et l'UBSanitizer
-sanitize: CFLAGS += -fsanitize=address,undefined -g
-sanitize: re
-	@echo "🧪 Exécution avec sanitizers..."
-	./$(NAME)
-
-# Règle pour tester avec des outils de détection de fuites spécifiques à macOS
-leaks: $(NAME)
-	@echo "🔍 Exécution avec l'outil leaks de macOS..."
-	leaks -atExit -- ./$(NAME)
-
-# Règle pour exécuter avec un input spécifique
-test-cmd: $(NAME)
-	@echo "🧪 Test avec commande spécifique: $(CMD)"
-	echo "$(CMD)" | ./$(NAME)
-
 # Règles phony pour éviter des conflits avec des fichiers du même nom
-.PHONY: all clean fclean re valgrind valgrind-readline readline-supp analyze sanitize leaks test-cmd
+.PHONY: all clean fclean re compile_start
+
+# Règle pour voir l'état du projet
+status:
+	@echo "📊 État du projet:"
+	@echo "  - Nombre total de fichiers sources: $(TOTAL_FILES)"
+	@if [ -f "$(NAME)" ]; then \
+		echo "  - Exécutable '$(NAME)': ✅ Présent"; \
+	else \
+		echo "  - Exécutable '$(NAME)': ❌ Absent"; \
+	fi
+	@echo "  - Libft: $(shell if [ -f "$(LIBFT)" ]; then echo "✅ Compilée"; else echo "❌ Non compilée"; fi)"

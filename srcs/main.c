@@ -6,13 +6,12 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 10:17:31 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/06 11:13:21 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/08 16:15:24 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/* Gère le statut de sortie selon les signaux */
 void	handle_signals_exit_status(t_shell_data *data)
 {
 	if (g_signal_received == SIGINT)
