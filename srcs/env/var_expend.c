@@ -75,7 +75,6 @@ char	*expand_quote(char *str, char *result, t_shell_data *data)
 int	handle_none_var(t_env_list *list, t_cmd *cmd, t_shell_data *data)
 {
 	int	j;
-
 	if (!cmd->args[0] || cmd->args[0][0] != '$')
 		return (0);
 	if (is_none_var(list, cmd))

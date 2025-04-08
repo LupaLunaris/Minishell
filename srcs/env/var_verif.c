@@ -73,6 +73,10 @@ t_indices	is_in_squote(t_quote *state, char *str, t_indices idx)
 
 int	is_none_var(t_env_list *list, t_cmd *cmd)
 {
+	if (cmd->args[0][0] == '$'
+		&& (cmd->args[0][1] == '$'
+			|| cmd->args[0][1] == '?'))
+		return 0;
 	if (!get_env_var(list, cmd->args[0] + 1)
 		|| (get_env_var(list, cmd->args[0] + 1)
 			&& ft_strlen(get_env_var(list, cmd->args[0] + 1)) == 0))

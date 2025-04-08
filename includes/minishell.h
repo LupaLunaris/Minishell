@@ -79,7 +79,7 @@ void	free_arr(char **arr);
 void	*clean_cmd_list(t_cmd *head);
 int		process_command(char *input, t_shell_data *data);
 int		process_all_redirections(t_cmd *cmd_list);
-int		check_special_commands(char *input, t_cmd *cmd);
+int		check_special_commands(char *input);
 int		check_dollar_command(t_cmd *cmd_list);
 void	main_shell_loop(t_shell_data *data, char **rl);
 void	handle_input_loop(t_shell_data *data, char **rl);
