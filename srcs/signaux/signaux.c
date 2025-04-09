@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 17:44:56 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/09 13:31:40 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/09 15:48:36 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,14 @@
 
 volatile sig_atomic_t	g_signal_received = 0;
 
-/*
- * Handles received signals, stores signal number and 
- * performs appropriate actions for each signal
- */
 void	signal_handler(int signo)
+{
+	g_signal_received = signo;
+	if (signo == SIGINT)
+		write(1, "\n", 1);
+}
+
+void	signal_handler_interactive(int signo)
 {
 	g_signal_received = signo;
 	if (signo == SIGINT)
@@ -40,16 +43,12 @@ void	set_signals_interactive(void)
 	struct sigaction	act;
 
 	ft_memset(&act, 0, sizeof(act));
-	act.sa_handler = &signal_handler;
+	act.sa_handler = &signal_handler_interactive;
 	sigaction(SIGINT, &act, NULL);
 	act.sa_handler = SIG_IGN;
 	sigaction(SIGQUIT, &act, NULL);
 }
 
-/*
- * Sets signal handlers for command execution mode
- * Both SIGINT and SIGQUIT are caught and handled
- */
 void	set_signals_noninteractive(void)
 {
 	struct sigaction	act;
