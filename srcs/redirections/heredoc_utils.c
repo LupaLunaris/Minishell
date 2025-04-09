@@ -6,12 +6,16 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 21:03:53 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/08 15:59:13 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/09 13:36:35 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/*
+ * Appends a line to the heredoc content, adding a newline character
+ * Returns: 0 on success, 1 on memory allocation failure
+ */
 int	add_line_to_content(char **new_content, char *line)
 {
 	char	*temp;
@@ -30,6 +34,9 @@ int	add_line_to_content(char **new_content, char *line)
 	return (0);
 }
 
+/*
+ * Process all heredoc redirections in a command
+ */
 static int	process_cmd_heredocs(t_cmd *current, t_shell_data *data)
 {
 	t_redirection	*redir;
@@ -51,6 +58,9 @@ static int	process_cmd_heredocs(t_cmd *current, t_shell_data *data)
 	return (0);
 }
 
+/*
+ * Sets up all heredoc redirections for all commands in a pipeline
+ */
 int	setup_heredocs_for_pipeline(t_cmd *cmd_list, t_shell_data *data)
 {
 	t_cmd	*current;
@@ -67,6 +77,9 @@ int	setup_heredocs_for_pipeline(t_cmd *cmd_list, t_shell_data *data)
 	return (0);
 }
 
+/*
+ * Helper function to append a line to content, adding a newline
+ */
 static char	*append_to_content(char *content, char *line)
 {
 	char	*temp;
@@ -80,6 +93,9 @@ static char	*append_to_content(char *content, char *line)
 	return (temp);
 }
 
+/*
+ * Interactive function to read heredoc content until delimiter is found
+ */
 char	*get_heredoc_content(char *delimiter)
 {
 	char	*content;

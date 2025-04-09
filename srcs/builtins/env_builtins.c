@@ -6,18 +6,13 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 17:22:25 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/02 15:13:39 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/09 13:51:07 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/**
- * Implémente la commande builtin 'env' qui affiche l'environnement
- * @param command La structure de commande contenant les arguments
- * @param env_list Pointeur vers le début de la liste chaînée d'environnement
- * @return Exit status de la commande (0 pour succès, autre pour erreur)
- */
+/* Display all environment variables without any arguments */
 int	builtin_env(t_cmd *cmd, t_env_list **env_list)
 {
 	if (cmd->args[1] != NULL)

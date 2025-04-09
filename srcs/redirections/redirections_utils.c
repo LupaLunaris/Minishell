@@ -6,12 +6,16 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 12:06:37 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/06 12:12:53 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/09 13:34:22 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/*
+ * Handles input redirection (<) by opening file for reading
+ * and redirecting it to stdin
+ */
 int	handle_input_redir(char *cleaned_file)
 {
 	int	fd;
@@ -28,6 +32,10 @@ int	handle_input_redir(char *cleaned_file)
 	return (0);
 }
 
+/*
+ * Handles output redirection (> or >>) by opening file for writing
+ * in truncate or append mode
+ */
 int	handle_output_redir(char *cleaned_file, int append)
 {
 	int	fd;
@@ -50,6 +58,10 @@ int	handle_output_redir(char *cleaned_file, int append)
 	return (0);
 }
 
+/*
+ * Handles heredoc redirection (<<) by setting up a pipe
+ * with heredoc content as stdin
+ */
 int	handle_heredoc_redir(t_redirection *current, char *cleaned_file)
 {
 	int	pipe_fd[2];
@@ -71,6 +83,10 @@ int	handle_heredoc_redir(t_redirection *current, char *cleaned_file)
 	return (0);
 }
 
+/*
+ * Helper for quote stripping - processes each character
+ * respecting quote context
+ */
 static void	process_char(char *str, char *result, int *i, int *j)
 {
 	static int	in_squote = 0;
@@ -85,6 +101,10 @@ static void	process_char(char *str, char *result, int *i, int *j)
 	(*i)++;
 }
 
+/*
+ * Removes quotes from a string while respecting quoting rules
+ * Returns a new string without quotes
+ */
 char	*strip_quotes(char *str)
 {
 	char	*result;

@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 
+/* Dispatch and execute appropriate builtin command based on name */
 int	execute_builtin(t_cmd *cmd, t_shell_data *data)
 {
 	int	ret;
@@ -37,11 +38,13 @@ int	execute_builtin(t_cmd *cmd, t_shell_data *data)
 	return (ret);
 }
 
+/* Check if command has any redirections */
 static int	has_redirections(t_cmd *cmd)
 {
 	return (cmd->redirections != NULL);
 }
 
+/* Execute builtin command with proper redirections handling */
 int	execute_builtin_cmd(t_cmd *cmd, t_shell_data *data)
 {
 	int	stdin_backup;

@@ -6,15 +6,13 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 17:22:46 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/06 11:50:25 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/09 13:51:33 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/**
- * Vérifie si une chaîne est un nombre valide
- */
+/* Check if a string represents a valid number for exit command */
 static int	is_valid_number(char *str)
 {
 	int	i;
@@ -33,10 +31,7 @@ static int	is_valid_number(char *str)
 	return (1);
 }
 
-/**
- * Implémente la commande builtin 'exit'
- * Quitte le shell avec le statut spécifié
- */
+/* Implement the 'exit' builtin command to terminate the shell */
 int	builtin_exit(t_cmd *cmd, t_shell_data *data)
 {
 	int		exit_code;

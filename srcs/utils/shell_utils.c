@@ -6,13 +6,13 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 22:40:21 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/08 15:56:48 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/09 13:59:52 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/* Fonction principale de la boucle du shell */
+/* Main shell loop function */
 void	main_shell_loop(t_shell_data *data, char **rl)
 {
 	while (1)
@@ -26,7 +26,7 @@ void	main_shell_loop(t_shell_data *data, char **rl)
 	}
 }
 
-/* Traite les redirections pour une liste de commandes */
+/* Process all redirections for a command list */
 int	process_all_redirections(t_cmd *cmd_list, t_shell_data *data)
 {
 	t_cmd			*curr;
@@ -55,7 +55,7 @@ int	process_all_redirections(t_cmd *cmd_list, t_shell_data *data)
 	return (0);
 }
 
-/* Gère les erreurs d'initialisation d'environnement */
+/* Handle environment initialization errors */
 int	error_message_env_init(t_shell_data *data)
 {
 	free(data);
@@ -63,12 +63,19 @@ int	error_message_env_init(t_shell_data *data)
 			EXIT_FAILURE));
 }
 
-/* Affiche un message d'erreur pour la mémoire et sort */
-int	error_message_and_exit(char *prefix, char *message)
+/* Free all shell data structures */
+void	free_shell_data(t_shell_data *data)
 {
-	return (error_handler(prefix, message, 1, EXIT_FAILURE));
+	if (!data)
+		return ;
+	if (data->env_list)
+		free_env_list(data->env_list);
+	if (data->state)
+		free(data->state);
+	free(data);
 }
 
+/* Initialize shell data structure */
 t_shell_data	*init_shell_data(char **envp)
 {
 	t_shell_data	*data;

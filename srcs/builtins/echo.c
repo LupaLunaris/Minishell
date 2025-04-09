@@ -6,12 +6,13 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 15:11:35 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/02 15:12:04 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/09 13:50:28 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* Check for -n option in echo command to suppress newline */
 static int	check_n_option(char **args, int *i)
 {
 	int	j;
@@ -31,6 +32,7 @@ static int	check_n_option(char **args, int *i)
 	return (newline);
 }
 
+/* Implement echo command with support for -n option */
 int	builtin_echo(t_cmd *cmd)
 {
 	int	i;

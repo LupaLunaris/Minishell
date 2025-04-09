@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 17:44:56 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/05 19:10:54 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/09 13:31:40 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
 
 volatile sig_atomic_t	g_signal_received = 0;
 
-/* signal_handler:
- * Gestionnaire principal des signaux.
- * Il enregistre le signal reçu et fait le traitement approprié.
+/*
+ * Handles received signals, stores signal number and 
+ * performs appropriate actions for each signal
  */
 void	signal_handler(int signo)
 {
@@ -31,10 +31,9 @@ void	signal_handler(int signo)
 	}
 }
 
-/* set_signals_interactive:
- * Configure les gestionnaires de signaux pour le mode interactif.
- * SIGINT (CTRL+C) : afficher un nouveau prompt
- * SIGQUIT (CTRL+\) : ignorer
+/*
+ * Sets signal handlers for interactive mode (prompt)
+ * SIGINT: displays new prompt, SIGQUIT: ignored
  */
 void	set_signals_interactive(void)
 {
@@ -47,9 +46,9 @@ void	set_signals_interactive(void)
 	sigaction(SIGQUIT, &act, NULL);
 }
 
-/* set_signals_noninteractive:
- * Configure les gestionnaires pour le mode non-interactif.
- * SIGINT et SIGQUIT sont gérés normalement pour les processus enfants.
+/*
+ * Sets signal handlers for command execution mode
+ * Both SIGINT and SIGQUIT are caught and handled
  */
 void	set_signals_noninteractive(void)
 {

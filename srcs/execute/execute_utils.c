@@ -6,12 +6,13 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 20:35:56 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/06 20:47:25 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/09 13:46:53 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* Convert process termination status to shell exit code */
 int	handle_status(int save_status)
 {
 	if (WIFSIGNALED(save_status))
@@ -21,6 +22,7 @@ int	handle_status(int save_status)
 	return (save_status);
 }
 
+/* Convert environment linked list to array format for execve */
 char	**env_list_to_array(t_env_list *env_list)
 {
 	int			count;
@@ -50,6 +52,7 @@ char	**env_list_to_array(t_env_list *env_list)
 	return (env_array);
 }
 
+/* Check if command has any heredoc redirections */
 int	has_heredoc(t_cmd *cmd)
 {
 	t_redirection	*redir;
@@ -64,6 +67,7 @@ int	has_heredoc(t_cmd *cmd)
 	return (0);
 }
 
+/* Retrieve heredoc content from command redirections */
 char	*get_cmd_heredoc_content(t_cmd *cmd)
 {
 	t_redirection	*redir;
@@ -78,6 +82,7 @@ char	*get_cmd_heredoc_content(t_cmd *cmd)
 	return (NULL);
 }
 
+/* Get delimiter string for heredoc from command redirections */
 char	*get_heredoc_delimiter(t_cmd *cmd)
 {
 	t_redirection	*redir;

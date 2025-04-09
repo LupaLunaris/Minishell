@@ -6,12 +6,13 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 15:14:57 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/08 14:47:08 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/09 13:59:47 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* Free environment list and its contents */
 void	free_env_list(t_env_list *env_list)
 {
 	t_env_list	*tmp;
@@ -28,17 +29,23 @@ void	free_env_list(t_env_list *env_list)
 	}
 }
 
-void	free_shell_data(t_shell_data *data)
+/* Free environment variable array */
+void	free_env_array(char **env_array)
 {
-	if (!data)
+	int	i;
+
+	i = 0;
+	if (!env_array)
 		return ;
-	if (data->env_list)
-		free_env_list(data->env_list);
-	if (data->state)
-		free(data->state);
-	free(data);
+	while (env_array[i])
+	{
+		free(env_array[i]);
+		i++;
+	}
+	free(env_array);
 }
 
+/* Free redirection structures in a command */
 void	free_redirections(t_redirection *redirections)
 {
 	t_redirection	*tmp;
@@ -55,6 +62,7 @@ void	free_redirections(t_redirection *redirections)
 	}
 }
 
+/* Free array of string arguments */
 void	free_args(char **args)
 {
 	int	i;
@@ -70,6 +78,7 @@ void	free_args(char **args)
 	free(args);
 }
 
+/* Free command structures and all their contents */
 void	free_command(t_cmd *cmd)
 {
 	t_cmd	*tmp;

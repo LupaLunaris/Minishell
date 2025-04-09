@@ -6,21 +6,13 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 16:02:36 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/02 15:05:16 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/09 13:53:46 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/**
- * Vérifie si une chaîne est un identifiant valide selon les règles POSIX
- * Un identifiant valide :
- * - Doit commencer par une lettre (a-z, A-Z) ou un underscore (_)
- * - Ne peut contenir que des lettres, chiffres et underscores
- *
- * @param str La chaîne à vérifier
- * @return 1 si l'identifiant est valide, 0 sinon
- */
+/* Check if a string is a valid POSIX identifier */
 int	is_valid_identifier(char *arg)
 {
 	int		i;
@@ -41,12 +33,7 @@ int	is_valid_identifier(char *arg)
 	return (1);
 }
 
-/**
- * Commande intégrée 'unset' - Supprime les variables d'environnement
- * @param args     Tableau d'arguments (args[0] est "unset")
- * @param env_list Pointeur sur la liste des variables d'environnement
- * @return         0 en cas de succès, 1 en cas d'erreur
- */
+/* Implement the 'unset' builtin command to remove environment variables */
 int	builtin_unset(char **args, t_env_list **env_list)
 {
 	int	i;

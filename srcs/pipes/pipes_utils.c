@@ -6,12 +6,13 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 11:54:49 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/06 11:58:00 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/09 13:42:23 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* Initialize pipeline data structure and count commands */
 void	init_pipeline(t_pipe_data *pd, t_shell_exec *se,
 		t_env_list *env_list, t_cmd *cmd_list)
 {
@@ -34,6 +35,7 @@ void	init_pipeline(t_pipe_data *pd, t_shell_exec *se,
 	pd->pipes[1][1] = -1;
 }
 
+/* Create child process for command execution in pipeline */
 int	create_process(t_cmd *curr, t_pipe_data *pd, t_shell_exec *se)
 {
 	pid_t	pid;
@@ -58,6 +60,7 @@ int	create_process(t_cmd *curr, t_pipe_data *pd, t_shell_exec *se)
 	return (pid);
 }
 
+/* Wait for all child processes and get last command's status */
 int	wait_for_processes(t_cmd *cmd, int *last_status)
 {
 	t_cmd	*curr;

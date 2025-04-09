@@ -6,12 +6,16 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 16:44:57 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/08 16:01:30 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/09 13:35:30 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/*
+ * Processes a line from heredoc: checks for delimiter, expands variables,
+ * and appends to content
+ */
 static int	handle_heredoc_line(char *delimiter, char *line,
 	char **content, t_shell_data *data)
 {
@@ -37,6 +41,9 @@ static int	handle_heredoc_line(char *delimiter, char *line,
 	return (0);
 }
 
+/*
+ * Reads lines for heredoc until delimiter is found
+ */
 static int	read_heredoc_lines(char *delimiter, char **content,
 	t_shell_data	*data)
 {
@@ -62,11 +69,17 @@ static int	read_heredoc_lines(char *delimiter, char **content,
 	return (0);
 }
 
+/*
+ * Public interface for reading heredoc content
+ */
 int	read_heredoc_content(char *delimiter, char **content, t_shell_data *data)
 {
 	return (read_heredoc_lines(delimiter, content, data));
 }
 
+/*
+ * Finds a heredoc redirection with the given delimiter
+ */
 t_redirection	*find_heredoc_redirection(t_cmd *command, char *delimiter)
 {
 	t_redirection	*redir;
@@ -82,6 +95,9 @@ t_redirection	*find_heredoc_redirection(t_cmd *command, char *delimiter)
 	return (NULL);
 }
 
+/*
+ * Processes heredoc redirection, reads content and stores it
+ */
 int	process_heredoc(char *delimiter, t_cmd *command, t_shell_data	*data)
 {
 	t_redirection	*redir;

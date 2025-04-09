@@ -6,13 +6,13 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 18:28:22 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/05 22:27:27 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/09 13:54:12 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/* Fonction pour afficher les erreurs */
+/* Function to display error messages */
 int	error_handler(const char *cmd, const char *message,
 	int should_exit, int error_code)
 {
@@ -32,7 +32,7 @@ int	error_handler(const char *cmd, const char *message,
 	return (error_code);
 }
 
-/* Fonction pour nettoyer les ressources et quitter */
+/* Function to clean up resources and exit the shell */
 void	cleanup_and_exit(t_shell_data *data, t_cmd *cmds, int exit_code)
 {
 	if (cmds)

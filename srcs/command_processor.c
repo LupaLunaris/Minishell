@@ -6,12 +6,16 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 22:44:41 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/08 15:55:55 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/09 13:29:24 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/*
+ * Checks for empty input or the lone "$" special case
+ * Returns: 1 for empty, 127 for "$", 0 otherwise
+ */
 int	check_special_commands(char *input)
 {
 	if (!input || input[0] == '\0')
@@ -25,7 +29,10 @@ int	check_special_commands(char *input)
 	return (0);
 }
 
-/* Vérifie les commandes qui commencent par $ */
+/*
+ * Handles commands starting with '$' without a path separator
+ * Returns: 1 if command starts with $ (no slashes), 0 otherwise
+ */
 int	check_dollar_command(t_cmd *cmd_list)
 {
 	if (cmd_list && cmd_list->cmd && cmd_list->cmd[0] == '$')
@@ -39,7 +46,11 @@ int	check_dollar_command(t_cmd *cmd_list)
 	return (0);
 }
 
-/* Traite une commande saisie par l'utilisateur */
+/*
+ * Main command processor: parses input, handles redirections,
+ * expands variables, and executes the command
+ * Returns: command exit status
+ */
 int	process_command(char *input, t_shell_data *data)
 {
 	t_cmd	*cmd_list;

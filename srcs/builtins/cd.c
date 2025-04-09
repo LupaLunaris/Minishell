@@ -6,12 +6,13 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 17:21:37 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/02 15:13:17 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/09 13:49:59 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* Resolve target directory path for cd command based on arguments or env */
 static int	handle_cd_path(char **args, t_env_list *env_list, char **path)
 {
 	if (args[1] == NULL)
@@ -32,6 +33,7 @@ static int	handle_cd_path(char **args, t_env_list *env_list, char **path)
 	return (0);
 }
 
+/* Change directory and update PWD/OLDPWD environment variables */
 int	builtin_cd(char **args, t_env_list **env_list)
 {
 	char	old_pwd[PATH_MAX];

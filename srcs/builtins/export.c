@@ -6,15 +6,13 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/01 00:00:00 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/02 15:10:25 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/09 13:52:56 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/**
- * Vérifie si un identifiant est valide pour une variable d'environnement
- */
+/* Check if an identifier is valid for an environment variable */
 int	is_valid_identifier_exp(char *id)
 {
 	int	i;
@@ -33,9 +31,7 @@ int	is_valid_identifier_exp(char *id)
 	return (1);
 }
 
-/**
- * Traite un argument spécifique d'export
- */
+/* Process a specific export argument */
 int	process_export_arg(char *arg, t_env_list **env_list)
 {
 	char	*error_msg;
@@ -54,9 +50,7 @@ int	process_export_arg(char *arg, t_env_list **env_list)
 	return (EXIT_SUCCESS);
 }
 
-/**
- * Implémente la commande builtin 'export'
- */
+/* Implement the 'export' builtin command */
 int	builtin_export(t_cmd *command, t_env_list **env_list)
 {
 	int	i;

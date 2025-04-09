@@ -6,12 +6,13 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 10:11:44 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/06 10:20:31 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/09 13:48:49 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* Create full command path by joining directory path and command */
 char	*create_cmd_path(char *cmd, char **paths)
 {
 	char	*cmd_path;
@@ -32,6 +33,7 @@ char	*create_cmd_path(char *cmd, char **paths)
 	return (NULL);
 }
 
+/* Extract PATH environment variable from environment array */
 char	*get_path(char **env_array)
 {
 	int		i;
@@ -53,6 +55,7 @@ char	*get_path(char **env_array)
 	return (path);
 }
 
+/* Check if command has absolute path and can be executed */
 static int	handle_absolute_path(char *cmd, char **cmd_path)
 {
 	struct stat	file_stat;
@@ -68,6 +71,7 @@ static int	handle_absolute_path(char *cmd, char **cmd_path)
 	return (0);
 }
 
+/* Search command in PATH directories and verify it's not a directory */
 static char	*process_path_search(char *cmd, char **paths)
 {
 	char		*cmd_path;
@@ -84,6 +88,7 @@ static char	*process_path_search(char *cmd, char **paths)
 	return (cmd_path);
 }
 
+/* Main function to locate command executable in filesystem */
 char	*get_cmd_path(char *cmd, char **env_array)
 {
 	char	*path;

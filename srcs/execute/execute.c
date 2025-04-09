@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 
+/* Wait for all child processes and return exit status */
 int	get_children(t_cmd *cmd)
 {
 	t_cmd	*head;
@@ -41,6 +42,7 @@ int	get_children(t_cmd *cmd)
 	return (handle_status(save_status));
 }
 
+/* Handle execution in child process (redirections and command) */
 static void	child_process(t_cmd *cmd, char **env_array, t_shell_data *data)
 {
 	setup_redirection(cmd->redirections);
@@ -50,6 +52,7 @@ static void	child_process(t_cmd *cmd, char **env_array, t_shell_data *data)
 		execute_command(cmd, env_array);
 }
 
+/* Fork child processes for each command without piping */
 int	create_children(t_cmd *cmd, t_env_list *env_list, t_shell_data *data)
 {
 	t_cmd	*head;
@@ -78,6 +81,7 @@ int	create_children(t_cmd *cmd, t_env_list *env_list, t_shell_data *data)
 	return (status);
 }
 
+/* Process heredoc redirections for all commands */
 static int	process_cmd_heredocs(t_cmd *cmd, t_shell_data *data)
 {
 	t_cmd	*curr;
@@ -103,6 +107,7 @@ static int	process_cmd_heredocs(t_cmd *cmd, t_shell_data *data)
 	return (0);
 }
 
+/* Main command execution dispatcher */
 int	execute(t_cmd *cmd, t_env_list *env_list, t_shell_data *data)
 {
 	int	status;

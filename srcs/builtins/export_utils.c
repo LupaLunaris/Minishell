@@ -6,15 +6,13 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 14:34:49 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/02 15:16:20 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/09 13:52:19 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/**
- * Affiche les variables d'environnement au format de la commande export
- */
+/* Display environment variables in 'export' command format */
 void	print_export_list(t_env_list *env_list)
 {
 	t_env_list	**sorted_env;
@@ -37,9 +35,7 @@ void	print_export_list(t_env_list *env_list)
 	free(sorted_env);
 }
 
-/**
- * Traitement d'erreur pour export
- */
+/* Handle export command error with invalid identifier */
 int	export_error(char *name)
 {
 	char	*error_msg;
@@ -51,9 +47,7 @@ int	export_error(char *name)
 	return (EXIT_FAILURE);
 }
 
-/**
- * Traite un argument export contenant un signe égal
- */
+/* Process export argument containing an equals sign */
 int	process_export_with_equals(char *arg, t_env_list **env_list)
 {
 	char	*name;
@@ -78,9 +72,7 @@ int	process_export_with_equals(char *arg, t_env_list **env_list)
 	return (EXIT_SUCCESS);
 }
 
-/**
- * Affiche les variables triées
- */
+/* Display sorted environment variables for export command */
 void	print_sorted_exp(t_env_list **sorted_env, int count)
 {
 	int	i;

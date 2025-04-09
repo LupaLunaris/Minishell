@@ -12,6 +12,13 @@
 
 #include "minishell.h"
 
+/*
+ * Sets up pipe redirections for each process in the pipeline
+ * Based on whether it's a child process or parent process
+ * 
+ * For child: redirects stdin/stdout to appropriate pipe ends
+ * For parent: closes unused pipe ends to prevent hanging
+ */
 void	manage_pipes(t_pipe_data *pd, int is_child)
 {
 	if (is_child)
@@ -38,6 +45,12 @@ void	manage_pipes(t_pipe_data *pd, int is_child)
 	}
 }
 
+/*
+ * Processes a single command in a pipeline
+ * Sets up redirections, then either:
+ * - Executes a builtin command, or
+ * - Executes an external command
+ */
 void	process_pipe_command(t_cmd *curr, t_shell_exec *se)
 {
 	char	**env_array;
@@ -53,6 +66,13 @@ void	process_pipe_command(t_cmd *curr, t_shell_exec *se)
 	}
 }
 
+/*
+ * Executes a pipeline of commands using multiple processes
+ * Creates processes for each command, sets up pipes between them,
+ * and waits for all processes to complete
+ * 
+ * Returns: Exit status of the last command in the pipeline
+ */
 int	execute_pipeline(t_cmd *cmd, t_env_list *env_list, t_shell_data *data)
 {
 	t_pipe_data		pd;

@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 
+/* Execute command with absolute/relative path and check permissions */
 static int	handle_direct_path(t_cmd *cmd, char **env_array)
 {
 	struct stat	file_stat;
@@ -29,6 +30,7 @@ static int	handle_direct_path(t_cmd *cmd, char **env_array)
 	return (error_handler(cmd->cmd, "Error executing command", 1, 126));
 }
 
+/* Find command in PATH and execute it */
 static int	handle_cmd_path(t_cmd *cmd, char **env_array)
 {
 	char	*cmd_path;
@@ -43,6 +45,7 @@ static int	handle_cmd_path(t_cmd *cmd, char **env_array)
 	return (error_handler(cmd->cmd, "command not found", 1, 127));
 }
 
+/* Special version of command execution for heredoc processing */
 int	execute_command_for_heredoc(t_cmd *cmd, char **env_array)
 {
 	char	*cmd_path;
@@ -56,6 +59,7 @@ int	execute_command_for_heredoc(t_cmd *cmd, char **env_array)
 	return (EXIT_FAILURE);
 }
 
+/* Main command execution function that determines execution method */
 void	execute_command(t_cmd *cmd, char **env_array)
 {
 	if (cmd->cmd && ((cmd->cmd[0] == '$' && cmd->cmd[1] == '\0')
