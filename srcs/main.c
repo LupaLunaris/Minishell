@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 10:17:31 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/09 15:49:51 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/10 10:49:51 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,11 @@ void	handle_input_loop(t_shell_data *data, char **rl)
 	int	signal_was_received;
 
 	signal_was_received = (g_signal_received == SIGINT);
+	if (g_signal_received != 0)
+	{
+		handle_signals_exit_status(data);
+		g_signal_received = 0;
+	}
 	if (!signal_was_received)
 		*rl = readline("MiniShellDeLaMort> ");
 	else

@@ -6,15 +6,20 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 17:44:56 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/09 15:48:36 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/10 10:51:24 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #define _POSIX_C_SOURCE 200809L
 #include "minishell.h"
 
+/* Global variable to store received signal number */
 volatile sig_atomic_t	g_signal_received = 0;
 
+/**
+ * Standard signal handler for non-interactive mode
+ * SIGINT: print newline, SIGQUIT: no visual output
+ */
 void	signal_handler(int signo)
 {
 	g_signal_received = signo;
@@ -22,6 +27,10 @@ void	signal_handler(int signo)
 		write(1, "\n", 1);
 }
 
+/**
+ * Signal handler for interactive mode (prompt)
+ * SIGINT: print newline and redisplay prompt
+ */
 void	signal_handler_interactive(int signo)
 {
 	g_signal_received = signo;
@@ -49,6 +58,11 @@ void	set_signals_interactive(void)
 	sigaction(SIGQUIT, &act, NULL);
 }
 
+/**
+ * Sets up signal handlers for non-interactive mode (executing commands)
+ * - SIGINT (Ctrl+C): set global flag and print newline
+ * - SIGQUIT (Ctrl+\): set global flag without output
+ */
 void	set_signals_noninteractive(void)
 {
 	struct sigaction	act;
