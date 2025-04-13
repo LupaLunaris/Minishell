@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 22:40:21 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/09 15:39:50 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/12 20:07:44 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ void	main_shell_loop(t_shell_data *data, char **rl)
 		if (*rl == NULL || data->should_exit)
 			break ;
 	}
+	cleanup_and_exit(data, NULL, data->exit_status);
 }
 
 /* Process all redirections for a command list */

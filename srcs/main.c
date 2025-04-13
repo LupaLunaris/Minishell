@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 10:17:31 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/10 10:49:51 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/12 20:07:17 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ void	handle_input_loop(t_shell_data *data, char **rl)
 	{
 		if (data->interactive)
 			write(STDOUT_FILENO, "exit\n", 5);
+		data->should_exit = 1;
 		return ;
 	}
 	if ((*rl)[0] != '\0')
@@ -75,6 +76,5 @@ int	main(int argc, char **argv, char **envp)
 	if (!data->env_list)
 		return (error_message_env_init(data));
 	main_shell_loop(data, &rl);
-	cleanup_and_exit(data, NULL, data->exit_status);
 	return (data->exit_status);
 }

@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 17:22:46 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/09 13:51:33 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/12 20:02:06 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,6 @@ int	builtin_exit(t_cmd *cmd, t_shell_data *data)
 	if (cmd->args[2])
 		return (error_handler("exit", "too many arguments", 0, 1));
 	exit_code = ft_atoi(arg) % 256;
-	exit((unsigned char)exit_code);
+	cleanup_and_exit(data, cmd, exit_code);
 	return (exit_code);
 }

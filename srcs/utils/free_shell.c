@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 15:14:57 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/09 13:59:47 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/12 20:22:35 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,10 @@ void	free_command(t_cmd *cmd)
 	while (cmd)
 	{
 		tmp = cmd->next;
+		if (cmd->infile > 2)
+			close(cmd->infile);
+		if (cmd->outfile > 2)
+			close(cmd->outfile);
 		if (cmd->cmd)
 			free(cmd->cmd);
 		if (cmd->args)
