@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 17:56:35 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/10 12:12:32 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/13 17:26:34 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <stdbool.h>
 # include "command.h"
 # include "shell_data.h"
+# include "signal.h"
 
 int		execute(t_cmd *cmd, t_env_list *env_list, t_shell_data *data);
 int		check_redirections(t_cmd *cmd);
@@ -45,5 +46,10 @@ char	*get_cmd_heredoc_content(t_cmd *cmd);
 int		handle_status(int status);
 int		has_heredoc(t_cmd *cmd);
 char	*get_heredoc_delimiter(t_cmd *cmd);
+void	set_signals_heredoc(void);
+void	restore_signals(void);
+int		process_heredoc_line_loop(char *delimiter, char **content,
+			t_shell_data *data);
+int		handle_exit_status_heredoc(int status);
 
 #endif

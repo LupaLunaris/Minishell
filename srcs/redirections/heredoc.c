@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 16:44:57 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/09 13:35:30 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/13 17:24:14 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,26 +45,30 @@ static int	handle_heredoc_line(char *delimiter, char *line,
  * Reads lines for heredoc until delimiter is found
  */
 static int	read_heredoc_lines(char *delimiter, char **content,
-	t_shell_data	*data)
+		t_shell_data *data)
 {
 	char	*line;
 	int		result;
 	char	*new_content;
 
+	set_signals_heredoc();
 	new_content = ft_strdup("");
 	if (!new_content)
-		return (error_handler("heredoc", "memory allocation failed", 0, 1));
+		return (restore_signals(), error_handler("heredoc",
+				"memory allocation failed", 0, 1));
 	while (1)
 	{
 		line = readline("> ");
 		result = handle_heredoc_line(delimiter, line, &new_content, data);
 		if (result != 0)
 		{
+			restore_signals();
 			if (result == 1)
 				break ;
 			return (result);
 		}
 	}
+	restore_signals();
 	*content = new_content;
 	return (0);
 }
@@ -98,7 +102,7 @@ t_redirection	*find_heredoc_redirection(t_cmd *command, char *delimiter)
 /*
  * Processes heredoc redirection, reads content and stores it
  */
-int	process_heredoc(char *delimiter, t_cmd *command, t_shell_data	*data)
+int	process_heredoc(char *delimiter, t_cmd *command, t_shell_data *data)
 {
 	t_redirection	*redir;
 	char			*content;

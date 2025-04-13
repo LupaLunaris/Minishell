@@ -91,7 +91,15 @@ char	*init_expand_result(char *str, t_shell_data *data)
 	if (!str)
 		return (NULL);
 	data->state = init_quote_state();
+	if (!data->state)
+		return (NULL);
 	result = malloc(4096);
+	if (!result)
+	{
+		free(data->state);
+		data->state = NULL;
+		return (NULL);
+	}
 	return (result);
 }
 
