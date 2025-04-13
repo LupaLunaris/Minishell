@@ -6,12 +6,14 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 16:58:43 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/13 17:16:33 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/13 18:29:48 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#define _POSIX_C_SOURCE 200809L
 #include "minishell.h"
 #include <signal.h>
+
 /* Signal handler spécifique au heredoc */
 void	signal_handler_heredoc(int signo)
 {
