@@ -70,6 +70,8 @@ typedef struct s_lexer			t_lexer;
 
 int		error_handler(const char *cmd, const char *message,
 			int should_exit, int error_code);
+int		error_handler_c(t_cmd *cmd, char **env_array, const char *message,
+			int should_exit);
 int		error_message_env_init(t_shell_data *data);
 int		error_message_and_exit(char *prefix, char *message);
 int		is_valid_identifier(char *str);

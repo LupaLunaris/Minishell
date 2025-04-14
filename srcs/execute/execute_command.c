@@ -42,7 +42,7 @@ static int	handle_cmd_path(t_cmd *cmd, char **env_array)
 		free(cmd_path);
 		return (error_handler(cmd->cmd, "Error executing command", 1, 126));
 	}
-	return (error_handler(cmd->cmd, "command not found", 1, 127));
+	return (error_handler_c(cmd, env_array ,"command not found", 1));
 }
 
 /* Special version of command execution for heredoc processing */
@@ -52,7 +52,7 @@ int	execute_command_for_heredoc(t_cmd *cmd, char **env_array)
 
 	cmd_path = get_cmd_path(cmd->cmd, env_array);
 	if (!cmd_path)
-		return (error_handler(cmd->cmd, "command not found", 0, 127));
+		return (error_handler_c(cmd, env_array ,"command not found", 1));
 	execve(cmd_path, cmd->args, env_array);
 	perror("execve");
 	free(cmd_path);

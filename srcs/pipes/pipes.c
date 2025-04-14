@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*																			*/
-/*														:::	  ::::::::   */
-/*   pipes.c											:+:	  :+:	:+:   */
-/*													+:+ +:+		 +:+	 */
-/*   By: Jpaulis <Jpaulis@student.s19.be>		   +#+  +:+	   +#+		*/
-/*												+#+#+#+#+#+   +#+		   */
-/*   Created: 2025/02/17 18:01:14 by Jpaulis		   #+#	#+#			 */
-/*   Updated: 2025/03/19 17:34:36 by Jpaulis		  ###   ########.fr	   */
-/*																			*/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipes.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/06 11:54:49 by Jpaulis           #+#    #+#             */
+/*   Updated: 2025/04/10 12:10:37 by Jpaulis          ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
@@ -15,7 +15,7 @@
 /*
  * Sets up pipe redirections for each process in the pipeline
  * Based on whether it's a child process or parent process
- * 
+ *
  * For child: redirects stdin/stdout to appropriate pipe ends
  * For parent: closes unused pipe ends to prevent hanging
  */
@@ -70,7 +70,7 @@ void	process_pipe_command(t_cmd *curr, t_shell_exec *se)
  * Executes a pipeline of commands using multiple processes
  * Creates processes for each command, sets up pipes between them,
  * and waits for all processes to complete
- * 
+ *
  * Returns: Exit status of the last command in the pipeline
  */
 int	execute_pipeline(t_cmd *cmd, t_env_list *env_list, t_shell_data *data)

@@ -12,20 +12,21 @@
 
 #include "minishell.h"
 
-/* Free environment list and its contents */
 void	free_env_list(t_env_list *env_list)
 {
-	t_env_list	*tmp;
+	t_env_list	*current;
+	t_env_list	*next;
 
-	while (env_list)
+	current = env_list;
+	while (current)
 	{
-		tmp = env_list;
-		env_list = env_list->next;
-		if (tmp->key)
-			free(tmp->key);
-		if (tmp->value)
-			free(tmp->value);
-		free(tmp);
+		next = current->next;
+		if (current->key)
+			free(current->key);
+		if (current->value)
+			free(current->value);
+		free(current);
+		current = next;
 	}
 }
 
@@ -79,24 +80,25 @@ void	free_args(char **args)
 }
 
 /* Free command structures and all their contents */
-void	free_command(t_cmd *cmd)
+void free_command(t_cmd *cmd)
 {
-	t_cmd	*tmp;
+    t_cmd *tmp;
 
-	while (cmd)
-	{
-		tmp = cmd->next;
-		if (cmd->infile > 2)
-			close(cmd->infile);
-		if (cmd->outfile > 2)
-			close(cmd->outfile);
-		if (cmd->cmd)
-			free(cmd->cmd);
-		if (cmd->args)
-			free_args(cmd->args);
-		if (cmd->redirections)
-			free_redirections(cmd->redirections);
-		free(cmd);
-		cmd = tmp;
-	}
+    tmp = NULL;
+    while (cmd)
+    {
+        tmp = cmd->next;
+        if (cmd->infile > 2)
+            close(cmd->infile);
+        if (cmd->outfile > 2)
+            close(cmd->outfile);
+        if (cmd->cmd)
+            free(cmd->cmd);
+        if (cmd->args)
+            free_args(cmd->args);
+        if (cmd->redirections)
+            free_redirections(cmd->redirections);
+        free(cmd);
+        cmd = tmp;
+    }
 }

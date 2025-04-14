@@ -15,7 +15,6 @@
 char	*expand_no_quote(char *str, char *result, t_shell_data *data)
 {
 	t_indices	idx;
-	char		*final_result;
 
 	idx.i = 0;
 	idx.j = 0;
@@ -30,9 +29,7 @@ char	*expand_no_quote(char *str, char *result, t_shell_data *data)
 			result[idx.j++] = str[idx.i++];
 	}
 	result[idx.j] = '\0';
-	final_result = ft_strdup(result);
-	free(result);
-	return (final_result);
+	return (result);
 }
 
 t_indices	process_quoted_vars(char *str, char *result, t_shell_data *data,

@@ -24,7 +24,6 @@ void	main_shell_loop(t_shell_data *data, char **rl)
 		if (*rl == NULL || data->should_exit)
 			break ;
 	}
-	cleanup_and_exit(data, NULL, data->exit_status);
 }
 
 /* Process all redirections for a command list */

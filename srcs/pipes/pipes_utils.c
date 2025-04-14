@@ -66,6 +66,7 @@ int	wait_for_processes(t_cmd *cmd, int *last_status)
 	t_cmd	*curr;
 	int		status;
 
+	status = 0;
 	curr = cmd;
 	while (curr)
 	{

@@ -65,6 +65,7 @@ int	main(int argc, char **argv, char **envp)
 {
 	char			*rl;
 	t_shell_data	*data;
+	int				exit_status;
 
 	rl = NULL;
 	if (argc != 1 || !argv)
@@ -76,5 +77,10 @@ int	main(int argc, char **argv, char **envp)
 	if (!data->env_list)
 		return (error_message_env_init(data));
 	main_shell_loop(data, &rl);
-	return (data->exit_status);
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	rl_clear_history();
+	exit_status = data->exit_status;
+	free_shell_data(data);
+	return (exit_status);
 }

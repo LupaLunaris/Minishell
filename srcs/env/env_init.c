@@ -103,20 +103,19 @@ char	*init_expand_result(char *str, t_shell_data *data)
 	return (result);
 }
 
-void	expand_cmd_args(t_cmd *cmd, t_shell_data *data)
+void expand_cmd_args(t_cmd *cmd, t_shell_data *data)
 {
-	int		i;
-	char	*expanded;
+    int i = 0;
+    char *expanded;
 
-	i = 0;
-	while (cmd->args[i])
-	{
-		expanded = expand_variables(cmd->args[i], data);
-		if (expanded)
-		{
-			free(cmd->args[i]);
-			cmd->args[i] = expanded;
-		}
-		i++;
-	}
+    while (cmd->args[i])
+    {
+        expanded = expand_variables(cmd->args[i], data);
+        if (expanded != NULL)
+        {
+            free(cmd->args[i]);
+            cmd->args[i] = expanded;
+        }
+        i++;
+    }
 }

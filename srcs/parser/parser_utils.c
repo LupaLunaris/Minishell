@@ -40,23 +40,25 @@ void	ft_cmdadd_back(t_cmd **lst, t_cmd *new)
 /*
 ** Crée une nouvelle commande vide
 */
-t_cmd	*create_command(void)
+t_cmd *create_command(void)
 {
-	t_cmd	*cmd;
+    t_cmd *cmd;
 
-	cmd = (t_cmd *)malloc(sizeof(t_cmd));
-	if (!cmd)
-		return (NULL);
-	cmd->cmd = NULL;
-	cmd->args = NULL;
-	cmd->redirections = NULL;
-	cmd->next = NULL;
-	cmd->prev = NULL;
-	cmd->pid = 0;
-	cmd->is_builtin = 0;
-	cmd->pipe_fd[0] = -1;
-	cmd->pipe_fd[1] = -1;
-	return (cmd);
+    cmd = (t_cmd *)malloc(sizeof(t_cmd));
+    if (!cmd)
+        return (NULL);
+    cmd->cmd = NULL;
+    cmd->args = NULL;
+    cmd->redirections = NULL;
+    cmd->next = NULL;
+    cmd->prev = NULL;
+    cmd->pid = 0;
+    cmd->is_builtin = 0;
+    cmd->pipe_fd[0] = -1;
+    cmd->pipe_fd[1] = -1;
+    cmd->infile = -1;
+    cmd->outfile = -1;
+    return (cmd);
 }
 
 int	count_args(t_token *token, t_token *end)
