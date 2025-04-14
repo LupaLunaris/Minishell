@@ -6,25 +6,24 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 18:28:22 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/31 18:42:53 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/12 19:11:16 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
- 
-int	error_handler(const char *cmd, const char *message, int should_exit, int error_code)
+/* Function to display error messages */
+int	error_handler(const char *cmd, const char *message,
+	int should_exit, int error_code)
 {
-	if (message && strlen(message) > 0)
+	if (message && ft_strlen(message) > 0)
 	{
+		write(STDERR_FILENO, "minishell: ", 11);
 		if (cmd)
 		{
-			write(STDERR_FILENO, "minishell: ", 11);
-			write(STDERR_FILENO, cmd, strlen(cmd));
+			write(STDERR_FILENO, cmd, ft_strlen(cmd));
 			write(STDERR_FILENO, ": ", 2);
 		}
-		else
-			write(STDERR_FILENO, "minishell: ", 11);
-		write(STDERR_FILENO, message, strlen(message));
+		write(STDERR_FILENO, message, ft_strlen(message));
 		write(STDERR_FILENO, "\n", 1);
 	}
 	if (should_exit)
@@ -32,22 +31,37 @@ int	error_handler(const char *cmd, const char *message, int should_exit, int err
 	return (error_code);
 }
 
-void cleanup_and_exit(const char *cmd, const char *message, t_shell_data *data, t_cmd *cmds, int exit_code)
+int	error_handler_c(t_cmd *cmd, char **env_array, const char *message,
+	int should_exit)
 {
-    // Libérer les ressources
-    if (cmds)
-        free_command(cmds);
-    if (data)
-    {
-        if (data->env_list)
-            free_env_list(data->env_list);
-        free(data);
-    }
-    rl_clear_history();
-    
-    // Afficher le message d'erreur si nécessaire et quitter
-    if (message || cmd)
-        error_handler(cmd, message, 1, exit_code);
-    else
-        exit(exit_code);
+	if (message && ft_strlen(message) > 0)
+	{
+		write(STDERR_FILENO, "minishell: ", 11);
+		if (cmd->cmd)
+		{
+			write(STDERR_FILENO, cmd->cmd, ft_strlen(cmd->cmd));
+			write(STDERR_FILENO, ": ", 2);
+		}
+		write(STDERR_FILENO, message, ft_strlen(message));
+		write(STDERR_FILENO, "\n", 1);
+	}
+	if(cmd)
+		free_command(cmd);
+	if (env_array)
+		free_env_array(env_array);
+	if (should_exit)
+		exit(127);
+	return (127);
+}
+
+
+/* Function to clean up resources and exit the shell */
+void	cleanup_and_exit(t_shell_data *data, t_cmd *cmds, int exit_code)
+{
+	if (cmds)
+		free_command(cmds);
+	if (data)
+		free_shell_data(data);
+	rl_clear_history();
+	exit(exit_code);
 }

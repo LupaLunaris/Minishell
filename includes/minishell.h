@@ -6,12 +6,12 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:46:16 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/31 19:30:07 by Jpaulis          ###   ########.ft       */
+/*   Updated: 2025/04/08 15:55:26 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
-#define MINISHELL_H
+# define MINISHELL_H
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -32,20 +32,28 @@
 # include <ctype.h>
 # include "libft.h"
 
-// Forward declarations
-struct s_command;
-struct s_env_list;
-struct s_shell_data;
-struct s_redirection;
-struct s_token;
-struct s_lexer;
+# include "shell_data.h"
+# include "command.h"
+# include "env.h"
+# include "execute.h"
+# include "builtins.h"
+# include "lexing.h"
+# include "parser.h"
+# include "signals.h"
 
-typedef struct s_command t_cmd;
-typedef struct s_env_list t_env_list;
-typedef struct s_shell_data t_shell_data;
-typedef struct s_redirection t_redirection;
-typedef struct s_token t_token;
-typedef struct s_lexer t_lexer;
+struct							s_command;
+struct							s_env_list;
+struct							s_shell_data;
+struct							s_redirection;
+struct							s_token;
+struct							s_lexer;
+
+typedef struct s_command		t_cmd;
+typedef struct s_env_list		t_env_list;
+typedef struct s_shell_data		t_shell_data;
+typedef struct s_redirection	t_redirection;
+typedef struct s_token			t_token;
+typedef struct s_lexer			t_lexer;
 
 # define CMD_NOT_FOUND 127
 # define CMD_NOT_EXECUTABLE 126
@@ -54,42 +62,31 @@ typedef struct s_lexer t_lexer;
 #  define PATH_MAX 4096
 # endif
 
-#  ifndef TRUE_FALSE_DEFINED
-#   define TRUE_FALSE_DEFINED
-#   define true 1
-#   define false 0
-#  endif
+# ifndef TRUE_FALSE_DEFINED
+#  define TRUE_FALSE_DEFINED
+#  define TRUE 1
+#  define FALSE 0
+# endif
 
-// États du lexer
-# define STATE_NORMAL     0
-# define STATE_IN_SQUOTE  1
-# define STATE_IN_DQUOTE  2
-
-// Types de tokens
-# define TOKEN_WORD      1
-# define TOKEN_PIPE      2
-# define TOKEN_REDIR_IN  3
-# define TOKEN_REDIR_OUT 4
-# define TOKEN_APPEND    5
-# define TOKEN_HEREDOC   6
-# define TOKEN_ERROR     7
-
-// Include other headers after forward declarations
-# include "command.h"
-# include "env.h"
-# include "shell_data.h"
-# include "execute.h"
-# include "builtins.h"
-# include "parser.h"
-# include "signals.h"
-# include "lexing.h"
-
-int		main(int argc, char **argv, char **envp);
-int		error_handler(const char *cmd, const char *message, int should_exit, int error_code);
+int		error_handler(const char *cmd, const char *message,
+			int should_exit, int error_code);
+int		error_handler_c(t_cmd *cmd, char **env_array, const char *message,
+			int should_exit);
+int		error_message_env_init(t_shell_data *data);
+int		error_message_and_exit(char *prefix, char *message);
 int		is_valid_identifier(char *str);
-void cleanup_and_exit(const char *cmd, const char *message, t_shell_data *data, t_cmd *cmds, int exit_code);
-void    free_arr(char **arr);
-void    *clean_cmd_list(t_cmd *head);
-char *strip_quotes(char *str);
+char	*strip_quotes(char *str);
+void	cleanup_and_exit(t_shell_data *data, t_cmd *cmds, int exit_code);
+void	free_arr(char **arr);
+void	*clean_cmd_list(t_cmd *head);
+int		process_command(char *input, t_shell_data *data);
+int		process_all_redirections(t_cmd *cmd_list, t_shell_data *data);
+int		check_special_commands(char *input);
+int		check_dollar_command(t_cmd *cmd_list);
+void	main_shell_loop(t_shell_data *data, char **rl);
+void	handle_input_loop(t_shell_data *data, char **rl);
+void	handle_signals_exit_status(t_shell_data *data);
+int		main(int argc, char **argv, char **envp);
+void	free_env_array(char **env_array);
 
 #endif

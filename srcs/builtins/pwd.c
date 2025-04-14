@@ -6,12 +6,13 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 18:40:04 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/03/23 18:43:47 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/09 13:53:20 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* Implement the 'pwd' builtin command to print working directory */
 int	builtin_pwd(void)
 {
 	char	*pwd;
