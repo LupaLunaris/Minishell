@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 16:35:04 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/06 20:53:27 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/15 11:34:26 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ typedef struct s_command
 }	t_cmd;
 
 void	free_command(t_cmd *cmd);
-void	free_command_list(t_cmd *cmd);
 char	*find_command_path(char *cmd, t_env_list *env_list);
 int		wait_for_commands(t_cmd *cmd_list, t_shell_data *data);
 void	execute_single_command(t_cmd *cmd, t_shell_data *data);

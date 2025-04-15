@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 16:58:43 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/13 18:29:48 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/15 11:49:15 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,12 @@
 #include "minishell.h"
 #include <signal.h>
 
+extern volatile sig_atomic_t	g_signal_received;
 /* Signal handler spécifique au heredoc */
-void	signal_handler_heredoc(int signo)
+void signal_handler_heredoc(int signo)
 {
-	if (signo == SIGINT)
-	{
-		write(STDOUT_FILENO, "\n", 1);
-		exit(130);
-	}
+	g_signal_received = signo;
+	ioctl(STDIN_FILENO, TIOCSTI, "\n");
 }
 
 /* Configuration des signaux pour heredoc */

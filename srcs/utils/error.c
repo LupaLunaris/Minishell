@@ -6,11 +6,12 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 18:28:22 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/12 19:11:16 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/15 11:49:39 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
 /* Function to display error messages */
 int	error_handler(const char *cmd, const char *message,
 	int should_exit, int error_code)
