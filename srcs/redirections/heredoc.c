@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 16:44:57 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/15 11:14:59 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/16 17:22:01 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ static int read_heredoc_lines(char *delimiter, char **content, t_shell_data *dat
     if (!new_content)
         return (restore_signals(), error_handler("heredoc", 
                 "memory allocation failed", 0, 1));
-    
     while (1)
     {
         line = readline("> ");
@@ -65,10 +64,8 @@ static int read_heredoc_lines(char *delimiter, char **content, t_shell_data *dat
             free(new_content);
             free(line);
             restore_signals();
-            return (130);  // Le code 130 indique une interruption par Ctrl+C
+            return (130);
         }
-        
-        // Si c'est NULL c'est un Ctrl+D normal
         if (!line)
         {
             free(new_content);
@@ -78,7 +75,6 @@ static int read_heredoc_lines(char *delimiter, char **content, t_shell_data *dat
             ft_putstr_fd("')\n", 2);
             return (1);
         }
-        
         result = handle_heredoc_line(delimiter, line, &new_content, data);
         if (result != 0)
         {
@@ -133,15 +129,11 @@ int process_heredoc(char *delimiter, t_cmd *command, t_shell_data *data)
     redir = find_heredoc_redirection(command, delimiter);
     if (!redir)
         return (0);
-    
     status = read_heredoc_content(delimiter, &content, data);
-    
-    if (status == 130) // SIGINT
+    if (status == 130)
         return (130);
-    
     if (status != 0)
         return (status);
-        
     if (redir->heredoc_content)
         free(redir->heredoc_content);
     redir->heredoc_content = content;
