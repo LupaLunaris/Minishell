@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 16:44:57 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/16 17:22:01 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/16 17:26:06 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,84 +19,102 @@ extern volatile sig_atomic_t	g_signal_received;
  * and appends to content
  */
 static int	handle_heredoc_line(char *delimiter, char *line,
-	char **content, t_shell_data *data)
+                char **content, t_shell_data *data)
 {
-	char	*tmp;
-	char	*expanded_line;
+    char	*tmp;
+    char	*expanded_line;
 
-	if (ft_strcmp(line, delimiter) == 0)
-	{
-		free(line);
-		return (1);
-	}
-	expanded_line = expand_variables(line, data);
-	free(line);
-	tmp = *content;
-	*content = ft_strjoin(*content, expanded_line);
-	free(tmp);
-	tmp = *content;
-	*content = ft_strjoin(*content, "\n");
-	free(tmp);
-	free(expanded_line);
-	return (0);
+    if (ft_strcmp(line, delimiter) == 0)
+    {
+        free(line);
+        return (1);
+    }
+    expanded_line = expand_variables(line, data);
+    free(line);
+    tmp = *content;
+    *content = ft_strjoin(*content, expanded_line);
+    free(tmp);
+    tmp = *content;
+    *content = ft_strjoin(*content, "\n");
+    free(tmp);
+    free(expanded_line);
+    return (0);
+}
+
+/*
+ * Handle signal and EOF conditions in heredoc
+ */
+static int	handle_heredoc_signals(char *line, char *new_content,
+                char *delimiter)
+{
+    if (g_signal_received == SIGINT)
+    {
+        free(new_content);
+        free(line);
+        restore_signals();
+        return (130);
+    }
+    if (!line)
+    {
+        free(new_content);
+        restore_signals();
+        ft_putstr_fd("minishell: warning: here-document delimited by ", 2);
+        ft_putstr_fd("end-of-file (wanted '", 2);
+        ft_putstr_fd(delimiter, 2);
+        ft_putstr_fd("')\n", 2);
+        return (1);
+    }
+    return (0);
+}
+
+/*
+ * Process result from heredoc line handling
+ */
+static int	process_heredoc_result(int result, char *new_content)
+{
+    restore_signals();
+    if (result == 1)
+        return (1);
+    free(new_content);
+    return (result);
 }
 
 /*
  * Reads lines for heredoc until delimiter is found
  */
-static int read_heredoc_lines(char *delimiter, char **content, t_shell_data *data)
+static int	read_heredoc_lines(char *delimiter, char **content,
+                t_shell_data *data)
 {
-    char *line;
-    int   result;
-    char *new_content;
-    
-	g_signal_received = 0;
+    char	*line;
+    int		result;
+    char	*new_content;
+
+    g_signal_received = 0;
     set_signals_heredoc();
     new_content = ft_strdup("");
     if (!new_content)
-        return (restore_signals(), error_handler("heredoc", 
+        return (restore_signals(), error_handler("heredoc",
                 "memory allocation failed", 0, 1));
     while (1)
     {
         line = readline("> ");
-        if (g_signal_received == SIGINT)
-        {
-            free(new_content);
-            free(line);
-            restore_signals();
-            return (130);
-        }
-        if (!line)
-        {
-            free(new_content);
-            restore_signals();
-            ft_putstr_fd("minishell: warning: here-document delimited by end-of-file (wanted '", 2);
-            ft_putstr_fd(delimiter, 2);
-            ft_putstr_fd("')\n", 2);
-            return (1);
-        }
+        result = handle_heredoc_signals(line, new_content, delimiter);
+        if (result != 0)
+            return (result);
         result = handle_heredoc_line(delimiter, line, &new_content, data);
         if (result != 0)
-        {
-            restore_signals();
-            if (result == 1)
-                break;
-            free(new_content);
-            return (result);
-        }
+            return (process_heredoc_result(result, new_content));
     }
-    restore_signals();
     *content = new_content;
     return (0);
 }
-
 
 /*
  * Public interface for reading heredoc content
  */
 int	read_heredoc_content(char *delimiter, char **content, t_shell_data *data)
 {
-	return (read_heredoc_lines(delimiter, content, data));
+    return (read_heredoc_lines(delimiter, content, data));
 }
 
 /*
@@ -104,27 +122,27 @@ int	read_heredoc_content(char *delimiter, char **content, t_shell_data *data)
  */
 t_redirection	*find_heredoc_redirection(t_cmd *command, char *delimiter)
 {
-	t_redirection	*redir;
+    t_redirection	*redir;
 
-	redir = command->redirections;
-	while (redir)
-	{
-		if (redir->type == REDIR_HEREDOC
-			&& ft_strcmp(redir->file, delimiter) == 0)
-			return (redir);
-		redir = redir->next;
-	}
-	return (NULL);
+    redir = command->redirections;
+    while (redir)
+    {
+        if (redir->type == REDIR_HEREDOC
+            && ft_strcmp(redir->file, delimiter) == 0)
+            return (redir);
+        redir = redir->next;
+    }
+    return (NULL);
 }
 
 /*
  * Processes heredoc redirection, reads content and stores it
  */
-int process_heredoc(char *delimiter, t_cmd *command, t_shell_data *data)
+int	process_heredoc(char *delimiter, t_cmd *command, t_shell_data *data)
 {
-    t_redirection *redir;
-    char *content;
-    int status;
+    t_redirection	*redir;
+    char			*content;
+    int				status;
 
     redir = find_heredoc_redirection(command, delimiter);
     if (!redir)
@@ -139,4 +157,3 @@ int process_heredoc(char *delimiter, t_cmd *command, t_shell_data *data)
     redir->heredoc_content = content;
     return (0);
 }
-
