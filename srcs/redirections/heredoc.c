@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 16:44:57 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/16 17:26:06 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/16 17:29:05 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,14 +110,6 @@ static int	read_heredoc_lines(char *delimiter, char **content,
 }
 
 /*
- * Public interface for reading heredoc content
- */
-int	read_heredoc_content(char *delimiter, char **content, t_shell_data *data)
-{
-    return (read_heredoc_lines(delimiter, content, data));
-}
-
-/*
  * Finds a heredoc redirection with the given delimiter
  */
 t_redirection	*find_heredoc_redirection(t_cmd *command, char *delimiter)
@@ -147,7 +139,7 @@ int	process_heredoc(char *delimiter, t_cmd *command, t_shell_data *data)
     redir = find_heredoc_redirection(command, delimiter);
     if (!redir)
         return (0);
-    status = read_heredoc_content(delimiter, &content, data);
+    status = read_heredoc_lines(delimiter, &content, data);
     if (status == 130)
         return (130);
     if (status != 0)
