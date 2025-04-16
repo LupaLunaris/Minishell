@@ -6,7 +6,7 @@
 /*   By: Jpaulis <Jpaulis@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 17:22:46 by Jpaulis           #+#    #+#             */
-/*   Updated: 2025/04/12 20:02:06 by Jpaulis          ###   ########.fr       */
+/*   Updated: 2025/04/15 16:11:43 by Jpaulis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	builtin_exit(t_cmd *cmd, t_shell_data *data)
 	if (data->interactive)
 		ft_putendl_fd("exit", 2);
 	if (!cmd->args[1])
-		exit(exit_code);
+		cleanup_and_exit(data, cmd, exit_code);
 	arg = cmd->args[1];
 	if (!is_valid_number(arg))
 		return (error_handler("exit",
